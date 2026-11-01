@@ -1,0 +1,17 @@
+# Segredos e estado local — nunca commitar
+*.key
+*.pem
+*.token
+*credentials*
+*secret*
+.env
+config.yaml
+.agent-reach/
+
+# Capturas e dumps brutos do aparelho (podem conter dados pessoais)
+screencap*.png
+dump*.xml
+*.log
+
+# Fotos brutas ainda não curadas para catálogo
+catalogo/fotos-brutas/

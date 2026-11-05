@@ -91,9 +91,10 @@ Legado, a migrar para o modelo acima quando tocado:
 ## Estado
 
 - 2026-10-31: repositório renomeado localmente para tuttibom-ops;
-  roadmap v2, arquitetura v2 e esboço do painel v1 criados. Publicação
-  no GitHub continua pendente (bloqueio na instalação do app do Muse
-  no GitHub, a resolver pelo usuário quando decidir publicar).
+  roadmap v2, arquitetura v2 e esboço do painel v1 criados.
+  Publicação no GitHub feita em 2026-10-31 (primeiro commit, 52
+  arquivos) e atualizada em 2026-11-05 com o adendo de integração
+  (PC ADB, Stories publicado) e os documentos de 2026-11-01.
 - Execução da conta pessoal da loja no Facebook: só via ADB no S10,
   por enquanto. Conector nativo do Muse não está ligado a conta nenhuma
   neste ambiente (checagem 2026-10-30); no futuro, só como auxiliar de

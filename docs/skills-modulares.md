@@ -33,6 +33,7 @@ estrutura esteja correta.
 | tuttibom-facebook-marketplace | Anúncio, triagem, encaminhamento | ADB no S10, conta pessoal da loja | Dump de UI nulo no Facebook (só screencap); espaço no `input text` (usar `keyevent 62`); banner de confirmação de email (dispensar com X, sem confirmar); filtro Juazeiro do Norte; preço para o Facebook ainda pendente — nunca inventar |
 | tuttibom-facebook-conteudo | Post, vídeo, fila, reação | ADB no S10, Página + Marketplace | Ritmo máximo 3 posts/semana em testes; nada de 3 vendas seguidas; vídeo de processo antes de catálogo; brand sheet existente a reavaliar |
 | tuttibom-notebooklm | Norteador + roteiro/texto/prompts | Conta Google do usuário, semi-manual | Sem API oficial estável; caderno canônico nunca usado para um asset só; caderno efêmero por criativo, com deleção ao fim |
+| tuttibom-estudio-criativo (2026-11-01) | Produzir ativo visual finalizado; nunca publica | Muse na VM (Remotion/HyperFrames/FFmpeg) | Brand sheet a validar antes do render final; vídeo bruto pode ter nome de cliente — sanitizar com badge/máscara ou usar arte genérica; encode yuv420p + AAC, stills 1s/6s/12s antes do .mp4 |
 | tuttibom-observabilidade | Painel, falhas, tokens, saúde | Muse na VM, lendo logs/banco | Painel só leitura; só o Muse edita; sem dado de comprador; sem endpoint vivo |
 
 ## Instância futura, só como exemplo de nome

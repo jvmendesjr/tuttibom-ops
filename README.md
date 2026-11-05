@@ -57,6 +57,7 @@ Instâncias atuais (focadas no produto e na conta de hoje):
 - `skills/tuttibom-facebook-marketplace/` — anúncio, triagem,
   encaminhamento; problemas específicos do Facebook no S10.
 - `skills/tuttibom-facebook-conteudo/` — post, vídeo, fila, reação.
+- `skills/tuttibom-estudio-criativo/` — fábrica visual agnóstica de rede: produz o ativo (Remotion/FFmpeg, storyboard e stills antes do render), nunca publica.
 - `skills/tuttibom-notebooklm/` — canônico + efêmeros, roteiro e texto.
 - `skills/tuttibom-observabilidade/` — painel, falhas, tokens, saúde.
 

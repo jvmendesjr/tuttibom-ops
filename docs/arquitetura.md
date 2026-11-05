@@ -142,6 +142,96 @@ fila (rascunho, aprovado, publicado, atrasado). Se custo subir ou
 confiança do Jev cair, degrada para revisão humana — nunca acelera
 publicação para compensar.
 
+## Adendo 2026-11-01 — Estúdio criativo desacoplado
+
+Adaptação dos documentos enviados em 2026-11-01 (Plano Diretor de
+Social Media e Arquitetura de Motion Graphics por Código), sem
+mudar os guardrails nem as regras v2 acima:
+
+- Nova instância agnóstica de rede:
+  `skills/tuttibom-estudio-criativo/` — produz o ativo, nunca
+  publica. Detalhe do plano em
+  `docs/plano-social-media-criativos.md`; contrato de motion em
+  `docs/motion-graphics-codigo.md`; storyboard da Publicação 1 em
+  `templates/storyboard-publicacao-1.md`.
+- Motion Graphics por Código passa a ser o contrato de render do
+  estúdio: 4 estilos (A híbrido cinético B-Roll, B UI Launch /
+  simulador de pedido, C split-screen comparativo, D editorial
+  spec-sheet), spring em vez de linear, safe zones 220/380/140 px
+  em 9:16, stills de 1s/6s/12s antes do .mp4 completo, encode
+  H.264 yuv420p 30 fps com stream AAC presente.
+- O que continua valendo: Camada 4 já previa Remotion /
+  HyperFrames / FFmpeg; este adendo só formaliza parâmetros.
+  Links de skills da comunidade não foram recebidos em
+  2026-11-01, então a ingestão agnóstica (seção 1 do plano) está
+  documentada e pendente, sem fonte inventada. O caderno efêmero
+  do NotebookLM para a Publicação 1 também continua pendente e
+  manual (semi-manual, sem API estável); o checkpoint apresentado
+  foi o storyboard + texto exato na conversa.
+
+## Adendo 2026-11-01 — Ponto de execução ADB no PC e Stories publicado
+
+Decidido e provado em 2026-11-01, entre 11:07 e 12:44, sem mudar
+os guardrails nem as regras v2 acima:
+
+- **Ponto de execução do ADB: o PC, não a VM.** Decidido pelo
+  usuário porque um agente do Paperclip no PC vai assumir essa
+  tarefa no futuro, e o ADB deve morar onde o agente vai morar.
+  O binário `adb` não foi encontrado nem nesta VM nem no PC
+  na checagem de 11:07-11:08. No PC, com aprovação do usuário,
+  o platform-tools oficial foi instalado isolado em
+  `~/platform-tools`, sem apt e sem mexer no sistema: adb
+  1.0.41 / 37.0.1, verificado.
+- **Pareamento é por chave de cada máquina.** A primeira
+  conexão do PC falhou, com lista de dispositivos vazia. A
+  chave nova do `adb` do PC precisou de pareamento próprio:
+  código de seis dígitos na tela do S10 e porta de
+  pareamento descoberta por mDNS
+  (`_adb-tls-pairing._tcp.local.`), com `adb pair` no PC.
+  Depois disso, a conexão na porta principal mostrada na
+  tela do S10 funcionou como `device`, modelo SM-G770F
+  confirmado. Código de pareamento e portas são efêmeros e
+  nunca são registrados como valores fixos.
+- **Porta efêmera, com churn real.** A porta principal mudou
+  de novo logo após o pareamento, e o arquivo de endpoint no
+  telefone foi atualizado por mDNS; o PC reconectou na porta
+  nova. Observação honesta da sessão: na checagem das 12:02,
+  a porta principal mostrada na tela não batia com a porta do
+  serviço `_adb-tls-connect` no mDNS, e a conexão na porta da
+  tela funcionou enquanto a anterior, na porta do mDNS,
+  tinha falhado. Não fixar nenhuma das duas: reler o
+  endpoint / mDNS antes de cada conexão.
+- **Stories 9:16 do piloto — PUBLICADO em 2026-11-01
+  ~12:43-12:44, via ADB do PC.** Publicação aprovada pelo
+  usuário às 12:37 ("já pode publicar"), substituindo o
+  checkpoint só-de-prévia. Facebook aberto como TuttiBom,
+  Criar story, primeira miniatura da galeria era a arte do
+  piloto, prévia conferida em 9:16 cheio, rótulo de IA
+  estava desligado e foi ligado antes de compartilhar,
+  Público, compartilhamento no WhatsApp desativado,
+  Compartilhar tocado, pedido de atalho na tela inicial
+  recusado com "Agora não". Confirmação no Feed como
+  "Seu story", com a miniatura da arte do piloto. Telefone
+  deixado no Feed, bateria 85% às 12:46. Nota: tocar em
+  "Seu story" abriu o visualizador, mas a foto de 5 s
+  avançou sozinha para o story seguinte antes da captura,
+  então a prova é o cartão "Seu story" no Feed, não a
+  captura do visualizador. Capturas com conteúdo de
+  terceiros no Feed foram apagadas após a checagem, como
+  nas sessões anteriores.
+- **O que isso muda para o Paperclip:** o agente futuro no
+  PC pode reutilizar o mesmo ponto de execução
+  (`~/platform-tools/adb`, chave já pareada no PC,
+  descoberta de endpoint por mDNS no telefone), sem
+  recriar um caminho na VM que ele não conseguiria usar.
+  A chave pareada mora no PC: se ela for regenerada ou o
+  PC for reconstruído, o pareamento precisa ser refeito
+  na tela do telefone. As travas não mudam: publicação
+  só após aprovação do texto exato / da arte pelo usuário.
+- **Segue não provado:** responder a interessado via ADB;
+  preço para o Facebook, segue indeciso; teste de ponta a
+  ponta da recuperação do ADB, segue adiado pelo usuário.
+
 ## Provedores — papéis e limites
 
 - **Muse:** orquestração, geração, edição, painel. Custo por tarefa,
@@ -172,6 +262,8 @@ publicação para compensar.
 - NotebookLM sem API oficial: quebra de automação é esperada; o
   contrato é a exportação, não a integração ao vivo.
 - Jev com confiança imperfeita: limiar + humano, sempre.
-- Publicação e resposta pelo ADB ainda não estão provadas (só leitura
-  e rascunho em laboratório): não prometer a via até os testes 2–4
-  passarem com aprovação.
+- Publicação pelo ADB agora está provada para Feed
+  (2026-11-01 ~01:49) e para Stories 9:16 (2026-11-01
+  ~12:43-12:44, via PC). Resposta a interessado pelo ADB
+  segue não provada: não prometer essa via até o teste
+  passar com aprovação.

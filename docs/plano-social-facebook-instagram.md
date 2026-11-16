@@ -67,6 +67,59 @@ passo**. A F1 só fecha o lote novo depois das decisões G1–G6
 dessa pesquisa (tema/templates no Gamma, motor, tamanho do lote,
 persona, MCP vs adapter, vídeo).
 
+
+### Adendo 2026-11-16 ~10:10 (America/Fortaleza)
+
+Incorpora a D-004, a pesquisa de vídeo/referências
+(`docs/pesquisa-video-referencias.md`) e as decisões posteriores
+do José no mesmo dia. Não republica nem gasta crédito.
+
+- **Navegação e publicação (D-004):** o Camofox (motor + Jev) é o
+  navegador único desta frente — painel, redes da loja e criativos.
+  O S10/ADB está **pausado**. O que já foi provado via ADB em
+  2026-11-01 (Feed e Stories, com rótulo de IA) permanece como
+  histórico. O caminho ativo de publicação é o **Meta Business
+  Suite** (o José cola ou sobe a peça aprovada e confirma) e,
+  quando houver sessão combinada, o **Camofox** com os guardrails
+  permanentes da D-004 (navegação simulada, ritmo humanizado, sem
+  ações em massa, sem modificar o Camofox; qualquer alerta de bot
+  → pausar e reavaliar). Esta frente **não edita** `fb_agent.py`
+  e **não opera** o Camofox sem o José. O adapter Messenger via
+  ADB na Ponte (passo 5) fica **posto de lado**; o Zernio segue
+  como ponte inicial do Messenger (F3).
+- **Gamma é auxiliar:** plataforma já paga, para aproveitar
+  créditos em post e carrossel (still). Não publica, não agenda
+  e não gera Reel. Detalhe em
+  `docs/pesquisa-criativo-gamma-persona.md`.
+- **Canal:** marca e produto agora; persona virtual depois,
+  sempre rotulada, nunca no atendimento.
+- **Aviso de IA:** texto na bio/Sobre da Página (e do Instagram,
+  quando existir) + rótulo nativo em cada post/Reel/Story. Ver
+  `docs/pesquisa-video-referencias.md` §3. Rascunho de bio,
+  ainda sem publicar, está lá.
+- **Mídia — regra conciliadora:** a maior parte será gerada.
+  **Produto fiel ao catálogo** (nunca inventar especificação);
+  cenário e pessoas podem ser gerados; bruto real autorizado
+  tem preferência quando existir. Reconcilia o “produto 100%
+  real no fundo” de `docs/motion-graphics-codigo.md` com a falta
+  de fotos. Texto da regra: `docs/pesquisa-video-referencias.md`
+  §5.
+- **Vídeo de primeira linha:** cena (real ou gerada via
+  Higgsfield/Kling/Gemini Omni; o Veo 3.1 Preview na Gemini API
+  foi encerrado em 22/10/2026) + motion graphics em Remotion
+  (estilos A–D) + voz/música ElevenLabs + legendas. Pipeline de
+  6 passos no mesmo doc, §1. O lote `criativos/f1-lote-01.md`
+  continua como registro, a refazer sob essa regra.
+- A loja trabalha com **fitas personalizadas e impressão 3D**.
+  A Página hoje só mostra fita; cinco melhorias priorizadas no
+  mesmo doc, §4.
+- Correções de estado, só para não arrastar erro antigo deste
+  plano: `ops/fila-publicacao.md` **existe** (o levantamento das
+  09:10 dizia o contrário); `docs/arquitetura.md` voltou no
+  merge `91af93d`. Caminho desta frente:
+  `/home/pc/Workspace/tuttibom-ops-social`, branch `social/fb-ig`.
+  Sem commit até o José validar.
+
 ## 1. Estado atual honesto
 
 ### 1.1 O que já é real (código, conta ou prova)
@@ -162,10 +215,10 @@ Adequado ao Cariri e ao que a biblioteca já tem (ocasiões: aniversário, casam
 - Nada é publicado, enviado ou fechado em preço sem a aprovação do José ao **texto e à mídia exatos**. Trabalho chega como rascunho.
 - Com o comprador, José é “produtor”, nunca “gestor”. A Ana não se apresenta como virtual por conta própria.
 - Sem dado pessoal de comprador no repo, neste plano ou no painel.
-- S10 é a superfície que já tocou a conta da loja; **Camofox / `fb_agent.py` não tocam essa conta**.
+- **D-004 (2026-11-16):** Camofox (motor + Jev) é o navegador único da loja; S10/ADB está pausado. Esta frente não edita `fb_agent.py` e não opera o Camofox sem o José. O histórico de 2026-11-01 (Feed e Stories via ADB, com rótulo de IA) permanece como prova passada, não como caminho ativo.
 - Conteúdo de IA segue a regra da plataforma (rótulo quando exigido); nunca insinuar que não é IA. **D-mídia (2026-11-16):** real autorizado e fictícia podem conviver, desde que a peça diga qual é qual.
 - **D-preço (2026-11-16):** peça social sem preço e sem frete; CTA no direct/Messenger. Ana não cita frete. Aprovar preço na conversa continua sendo clique do José, quando houver valor.
-- Vídeo entra na F1 (roteiro e rascunho) e na F2 (publicação). Existentes e novos. O Reel ainda não foi provado via ADB; o primeiro Reel aprovado prefere o Meta Business Suite até esse teste existir.
+- Vídeo entra na F1 (roteiro e rascunho) e na F2 (publicação). Existentes, gerados e novos, com a regra conciliadora. O Reel ainda não foi provado; o primeiro Reel aprovado prefere o Meta Business Suite (Camofox só em sessão combinada, D-004). Pipeline: `docs/pesquisa-video-referencias.md` §1.
 - Esta frente **não altera** o repo Deskcomm, migrations, baseline, `organizations.settings`, catálogo MCP, containers ou configs. Também **não edita** as skills vendored nem o `pacote-tuttibom.md` para “alinhar” o texto antigo — a divergência fica anotada aqui.
 
 ## 4. Criativo × fluxos
@@ -174,7 +227,7 @@ Adequado ao Cariri e ao que a biblioteca já tem (ocasiões: aniversário, casam
 [ideia] → [roteiro/legenda] → [arte no Drive, pasta Pendentes/]
         → [José aprova a peça exata] → [pasta da ocasião + planilha]
         → [fila de publicação] → [José aprova data/rede/texto]
-        → [publicar: Business Suite ou ADB no S10]
+        → [publicar: Business Suite ou Camofox (D-004); ADB pausado]
         → [medir 24h/72h, sem dado de comprador]
 
 [comentário ou DM no Facebook] → [Zernio webhook] → [Deskcomm inbox]
@@ -234,10 +287,12 @@ acima e §8) ou em `docs/decisoes/`, sem credencial.
   tela, áudio, e a marcação “vídeo existente (a escolher na
   Biblioteca)” ou “vídeo a criar”. O José usa os que já tem e
   também cria novos. Isto é rascunho — **não publica**.
-- Abrir a fila de publicação (o arquivo `ops/fila-publicacao.md`
-  citado ainda não existe) com colunas: peça, formato (4:5 feed /
+- Usar a fila de publicação já existente em `ops/fila-publicacao.md`
+  (o levantamento das 09:10 dizia que o arquivo não existia; ele
+  voltou no merge `91af93d`). Colunas: peça, formato (4:5 feed /
   9:16 stories ou reels), rede, texto, status (rascunho / aprovado /
   agendado / publicado), data proposta. Sem nome de comprador.
+  Não apagar o histórico do piloto de 2026-11-01.
 - Primeiro lote de rascunhos Facebook: `criativos/f1-lote-01.md`
   (2026-11-16) — 8 peças da Página, misturando feed, Stories e
   um Reel, com 3 itens em vídeo. **Adendo 09:35: este lote
@@ -250,8 +305,11 @@ acima e §8) ou em `docs/decisoes/`, sem credencial.
   Reel fica só com o nome da loja, em rascunho.
 
 **Dependências:** Drive da biblioteca (já existe). Escolha, pelo
-José, do vídeo existente (P5) e gravação dos vídeos a criar
-(P6, P7). Nenhuma permissão Meta. Não usa Camofox.
+José, do vídeo existente (P5) e a produção dos vídeos a criar
+(P6, P7), agora também pelo pipeline de
+`docs/pesquisa-video-referencias.md` (geração + Remotion), com a
+regra conciliadora. Nenhuma permissão Meta. A F1 é só produção:
+não publica e não opera o Camofox.
 
 **Pronto quando:** o José aprovar o lote (ou as peças que forem
 seguir); vídeos existentes escolhidos e revisados (sem nome
@@ -262,37 +320,39 @@ aprovado peça a peça.
 
 ### Fase 2 — Publicar no Facebook (página: feed, depois stories, depois reels)
 
-**Caminho recomendado (enquanto valer “sem app próprio”):**
+**Caminho recomendado (enquanto valer “sem app próprio”, e
+segundo a D-004):**
 
 1. **Meta Business Suite** para agendar feed/Reels/Stories da Página
    (o José cola ou sobe a peça já aprovada e confirma data/texto).
-2. **ADB no S10** como caminho já provado de Feed e Stories, quando
-   o Suite não servir ou para repetir o ritual de prova. Uma
-   publicação por sessão de teste, sem rajada (skill
-   `facebook-conteudo` / práticas de laboratório).
-3. **Vídeo na F2.** Stories em vídeo podem ir pelo Suite ou pelo
-   ADB (Stories estáticos já foram provados em 2026-11-01; vídeo
-   no Story ainda é teste controlado, um por vez). **Reel ainda
-   não foi provado via ADB** — o upload de vídeo no app do
-   Facebook no S10 continua o ponto frágil. O primeiro Reel
-   aprovado (P6 do lote F1) prefere o **Meta Business Suite**
-   até existir um teste controlado de upload via ADB. Não
-   misturar esse teste com horário de atendimento da Ana.
+   É o caminho preferido, sobretudo para o **primeiro Reel**, que
+   ainda não foi provado.
+2. **Camofox (motor + Jev)**, só em sessão combinada com o José,
+   com os guardrails permanentes da D-004: navegação simulada,
+   ritmo humanizado, sem ações em massa, sem modificar o Camofox;
+   qualquer alerta de bot → pausar e reavaliar. Uma publicação por
+   sessão, ritual de prova por captura (Jev). Esta frente não edita
+   `fb_agent.py`.
+3. **Vídeo na F2.** Stories em vídeo e o primeiro Reel aprovado
+   preferem o Suite até existir um teste controlado de upload via
+   Camofox. O histórico de 2026-11-01 (Feed e Stories estáticos via
+   ADB, com rótulo de IA) não se reabre no S10 enquanto a D-004
+   valer. Não misturar o teste com horário de atendimento da Ana.
 
 **Não fazer nesta fase:** app Graph, token de Página em agente,
-publicar pelo Camofox, impulsionar, Marketplace (skill existe;
-é outra frente).
+voltar ao ADB/S10, impulsionar, Marketplace (skill existe; é
+outra frente).
 
 **Dependências:** aprovação peça a peça (D0 contínua); acesso do José
-ao Business Suite / ao app no S10. Agente não publica sozinho.
+ao Business Suite e, se for o caso, sessão Camofox combinada.
+Agente não publica sozinho.
 
 **Pronto quando:** 1 post no Feed e 1 Story no ar, com o texto e a
 mídia que o José aprovou; captura de confirmação no Feed (“Seu
 story” / post visível na Página), sem conteúdo de terceiros no
 arquivo guardado. Reel: só entra no critério desta fase depois
-de publicado com aprovação — e, se for via ADB, depois do teste
-de upload ter passado; até lá, Suite conta como prova de
-publicação do Reel, ADB não.
+de publicado com aprovação; até um teste Camofox existir, o
+Suite conta como prova de publicação do Reel.
 **Prova:** captura + linha na fila (“publicado”, data, formato).
 Métricas 24h/72h, se o José puder ler no Suite, entram como
 anexo num ciclo seguinte — nunca inventadas.
@@ -338,8 +398,9 @@ desenho e ponto serializado de config da Ponte).
 no Messenger, com horário e captura (sem dado de terceiro).
 **Prova:** as duas capturas + nota de que a sessão `zernio_social`
 está `WORKING` na tela de Conexões. Se falhar, registrar o erro e
-parar — não improvisar Camofox nem ADB de Messenger nesta fase
-(saída ADB ainda não provada; Camofox é de outro dono).
+parar — não improvisar Messenger via Camofox nem reabrir ADB
+nesta fase (saída ADB nunca foi provada; adapter ADB está posto
+de lado pela D-004; Camofox/`fb_agent.py` não se edita aqui).
 
 ### Fase 4 — Instagram, contas (depois do Facebook estável)
 
@@ -379,8 +440,10 @@ reusando asset já autorizado.
 ### Fase 6 — Publicar no Instagram
 
 **Caminho recomendado:** o mesmo Meta Business Suite (planner único
-Página + IG). ADB no app do Instagram **não está provado** — não é
-o primeiro caminho. API de publicação: só se o José reabrir D1.
+Página + IG). Upload pelo app do Instagram via ADB **não está
+provado** e o ADB está pausado (D-004). Camofox só em sessão
+combinada, depois do Suite. API de publicação: só se o José
+reabrir D1.
 
 **Pronto quando:** 1 Reel ou 1 carrossel e 1 Story no ar, texto/mídia
 aprovados, linha na fila.
@@ -417,17 +480,17 @@ Como trabalhar **sem colidir** com o outro agente em paralelo:
 | Superfície | Dono | O que esta frente faz |
 |---|---|---|
 | **P7 — vocabulário canônico de tags** | Autor do handover; **intocável** até ele liberar. HEAD citado: `fc4a4e0b6`. Arquivos: `lib/schemas/tags.ts`, `app/api/v1/tags/vocabulario/route.ts`, `fn_vocabulario_de_tags_operar` + migration `..._9224_adicionar_etiqueta_no_vocabulario.sql` + apêndice no `baseline.sql`, `app/app/settings/tags/_painel.tsx`, `lib/operacao/marcadores-e-time.ts`, testes `tags-vocabulario*`. | **Nada.** Nem leitura de alteração, nem “só um teste”. Fluxos sociais não precisam de tag nova para o plano. |
-| **`fb_agent.py` / Camofox** | Autor do handover; fora do escopo TuttiBom Ops. | **Não usar, não ligar, não apontar para a conta da loja.** Produção de arte desta frente: Drive + Muse/FFmpeg no que já for da loja, sem a sessão Camofox do outro dono. |
+| **`fb_agent.py` / Camofox** | Autor do handover é dono do **código** (`fb_agent.py`); a D-004 tornou o Camofox o navegador único das redes da loja. | **Não editar, não refatorar, não apontar script novo.** Publicação e navegação da conta, quando o José aprovar, seguem a D-004 (Camofox + Jev, guardrails permanentes). Produção de arte desta frente: Drive + Remotion/FFmpeg/Higgsfield/Gamma no PC ou no box, sem operar a sessão Camofox sozinho. |
 | **Varredura do gestor** (08:00 / 14:00 / 20:00) e `mcp-ultima-varredura.json` | Autor do handover. | Não rodar, não reescrever, não competir pelo token MCP. |
 | **`organizations.settings`**, baseline / migrations, funções SQL compartilhadas, **catálogo MCP** | Um dono por vez (ver `docs/frentes-ativas.md`). | Esta frente **não escreve** nesses pontos. Ligar Zernio, se for pela tela do Deskcomm, é configuração da org — **só com o José na tela**, e avisando o outro agente antes se houver risco de mexer em settings. |
 | **Repo Deskcomm** (`local/v1.20.0-petemcasa`) | Produção viva; nunca `git pull`; P7 em andamento. | Só leitura, como neste levantamento. Nenhum commit, migration ou compose. |
-| **S10 / ADB** | Superfície compartilhada na prática. | Publicar via ADB só em janela combinada, um passo por vez, sem coincidir com testes de Messenger ADB ou com sessão do outro agente no aparelho. |
+| **S10 / ADB** | Pausado pela D-004. Aprendizados em `docs/aprendizados-adb-comunidade.md` ficam como referência, não como prática ativa. | **Não usar** enquanto a D-004 valer. Não reabrir janela de ADB para publicar nem para Messenger. |
 
 Trabalho paralelo **seguro agora:** rascunhos no Drive, este doc,
 skills de criativo (só no repo tuttibom-ops, arquivos de ajuste),
 fila de publicação, pesquisa. Trabalho que **espera o José e um
 aviso explícito:** conectar Zernio, webhook, qualquer clique no
-painel Deskcomm, qualquer toque no S10.
+painel Deskcomm, qualquer sessão Camofox na conta da loja.
 
 ## 7. O que exige aprovação do José (publicar, enviar, preço)
 
@@ -454,10 +517,12 @@ Rascunhar, classificar no Drive, escrever este plano e pesquisar API
   O catálogo do Deskcomm (pacote §9) continua valendo no
   atendimento; **não** se copia o valor para a legenda. Skills e
   pacote não foram editados — ver §1.3 item 6.
-- **D3 / D-mídia — FECHADA.** Misturar foto/vídeo **real autorizado**
-  e mídia **fictícia**, sinalizando qual é qual. Adendo do mesmo
-  horário: usar vídeos existentes e criar vídeos novos. Skills
-  longas que ainda pedem “100% fictício” ficam como estão até um
+- **D3 / D-mídia — FECHADA**, com a **regra conciliadora** do
+  adendo 10:10 (`docs/pesquisa-video-referencias.md` §5): produto
+  fiel ao catálogo; cenário e pessoas podem ser gerados; bruto
+  real autorizado tem preferência. Adendo das 09:10: usar vídeos
+  existentes e criar vídeos novos. Skills longas que ainda pedem
+  “100% fictício” ou “fundo 100% real” ficam como estão até um
   ajuste separado, se o José pedir — ver §1.3 item 5.
 - **D8 — FECHADA.** O Instagram da loja ainda **não** é profissional
   e **não** está ligado à Página. Tarefa da F4, **só o José executa**.
@@ -468,11 +533,13 @@ Resposta curta basta. A F1 de rascunhos já anda com o que foi
 fechado; publicar (F2) e ligar inbox (F3) ainda dependem do que
 falta.
 
-- **D1. Caminho de publicação.** Manter a decisão de 2026-11-05 (sem
-  app próprio no Developers): Business Suite para agendar + ADB no
-  S10 para o que já foi provado? Ou reabrir Graph API / App Review?
-  (Sugestão vigente no plano: Suite, sobretudo para o **primeiro
-  Reel**, que ainda não foi provado via ADB.)
+- **D1. Caminho de publicação.** A D-004 já substitui o ADB pelo
+  Camofox como navegador. A pergunta que resta: manter a decisão
+  de 2026-11-05 (sem app próprio no Developers) — Business Suite
+  para agendar + Camofox só em sessão combinada — ou reabrir
+  Graph API / App Review? (Sugestão vigente: Suite, sobretudo
+  para o **primeiro Reel**, ainda não provado; Camofox com os
+  guardrails da D-004; ADB pausado.)
 - **D4. Ritmo.** Quantos posts por semana no Facebook no começo
   (sugestão: 2–3)? O 1º lote (`criativos/f1-lote-01.md`) **já inclui**
   um Reel e dois Stories em vídeo, como rascunho — não precisa
@@ -497,7 +564,7 @@ falta.
 - Confirmação do webhook (URL HTTPS já existe; o clique e o segredo
   são dele).
 - Acesso ao Meta Business Suite para agendar (e para o primeiro Reel,
-  enquanto o ADB de Reel não estiver provado).
+  enquanto o upload via Camofox não estiver provado).
 - DM e comentário de **teste** a partir de um perfil que não seja de
   cliente.
 - Se D1 reabrir app próprio: criar o app Meta, App Review, tokens de
@@ -513,4 +580,14 @@ falta.
 - Business Suite / agendamento nativo: https://www.facebook.com/business/help/1252240869631062 — https://help.instagram.com/439971288310029
 - Zernio: https://docs.zernio.com/pricing/inbox — https://zernio.com/pricing.md — https://docs.zernio.com/products/inbox
 - ManyChat: https://help.manychat.com/en/articles/17742037-quick-automation-auto-dm-links-from-comments — https://help.manychat.com/en/articles/17742196-facebook-comments-trigger
-- Docs internos de autoridade (lidos, não editados): `docs/handover-deskcomm-outro-agente.md`, `docs/roadmap.md` §10–§12, `docs/plano-painel-v2.md`, `docs/pacote-tuttibom.md`, `docs/persona-interacao.md`, `docs/base-conhecimento-tuttibom.md`, `docs/aprendizados-adb-comunidade.md`, `docs/blueprint-inicial.md`, `docs/frentes-ativas.md`, `catalogo/*`; Ponte `AGENTS.md`; Deskcomm `lib/channels/{social,zernio,adapters,meta}/` e migrations 9032 / 0159 / 9222 / 9224 (esta última só para não tocá-la).
+- Docs internos de autoridade (lidos; este plano e `docs/frentes-ativas.md` foram atualizados neste passo, os demais não): `docs/decisoes/D-004-2026-11-16-camofox-navegador-unico-adb-pausado.md`, `docs/pesquisa-video-referencias.md`, `docs/motion-graphics-codigo.md`, `docs/plano-social-media-criativos.md`, `docs/pesquisa-criativo-gamma-persona.md`, `docs/handover-deskcomm-outro-agente.md`, `docs/roadmap.md` §10–§12, `docs/plano-painel-v2.md`, `docs/pacote-tuttibom.md`, `docs/persona-interacao.md`, `docs/base-conhecimento-tuttibom.md`, `docs/aprendizados-adb-comunidade.md`, `docs/blueprint-inicial.md`, `docs/frentes-ativas.md`, `catalogo/*`; Ponte `AGENTS.md`; Deskcomm `lib/channels/{social,zernio,adapters,meta}/` e migrations 9032 / 0159 / 9222 / 9224 (esta última só para não tocá-la).
+- Rótulo de IA (Meta): https://www.facebook.com/help/7434563519957988 — https://transparency.meta.com/en-us/governance/tracking-impact/labeling-ai-content — https://creators.instagram.com/blog/ai-generated-profile-label
+
+## Registro 2026-11-16 ~10:16 (America/Fortaleza) — decisões e gestão das plataformas
+
+- **Gestão das plataformas pelo Camofox (usuário, 10:16; ver D-004):** configurações das redes da loja são feitas pelo agente via Camofox (trinômio agente+camofox+jev, perfil `profile-fb`): ligar o **"Adicionar rótulo de IA"** em cada post/Reel/Story, ajustar categoria, Sobre/bio, capa e demais campos da Página. Guardrails da D-004 valem: navegação humana, sem ação em massa, tempo humanizado, todo print pelo Jev, pausar a qualquer alerta de bot. Toda mudança visível ao público (capa, Sobre, categoria, nome, publicação) só depois da aprovação do usuário ao texto/imagem exato.
+- **Coordenação:** `fb_agent.py`/sessão `profile-fb` têm dono no outro agente; a frente social usa a sessão em janela combinada, sem login nem renovação própria (uma identidade por sessão).
+- **Aviso de IA:** na bio/Sobre e no rótulo nativo de cada peça. "AI-generated profile" do IG fica desligado até haver persona virtual.
+- **Decisões fechadas hoje:** canal da marca/produto agora, persona virtual depois; mídia mista (maioria gerada); legenda sem preço com CTA no direct; IG ainda não profissional nem ligado à Página; Gamma só auxiliar; fita + impressão 3D na identidade; ADB pausado (D-004).
+- **Proposta (aguarda aprovação):** regra conciliadora — produto fiel ao catálogo, sem inventar especificação; bruto real autorizado tem preferência; cenário e pessoas podem ser gerados; sem fidelidade garantida, a peça se declara prévia/simulação.
+- **Ordem definida pelo usuário (10:16):** 1) registros; 2) nova capa da Página (fita + 3D, recorte seguro), discutindo antes as ferramentas do usuário para a capa.

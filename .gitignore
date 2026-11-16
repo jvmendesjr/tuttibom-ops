@@ -1,0 +1,60 @@
+# Segredos e ambiente — nunca versionar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+**/secrets/
+**/credentials/
+**/storage-state.json
+**/cookies*.json
+**/token*.json
+**/oauth*.json
+
+# Trabalho local e mídia (o piloto e os criativos não vão para este repo do PC)
+work/*
+!work/.gitkeep
+media/
+out/
+renders/
+criativos-piloto/
+*.mp4
+*.mov
+*.webm
+*.wav
+*.mp3
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.webp
+!docs/**/*.png
+
+# Python / Node
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+node_modules/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.codebase-memory/
+
+# IDE / SO
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
+
+# Temporal / runtime
+.temporal/
+runtime/
+*.log
+
+# Perfis de navegador (sessões, cookies, impressões digitais) — nunca versionar
+prototype-vision/profile-*/

@@ -1,0 +1,209 @@
+{
+  "quando": "2026-11-07 13:22:54 -0300",
+  "base_url": "https://9router.petemcasa.com/v1",
+  "piso_confianca": 0.65,
+  "fallback": "core-medio",
+  "candidatos": [
+    "cu/grok-4.7-low",
+    "cu/grok-4.7-medium",
+    "cu/grok-4.7-high",
+    "cu/cursor-grok-4.5-high"
+  ],
+  "aquecimento_descartado": {
+    "model_id": "core-medio",
+    "ok": true,
+    "ttft_s": 23.329,
+    "error": null
+  },
+  "amostras": [
+    {
+      "nivel": "facil",
+      "tarefa": "Quanto é 2+2? Responda só o número.",
+      "roteador": {
+        "tarefa": "Quanto é 2+2? Responda só o número.",
+        "baseline": false,
+        "decisao": {
+          "model_id": "cu/grok-4.7-low",
+          "selected_jev_id": "cu:grok-4.7-low",
+          "confidence": 1.0,
+          "fallback": false,
+          "reason": "chosen",
+          "jev_s": 0.479,
+          "probabilities": {
+            "cu:grok-4.7-low": 1.0,
+            "cu:grok-4.7-medium": 0.0,
+            "cu:grok-4.7-high": 0.0,
+            "cu:cursor-grok-4.5-high": 0.0,
+            "reobserve": 0.0,
+            "abstain": 0.0
+          }
+        },
+        "geracao": {
+          "model_id": "cu/grok-4.7-low",
+          "resolved_model": "grok-4.7-low",
+          "ok": true,
+          "error": null,
+          "ttft_s": 4.394,
+          "ttfb_s": 4.394,
+          "model_total_s": 4.394,
+          "chars": 1,
+          "preview": "4"
+        },
+        "primeira_resposta_s": 4.873,
+        "total_s": 4.874
+      },
+      "referencia_core_medio": {
+        "tarefa": "Quanto é 2+2? Responda só o número.",
+        "baseline": true,
+        "decisao": {
+          "model_id": "core-medio",
+          "selected_jev_id": null,
+          "confidence": null,
+          "fallback": false,
+          "reason": "referência direta, sem Jev",
+          "jev_s": 0.0,
+          "probabilities": {}
+        },
+        "geracao": {
+          "model_id": "core-medio",
+          "resolved_model": "gemini-3.8-flash-n",
+          "ok": true,
+          "error": null,
+          "ttft_s": 28.457,
+          "ttfb_s": 28.457,
+          "model_total_s": 28.457,
+          "chars": 1,
+          "preview": "4"
+        },
+        "primeira_resposta_s": 28.457,
+        "total_s": 28.458
+      }
+    },
+    {
+      "nivel": "medio",
+      "tarefa": "Explique em três frases o que é um índice B-tree e quando vale a pena usá-lo num banco relacional.",
+      "roteador": {
+        "tarefa": "Explique em três frases o que é um índice B-tree e quando vale a pena usá-lo num banco relacional.",
+        "baseline": false,
+        "decisao": {
+          "model_id": "cu/grok-4.7-medium",
+          "selected_jev_id": "cu:grok-4.7-medium",
+          "confidence": 0.99,
+          "fallback": false,
+          "reason": "chosen",
+          "jev_s": 0.514,
+          "probabilities": {
+            "cu:grok-4.7-low": 0.01,
+            "cu:grok-4.7-medium": 0.99,
+            "cu:grok-4.7-high": 0.0,
+            "cu:cursor-grok-4.5-high": 0.0,
+            "reobserve": 0.0,
+            "abstain": 0.0
+          }
+        },
+        "geracao": {
+          "model_id": "cu/grok-4.7-medium",
+          "resolved_model": "grok-4.7-medium",
+          "ok": true,
+          "error": null,
+          "ttft_s": 20.71,
+          "ttfb_s": 20.71,
+          "model_total_s": 21.815,
+          "chars": 429,
+          "preview": "Índice B-tree é uma árvore balanceada de nós largos com chaves ordenadas. Busca pontual, faixa, `ORDER BY` e `JOIN` custam tempo logarítmico e as folhas percorrem intervalos em sequência.\n\nVale em banco relacional quando a coluna entra com frequência em filtro, junção ou ordenação e tem seletividade alta.\n\nTabela pequena, coluna quase constante ou escrita intensa tornam a manutenção do índice mais"
+        },
+        "primeira_resposta_s": 21.224,
+        "total_s": 22.329
+      },
+      "referencia_core_medio": {
+        "tarefa": "Explique em três frases o que é um índice B-tree e quando vale a pena usá-lo num banco relacional.",
+        "baseline": true,
+        "decisao": {
+          "model_id": "core-medio",
+          "selected_jev_id": null,
+          "confidence": null,
+          "fallback": false,
+          "reason": "referência direta, sem Jev",
+          "jev_s": 0.0,
+          "probabilities": {}
+        },
+        "geracao": {
+          "model_id": "core-medio",
+          "resolved_model": "claude-sonnet-4-6",
+          "ok": true,
+          "error": null,
+          "ttft_s": 1.362,
+          "ttfb_s": 1.362,
+          "model_total_s": 3.93,
+          "chars": 358,
+          "preview": "B-tree organiza dados em nó raiz, nós internos e folhas, mantendo valores ordenados e balanceados. Busca, inserção e deleção custam O(log n) — eficiente para tabelas grandes. Use quando coluna aparece em `WHERE`, `ORDER BY`, `JOIN` ou tem alta cardinalidade; evite em colunas com poucos valores distintos (ex: booleano) pois custo de manutenção supera ganho."
+        },
+        "primeira_resposta_s": 1.362,
+        "total_s": 3.93
+      }
+    },
+    {
+      "nivel": "dificil",
+      "tarefa": "Projete as invariantes de um roteador que escolhe um modelo de linguagem pela dificuldade da tarefa, com piso de confiança e fallback. Liste os modos de falha (roteador lento, modelo lento para o primeiro token, escolha errada de tier) e diga como medir se o roteador de fato antecipa a primeira resposta. Seja conciso.",
+      "roteador": {
+        "tarefa": "Projete as invariantes de um roteador que escolhe um modelo de linguagem pela dificuldade da tarefa, com piso de confiança e fallback. Liste os modos de falha (roteador lento, modelo lento para o primeiro token, escolha errada de tier) e diga como medir se o roteador de fato antecipa a primeira resposta. Seja conciso.",
+        "baseline": false,
+        "decisao": {
+          "model_id": "cu/grok-4.7-high",
+          "selected_jev_id": "cu:grok-4.7-high",
+          "confidence": 0.99,
+          "fallback": false,
+          "reason": "chosen",
+          "jev_s": 0.453,
+          "probabilities": {
+            "cu:grok-4.7-low": 0.0,
+            "cu:grok-4.7-medium": 0.01,
+            "cu:grok-4.7-high": 0.99,
+            "cu:cursor-grok-4.5-high": 0.0,
+            "reobserve": 0.0,
+            "abstain": 0.0
+          }
+        },
+        "geracao": {
+          "model_id": "cu/grok-4.7-high",
+          "resolved_model": "grok-4.7-high",
+          "ok": true,
+          "error": null,
+          "ttft_s": 87.598,
+          "ttfb_s": 87.598,
+          "model_total_s": 92.119,
+          "chars": 2872,
+          "preview": "**Invariantes**\n\n1. Toda requisição tem exatamente um destino: tier escolhido ou fallback.\n2. Confiança \\(c < \\tau\\) bloqueia tier de capacidade menor que o fallback e dispara fallback.\n3. Com \\(c \\geq \\tau\\), dificuldade \\(d_1 \\leq d_2\\) implica capacidade do tier de \\(d_1\\) menor ou igual à capacidade do tier de \\(d_2\\).\n4. Timeout do roteador, erro e \\(c < \\tau\\) caem no mesmo fallback. Capacid"
+        },
+        "primeira_resposta_s": 88.051,
+        "total_s": 92.572
+      },
+      "referencia_core_medio": {
+        "tarefa": "Projete as invariantes de um roteador que escolhe um modelo de linguagem pela dificuldade da tarefa, com piso de confiança e fallback. Liste os modos de falha (roteador lento, modelo lento para o primeiro token, escolha errada de tier) e diga como medir se o roteador de fato antecipa a primeira resposta. Seja conciso.",
+        "baseline": true,
+        "decisao": {
+          "model_id": "core-medio",
+          "selected_jev_id": null,
+          "confidence": null,
+          "fallback": false,
+          "reason": "referência direta, sem Jev",
+          "jev_s": 0.0,
+          "probabilities": {}
+        },
+        "geracao": {
+          "model_id": "core-medio",
+          "resolved_model": "gemini-3.8-flash-n",
+          "ok": true,
+          "error": null,
+          "ttft_s": 31.862,
+          "ttfb_s": 31.862,
+          "model_total_s": 34.999,
+          "chars": 2322,
+          "preview": "Initial hypothesis: The request concerns invariant properties of an LLM router, specifically its behavior across task difficulty, confidence thresholds, and fallback mechanisms. The goal is to identify and measure potential failure modes like router latency and model TTFT, and determine whether the routing strategy actually improves the time to first response. The prompt's terse style might affect"
+        },
+        "primeira_resposta_s": 31.862,
+        "total_s": 34.999
+      }
+    }
+  ]
+}

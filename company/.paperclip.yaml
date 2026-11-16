@@ -1,0 +1,6 @@
+schema: "paperclip/v1"
+# TuttiBom — empresa Paperclip AINDA NÃO CRIADA (F1).
+# Quando for criada na instância 3110, registrar aqui: nome, id e prefixo
+# de issue. NUNCA segredo, chave ou token neste arquivo.
+# Modelo: 9Router http://127.0.0.1:20128/v1 (ver config/modelos_9router.json).
+# Agentes: opencode_local; primeiro o CEO, heartbeat desligado.

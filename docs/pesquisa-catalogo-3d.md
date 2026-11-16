@@ -83,13 +83,13 @@ Em alta, mas **não vendáveis** como estão (referência, não entram no catál
 
 | Nome | Categoria | URL | Licença | Situação | Demanda MakerWorld (downloads / impressões / curtidas) |
 |---|---|---|---|---|---|
-| Name Keychain Generator | Chaveiros | https://makerworld.com/en/models/2115391 | Standard Digital File License | Vendável só com Commercial Membership do criador (descrição: US$ 4.99/mês) | 67.714 / 26.711 / 8.592 |
+| Name Keychain Generator | Chaveiros | https://makerworld.com/en/models/2115391 | Standard Digital File License | Vendável só com Commercial Membership do criador (descrição: US$ 4,99/mês) | 67.714 / 26.711 / 8.592 |
 | Custom Name Keychain Generator | Chaveiros | https://makerworld.com/en/models/3049453 | Standard Digital File License | Não vendável (SDFL); membership não confirmada | 87.269 / 43.892 / 12.864 |
 | Customizable Name Keychain | Chaveiros | https://makerworld.com/en/models/2666145 | Standard Digital File License | Vendável só com Commercial Membership do criador (valor não confirmado) | 30.295 / 14.516 / 4.936 |
 | Llavero Nombre Doble Conexión | Chaveiros | https://makerworld.com/en/models/3050158 | BY-ND | CC BY-ND: só sem alteração; com nome do cliente = derivado → não vender personalizado | 18.315 / 7.471 / 4.768 |
 | Porta batom florzinhas (dia das mães) | Presentes | https://makerworld.com/en/models/2706365 | BY-ND | CC BY-ND: vendável sem alteração; personalização não | 18.279 / 16.748 / 7.505 |
 | Luminária LED inicial e nome | Decor | https://makerworld.com/en/models/3046803 | BY-ND | CC BY-ND: personalização (o propósito do modelo) não permitida para venda | 895 / 323 / 263 |
-| Marcador nome lápis princesas | Escola | https://makerworld.com/en/models/2478456 | BY-SA | CC BY-SA. mas usa personagens Disney: risco de marca/direito autoral → não vender | 22.526 / 9.008 / 4.343 |
+| Marcador nome lápis princesas | Escola | https://makerworld.com/en/models/2478456 | BY-SA | CC BY-SA, mas usa personagens Disney: risco de marca/direito autoral → não vender | 22.526 / 9.008 / 4.343 |
 ## Top 15 recomendado para o catálogo inicial
 
 Só entram modelos vendáveis e personalizáveis (CC0, BY ou BY-SA; nenhum BY-ND). O número entre parênteses é a linha da tabela.

@@ -11,3 +11,10 @@
 | Varredura agendada do gestor + mcp-ultima-varredura.json | autor do handover | rotina 08/14/20h | — | — | fora do escopo do TuttiBom Ops |
 | fb_agent.py / Camofox | autor do handover | — | — | — | fora do escopo do TuttiBom Ops |
 | Criativo e fluxos sociais (Facebook → Instagram) | TuttiBom Ops | docs/plano-social-facebook-instagram.md; docs/pesquisa-criativo-gamma-persona.md; docs/pesquisa-video-referencias.md; criativos/ | worktree /home/pc/Workspace/tuttibom-ops-social (social/fb-ig) | 2026-11-16 | próxima: nova capa da Página; config. via Camofox em janela combinada com o dono do profile-fb |
+
+## Divisão de automações sociais (2026-11-16)
+
+- Zernio (outro agente): só Messenger.
+- Camofox/TuttiBom Ops: configurações da Página (capa, bio, categoria, rótulo IA).
+- Uma única automação responde por conversa (Zernio ou Ana, nunca os dois).
+- Troca da capa A3b: aguardando janela com o profile-fb livre. Script pronto, não executado: `scripts/fb_trocar_capa.py` (`--dry-run` só faz a pré-checagem).

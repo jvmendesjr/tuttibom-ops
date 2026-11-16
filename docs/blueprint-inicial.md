@@ -4,6 +4,10 @@
 > Para discussão e atualização. Nada aqui está aprovado para a main,
 > nada foi implementado, e nenhum agente, organização ou MCP foi criado
 > ainda a partir deste documento.
+>
+> Atualização 2026-11-16: várias seções foram superadas por decisões
+> posteriores — ver `docs/decisoes/` (D-002, D-003, D-004) e o roadmap §12
+> (estado atual).
 
 ## 1. O que é
 
@@ -267,7 +271,12 @@ Avaliação: sim, era necessário atualizar. Este rascunho foi criado
 mesmo dia. Nada nesta seção cria agente, organização ou MCP, e
 nada aqui autoriza publicação.
 
-### 13.1 S10 principal, Camofox secundário — DECIDIDO
+### 13.1 S10 principal, Camofox secundário — DECIDIDO (SUPERSEDEDO por D-004, 2026-11-16)
+
+> **SUPERSEDEDO por D-004 (2026-11-16):** o S10/ADB foi pausado e o
+> Camofox é o navegador único do TuttiBom OPS (painel, redes sociais,
+> criativos). O que segue nesta seção é o registro da decisão original
+> de 2026-11-01, não a prática atual.
 
 - O S10 via ADB continua sendo o caminho principal para tudo que
   toca a conta da loja. Não há migração total para o Camofox e o

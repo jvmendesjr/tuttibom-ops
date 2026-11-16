@@ -31,10 +31,11 @@ definido pelo script; `TUTTIBOM_ROOT` aponta para o diretório do projeto.)
 | `catalogo` | lê `catalogo/produto-fita-cetim.md` — hoje não existe no PC; a tool avisa isso sem inventar conteúdo |
 
 As *instructions* do servidor trazem o roteiro **Ao começar** /
-**Ao terminar**, incluindo as travas do TuttiBom: S10 principal, nada
-publica sem aprovação do texto exato, conferir identidade do aparelho
-antes de agir sobre telemetria, verificar a tela acordada antes de cada
-toque, nunca registrar IP/porta viva de ADB ou código de pareamento.
+**Ao terminar**, incluindo as travas do TuttiBom: Camofox é o navegador
+único (D-004; S10/ADB pausado), nada publica sem aprovação do texto
+exato, conferir o perfil/sessão do navegador antes de agir, todo print
+passa pelo Jev, sem ações em massa, nunca registrar IP/porta viva de ADB
+ou código de pareamento.
 
 ## Teste
 

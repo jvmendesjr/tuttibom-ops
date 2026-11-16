@@ -1,7 +1,7 @@
 # TuttiBom — base no PC (caminho Paperclip)
 
 Vendas no Cariri (Juazeiro do Norte / Crato / Barbalha): fitas de cetim
-personalizadas e itens impressos em 3D, pelo Facebook no S10 via ADB,
+personalizadas e itens impressos em 3D, pelo Facebook via Camofox,
 orquestrados pelo Paperclip no PC.
 
 | Campo | Valor |
@@ -14,7 +14,7 @@ orquestrados pelo Paperclip no PC.
 | Temporal | namespace `tuttibom` (a criar, F5) |
 | Memória | Hindsight bank `tuttibom` · codebase-memory projeto `TUTTIBOM` |
 | MCP manutenção | `tuttibom-mcp` (stdio, só leitura) |
-| Conta da loja | S10 Lite, via ADB no PC; S10 principal, Camofox só teste |
+| Conta da loja | Camofox (motor) — painel, redes sociais e criativos; S10/ADB pausado (D-004) |
 
 ## Árvore
 
@@ -32,7 +32,7 @@ work/               # trabalho local (gitignored)
 
 - Nada é publicado, enviado ou combinado em preço sem aprovação do
   usuário ao texto exato.
-- S10 principal; Camofox só secundário em teste, sem escrita na conta.
+- Camofox é o navegador único do TuttiBom OPS (D-004); S10/ADB pausado.
 - Mídia 100% fictícia, gerada pelo Muse; zero foto/vídeo de cliente.
 - Sem dado de comprador no repo, no painel ou no Hindsight.
 - Sem segredos no git, logs, MCP ou Hindsight (só nomes de env/caminhos).

@@ -173,8 +173,8 @@ composes juntos. Não foi executado `docker compose down -v`. Nada em
    orçamento).
 3. Muse como gestor via MCP (token, papel manager, rotina de revisão).
 4. Messenger via Zernio (conta, página, webhook, teste com mensagem real).
-5. Ponte: registrar `tutibom` e construir o adapter Messenger via ADB
-   (alvo/fallback).
+5. Ponte: registrar `tutibom` — o adapter Messenger via ADB está
+   POSTO DE LADO (D-004, 2026-11-16; ADB pausado).
 6. Painel reduzido (Conteúdo + Planos).
 7. Decisão WAHA interno vs externo — segue aberta (serviço interno presente no
    compose fundido, não iniciado).

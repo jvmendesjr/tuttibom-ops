@@ -6,6 +6,10 @@
 > A lente pedida pelo usuário: abstrair o aprendizado, desconsiderar
 > o foco de ferramenta de cada fonte (OpenClaw, Appium, httprunner,
 > forense).
+>
+> **Nota 2026-11-16 (D-004):** o caminho ADB/S10 foi pausado; o Camofox
+> é o navegador único do TuttiBom OPS. Estes aprendizados ficam como
+> referência, não como prática ativa.
 
 ## Fontes lidas
 

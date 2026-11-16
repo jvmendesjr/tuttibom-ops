@@ -3,6 +3,17 @@
 > Versão 2, 2026-10-31. Onde divergir das notas de 2026-10-30, vale esta
 > versão, com as correções de 2026-10-31: nome tuttibom-ops; Railway
 > fora do escopo; avaliação de "80–90%" retirada pelo usuário.
+>
+> **Atualização 2026-11-16 (D-004):** a camada de execução mudou — o
+> **Camofox (motor) substitui o S10/ADB** como acesso à conta da loja
+> (painel Deskcomm, redes sociais e criativos), com o Jev por visão
+> (trinômio agente+camofox+jev), perfis persistentes, impressão digital
+> fixa e display virtual para segundo plano. O fluxo S10/ADB descrito
+> abaixo (camada 6, gate rede → SSH → ADB → tela) está **pausado**
+> por decisão do usuário (2026-11-15 ~23:11) e fica como referência,
+> não como prática ativa. O princípio de desenho segue valendo, com
+> a execução vivendo numa sessão de navegador Camofox em vez de numa
+> janela viva de ADB.
 
 ## Princípio de desenho
 

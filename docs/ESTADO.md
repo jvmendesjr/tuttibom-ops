@@ -85,7 +85,8 @@ Os itens abaixo são história do caminho cancelado em 2026-11-05.
 ## Regras rápidas
 
 - Nada publica sem aprovação do usuário ao texto exato.
-- S10 principal; PC é só o ponto de execução do ADB.
+- Camofox é o navegador único do TuttiBom OPS (D-004, 2026-11-16);
+  S10/ADB pausado.
 - Sem segredos e sem dado de comprador no repo/painel/Hindsight.
 - Nunca IP/porta viva de ADB ou código de pareamento em arquivo.
 
@@ -157,6 +158,9 @@ Nada mudado em nenhum sistema — só documentos.
   fica como alvo e fallback do Messenger — e a experiência com
   o ADB vai ficando cada vez mais aperfeiçoada, então o
   fallback fica mais viável com o tempo.
+  **Atualização 2026-11-16 (D-004):** o ADB foi pausado e o adapter
+  Messenger via ADB está posto de lado. O acesso às redes sociais da
+  loja é via Camofox; o Zernio segue como ponte inicial do Messenger.
 - **Ordem:** validar 9Router → configurar agente Deskcomm →
   Muse gestor via MCP → conector Messenger na Ponte → ativar
   Messenger e testar → painel reduzido.
@@ -975,17 +979,13 @@ em node:22 docker.
   o cumprimento + registrar o Modo A; teste de imagem; investigação B
   do retorno (agora coberta pelo projeto de memória).
 
-## Próximo passo (atualizado 2026-11-12 22:20)
+## Próximo passo (atualizado 2026-11-16)
 
-1. **Dar o brief ao Agy** (no `agy` interativo já logado, ou relançar
-   o `--print` após login do CLI) e acompanhar a implementação da
-   memória + roteador; Muse revisa cada entrega contra o brief.
-2. **Correção do ack para áudio** — brief pronto, aguarda autorização
-   para lançar (agora presumivelmente ao Agy).
-3. **Aplicar a regra de devolver o cumprimento + registrar o Modo A.**
-4. **Teste de imagem** (paleta + foto/logo) e **investigação B**.
-5. **Muse como gestor via MCP** → **Messenger via Zernio** →
-   **Ponte: registrar `tutibom`, adapter Messenger ADB** → **painel
-   reduzido** (Conteúdo + Planos).
-6. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03
+1. **Messenger via Zernio** (passo 4 da ordem) — configurar e testar com mensagem real. O adapter Messenger via ADB (passo 5) foi posto de lado (D-004, 2026-11-16).
+2. **Painel reduzido** a Conteúdo + Planos (passo 6).
+3. **Usuário:** publicar o rascunho do Fluxo A no painel (um clique) e fazer o teste do áudio em produção.
+4. **Confirmar a janela da Ana 24/7** contra o padrão 7–22h do Deskcomm.
+5. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03
    (não mudar o prompt sem aprovação).
+
+Concluído desde a versão anterior: memória por contato + roteador Jev (deploy 2026-11-13); correção do ack de áudio e regra de devolver o cumprimento + Modo A (aplicados); investigação B — parte A deployada, parte B com rascunho escolhido aguardando publicação pelo usuário; gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas).

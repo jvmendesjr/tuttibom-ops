@@ -1,6 +1,8 @@
 # Relatório — TuttiBom Ops: descrição e estado atual
 
 **Data:** 2026-11-15
+
+**Atualização 2026-11-16:** este relatório é um instantâneo de 2026-11-14/15, anterior à pausa do ADB e à adoção do Camofox como navegador único (D-004). Para o estado corrente, ver o roadmap §12 e o ESTADO.md.
 **Base:** `docs/roadmap.md` §12 ("Estado atual — 2026-11-14"), `docs/ESTADO.md`
 (2026-11-07), `docs/rascunho-memoria-roteador.md`,
 `docs/rascunho-investigacao-b-retorno.md`,

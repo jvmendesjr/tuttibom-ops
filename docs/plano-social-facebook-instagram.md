@@ -591,3 +591,11 @@ falta.
 - **Decisões fechadas hoje:** canal da marca/produto agora, persona virtual depois; mídia mista (maioria gerada); legenda sem preço com CTA no direct; IG ainda não profissional nem ligado à Página; Gamma só auxiliar; fita + impressão 3D na identidade; ADB pausado (D-004).
 - **Proposta (aguarda aprovação):** regra conciliadora — produto fiel ao catálogo, sem inventar especificação; bruto real autorizado tem preferência; cenário e pessoas podem ser gerados; sem fidelidade garantida, a peça se declara prévia/simulação.
 - **Ordem definida pelo usuário (10:16):** 1) registros; 2) nova capa da Página (fita + 3D, recorte seguro), discutindo antes as ferramentas do usuário para a capa.
+
+## Registro 2026-11-16 ~10:25 — ferramentas pagas do usuário no pipeline
+
+- **Pangram (detector de IA):** etapa fixa antes da aprovação de todo texto público; auditoria de tom da Ana por amostra anonimizada (relatório, sem mexer em produção). Ver `docs/decisoes/D-005-...pangram...md`.
+- **Mobbin:** referência de composição (conectado).
+- **Magic Patterns:** protótipo do site/catálogo da loja e do painel reduzido; telas "site para printar" para post/carrossel (conectado).
+- **Framer:** publicação do site/catálogo (a conectar quando chegar a hora).
+- **Gamma:** auxiliar de still/carrossel (créditos do plano).

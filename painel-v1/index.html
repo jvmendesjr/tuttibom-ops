@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tuttibom-ops — Painel v1 (esboço, só leitura)</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f4f1ea;color:#222}
+  header{background:#1f2a2e;color:#fff;padding:18px 22px} header h1{margin:0;font-size:22px} header p{margin:6px 0 0;color:#cfe3d8}
+  .mock{background:#fff3cd;border:1px solid #e6c87a;padding:10px 14px;margin:14px 22px;border-radius:8px}
+  nav{display:flex;gap:8px;flex-wrap:wrap;padding:0 22px} nav button{border:1px solid #999;background:#ffffff;color:#1f2a2e;padding:9px 14px;border-radius:999px;cursor:pointer;font-size:14px;font-weight:600}
+  nav button.active{background:#1f2a2e;color:#ffffff;border-color:#1f2a2e}
+  main{padding:14px 22px 30px} section{display:none} section.active{display:block}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+  .card{background:#fff;border:1px solid #ddd;border-radius:10px;padding:14px} .card b{font-size:26px;display:block}
+  .card span{color:#666;font-size:13px}
+  table{width:100%;border-collapse:collapse;background:#fff} th,td{text-align:left;padding:9px 10px;border-bottom:1px solid #eee;font-size:14px}
+  .ok{color:#1a7a4a;font-weight:600} .warn{color:#9a6b00;font-weight:600} .bad{color:#a83232;font-weight:600}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:#eee}
+  .pill.crit{background:#fde2e2} .pill.ncrit{background:#fff3cd}
+  footer{padding:0 22px 22px;color:#666;font-size:13px}
+  .flow{background:#fff;border:1px solid #ddd;border-radius:10px;padding:14px;line-height:1.9}
+</style>
+</head>
+<body>
+<header>
+  <h1>tuttibom-ops — Painel v1</h1>
+  <p>Esboço só leitura. Só o Muse edita e atualiza este painel. Sem botão de publicar, responder ou apagar. Sem dado de comprador.</p>
+</header>
+<div class="mock"><b>Dados mockados:</b> todos os números abaixo são de exemplo, para validar layout e leitura. Não são dados reais da loja, de uma conta ou de um comprador.</div>
+<nav>
+  <button class="active" data-tab="mapa">Mapa</button>
+  <button data-tab="setores">Setores</button>
+  <button data-tab="aprovacoes">Aprovações</button>
+  <button data-tab="falhas">Falhas</button>
+  <button data-tab="provedores">Provedores e tokens</button>
+  <button data-tab="saude">Saúde do S10</button>
+  <button data-tab="skills">Skills e módulos</button>
+</nav>
+<main>
+  <section id="mapa" class="active">
+    <h2>Mapa — hierarquia e checkpoints</h2>
+    <div class="flow">
+      Guardrails (acima de tudo) ↓<br>
+      Check de acesso Android: rede → SSH → ADB → tela acordada → app em foco ↓<br>
+      Skills de setor: Marketplace · Publicações · Interações ↓<br>
+      Decisão Jev (System 1, com limiar → humano) + Geração Muse / NotebookLM (System 2) ↓<br>
+      Execução: conector da Página (futuro) <b>ou</b> ADB da conta pessoal (hoje) ↓<br>
+      Auditoria → Painel (só leitura)<br>
+      <b>Checkpoint humano em:</b> preço, texto e mídia exatos, identidade, exceções.
+    </div>
+  </section>
+
+  <section id="setores">
+    <h2>Setores — módulos, cada um com fila própria</h2>
+    <div class="grid">
+      <div class="card"><b>Marketplace</b><span>Rascunhos 2 · Aprovados 1 · Publicados 0 · Atrasados 0</span></div>
+      <div class="card"><b>Publicações</b><span>Rascunhos 3 · Aprovados 1 · Publicados 0 · Feed 2 · Stories 1</span></div>
+      <div class="card"><b>Interações</b><span>Triagem 4 · Aguardando rascunho 2 · Aguardando aprovação 1 · Respondidas 0</span></div>
+    </div>
+    <p>Um anúncio não vira post. Um lead não vira métrica. Um criativo não é republicado sem registro de uso.</p>
+  </section>
+
+  <section id="aprovacoes">
+    <h2>Aprovações — parado esperando você</h2>
+    <table>
+      <tr><th>Item (mock)</th><th>Produto</th><th>Rede / formato</th><th>Estado</th></tr>
+      <tr><td>Post processo — impressão em camadas</td><td>Impressão 3D</td><td>Facebook · vídeo curto</td><td class="warn">Aguardando texto e mídia exatos</td></tr>
+      <tr><td>Anúncio — fita personalizada</td><td>Fita de cetim</td><td>Marketplace · anúncio</td><td class="warn">Aguardando preço</td></tr>
+      <tr><td>Post pergunta — escolha de cor</td><td>Impressão 3D</td><td>Facebook · stories</td><td class="ok">Rascunho pronto</td></tr>
+    </table>
+    <p>Aprovação acontece na conversa, nunca em lote e nunca neste painel.</p>
+  </section>
+
+  <section id="falhas">
+    <h2>Falhas — contadores por período (mock)</h2>
+    <div class="grid">
+      <div class="card"><b>2</b><span>Críticas hoje · 5 na semana · 9 no mês</span></div>
+      <div class="card"><b>4</b><span>Não críticas hoje · 11 na semana · 28 no mês</span></div>
+      <div class="card"><b>0</b><span>Publicações sem prova (meta: sempre 0)</span></div>
+    </div>
+    <table>
+      <tr><th>Tipo</th><th>Severidade</th><th>Interrompe?</th><th>Próxima ação</th></tr>
+      <tr><td>ADB fora / prompt de rede</td><td><span class="pill crit">Crítica</span></td><td>Sim</td><td>Humano: allow na tela; registrar no log</td></tr>
+      <tr><td>Verificação do Facebook</td><td><span class="pill crit">Crítica</span></td><td>Sim</td><td>Parar e chamar o humano</td></tr>
+      <tr><td>Jev abaixo do limiar</td><td><span class="pill ncrit">Não crítica</span></td><td>Não</td><td>Rota para humano, sem publicar</td></tr>
+      <tr><td>Render falhou</td><td><span class="pill ncrit">Não crítica</span></td><td>Não</td><td>Refazer render, sem republicar</td></tr>
+      <tr><td>Métrica atrasada</td><td><span class="pill ncrit">Não crítica</span></td><td>Não</td><td>Aguardar próximo ciclo</td></tr>
+    </table>
+  </section>
+
+  <section id="provedores">
+    <h2>Provedores, tokens e disponibilidade (mock)</h2>
+    <table>
+      <tr><th>Provedor / acesso</th><th>Status</th><th>Último check (mock)</th><th>Custo / tokens (mock)</th></tr>
+      <tr><td>Muse (orquestração)</td><td class="ok">Disponível</td><td>Hoje, 08:00</td><td>— por tarefa</td></tr>
+      <tr><td>SSH / Tailscale</td><td class="ok">Disponível</td><td>Hoje, 08:00</td><td>—</td></tr>
+      <tr><td>ADB no S10</td><td class="warn">Observar</td><td>Ontem, 20:09 — FOUND</td><td>—</td></tr>
+      <tr><td>Facebook (app no S10)</td><td class="ok">Sessão no aparelho</td><td>Ontem</td><td>—</td></tr>
+      <tr><td>NotebookLM</td><td class="warn">Semi-manual</td><td>—</td><td>Limite de taxa do Google</td></tr>
+      <tr><td>Jev (TypeSafe)</td><td class="ok">Disponível</td><td>—</td><td>Baixo por classificação</td></tr>
+      <tr><td>Supabase</td><td class="warn">Ainda não criado</td><td>—</td><td>Projeto Pro, quando criado</td></tr>
+      <tr><td>Drive</td><td class="ok">Arquivo criativo</td><td>—</td><td>5 TB (informado pelo usuário)</td></tr>
+      <tr><td>Figma Pro</td><td class="warn">Secundário, sem credencial usada</td><td>—</td><td>Hub de design: brand sheet, painel, layouts</td></tr>
+      <tr><td>Mobbin / Magic Patterns</td><td class="warn">Secundários, sem credencial usada</td><td>—</td><td>Referência de padrão / protótipo</td></tr>
+    </table>
+    <p>Se custo por lote subir ou confiança do Jev cair, o sistema degrada para revisão humana — nunca acelera publicação.</p>
+  </section>
+
+  <section id="skills">
+    <h2>Skills e módulos — genérico na estrutura, específico na instância</h2>
+    <table>
+      <tr><th>Instância</th><th>Função</th><th>Executor</th></tr>
+      <tr><td>tuttibom-facebook-marketplace</td><td>Anúncio, triagem, encaminhamento</td><td>ADB no S10</td></tr>
+      <tr><td>tuttibom-facebook-conteudo</td><td>Post, vídeo, fila, reação</td><td>ADB no S10</td></tr>
+      <tr><td>tuttibom-notebooklm</td><td>Canônico + efêmeros, roteiro e texto</td><td>Conta Google, semi-manual</td></tr>
+      <tr><td>tuttibom-observabilidade</td><td>Painel, falhas, tokens, saúde</td><td>Muse na VM</td></tr>
+    </table>
+    <p>Contrato em <code>skills/_contrato/</code>. Futuro, só como padrão de nome: <code>tuttibom-tiktok-conteudo</code> — não criado, só quando a rede entrar de fato. Clonar e bifurcar: copiar o repo, renomear a marca, trocar só as variáveis da instância.</p>
+  </section>
+
+  <section id="saude">
+    <h2>Saúde do S10 (mock)</h2>
+    <div class="grid">
+      <div class="card"><b>— %</b><span>Bateria (mock)</span></div>
+      <div class="card"><b>— GB</b><span>Disco livre (mock)</span></div>
+      <div class="card"><b>—</b><span>Uptime / reinícios (mock)</span></div>
+      <div class="card"><b>Observar</b><span>Último ADB FOUND: ontem, 20:09 (mock de data real registrada)</span></div>
+    </div>
+    <p>Rede atual no painel: só "rede conhecida" / "rede nova" quando relevante para o prompt — nunca nome de rede sensível.</p>
+  </section>
+</main>
+<footer>
+  tuttibom-ops · Painel v1, esboço · Só leitura · Só o Muse edita · Sem dado de comprador · Sem segredo · Sem endpoint vivo ·
+  Railway fora do escopo · Bootloader só como último caso · ADB como único executor da conta pessoal da loja, por enquanto.
+</footer>
+<script>
+  document.querySelectorAll('nav button').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('nav button').forEach(function(b){b.classList.remove('active')});
+      document.querySelectorAll('main section').forEach(function(s){s.classList.remove('active')});
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

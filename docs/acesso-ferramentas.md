@@ -47,7 +47,7 @@ Configuração no próprio repo, sem segredo (as chaves vêm do `.env.ferramenta
 | pangram | `https://www.pangram.com/mcp` | OAuth (login uma vez por cliente) |
 | gamma | `https://mcp.gamma.app/mcp` | OAuth; a `GAMMA_API_KEY` serve à API REST |
 | framer | `https://mcp.framer.com/mcp` | OAuth |
-| higgsfield | `https://mcp.higgsfield.ai/mcp` | OAuth (créditos do plano) |
+| higgsfield | `https://mcp.higgsfield.ai/mcp` | OAuth; fora do Claude Code o login MCP não completa (issuer Clerk) → usar a CLI |
 | runway | `https://mcp.runwayml.com/mcp` | OAuth (créditos do plano) |
 
 Abrir o agente com as variáveis carregadas:
@@ -58,3 +58,13 @@ scripts/com-ferramentas.sh mcporter list
 ```
 
 Se uma ferramenta passar a aceitar chave no MCP, troca-se só a entrada dela nesses quatro arquivos.
+
+## Higgsfield pela CLI (caminho oficial para agentes)
+
+- `@higgsfield/cli` 1.2.2 em `~/.local/opt/node22/bin/higgsfield` (o `/usr/local/bin/higgsfield` 1.1.26 é antigo; o `com-ferramentas.sh` põe o novo na frente do PATH).
+- Login feito em 2026-11-17 (`higgsfield auth login`); credencial local da CLI, nunca copiar.
+- Uso: `scripts/com-ferramentas.sh higgsfield model list`, `... higgsfield generate cost ...` antes de gerar (gera crédito).
+
+## Status dos logins (2026-11-17, mcporter)
+
+Pangram, Gamma, Framer e Runway autenticados via `mcporter auth` (token em `~/.mcporter`). Magic Patterns depende de `MAGIC_PATTERNS_API_KEY`. Claude Code, Cursor e Gemini pedem o próprio login na primeira vez (`/mcp`).

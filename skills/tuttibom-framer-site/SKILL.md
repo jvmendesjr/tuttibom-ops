@@ -49,6 +49,22 @@ Ler antes de qualquer tarefa no projeto Framer.
   Fontes: Cormorant Garamond (títulos) + Inter (texto). Tema de Natal até o
   Natal.
 
+## Breakpoints — lições da versão de celular (2026-11-17)
+
+- O site nasce só com o Desktop. A versão de celular não aparece sozinha:
+  breakpoints são criados pela API com `tree.createVariant` — os ids pedidos
+  são renomeados pelo Framer; usar os ids devolvidos (`renamedIds`).
+- Overrides vão SÓ nas variantes novas (o Desktop não se toca): no celular,
+  menu de navegação oculto (`visible: false`), paddings 32 → 20 px, linhas de
+  cartões em empilhamento vertical, imagens menores, chips com quebra de linha
+  (`stackWrapEnabled: true`), fontes reduzidas (H1 60 → 44 px).
+- O parser de scripts do Framer rejeita `$` em acesso por ponto
+  (`p.$breakpoints` dá SyntaxError) — usar colchetes (`p["$breakpoints"]`).
+- `fontSize` pode ser patchado no descendente da variante e altera os runs do
+  texto.
+- Diagnósticos do linter que vêm junto com o resultado de uma mutação
+  refletem o estado PRÉ-mutação — sempre reler só-leitura para validar.
+
 ## Verificação
 
 - 3 páginas com paths `/`, `/3d`, `/fitas`, nenhuma em draft.

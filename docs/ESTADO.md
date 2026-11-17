@@ -1,6 +1,6 @@
 # ESTADO — TuttiBom (PC)
 
-**Atualizado:** 2026-11-11 (America/Fortaleza) · caminho Deskcomm (Paperclip cancelado 2026-11-05, fases F0–F8 só como história)
+**Atualizado:** 2026-11-17 (America/Fortaleza) · caminho Deskcomm (Paperclip cancelado 2026-11-05, fases F0–F8 só como história)
 **Diretório:** `/home/pc/Workspace/tuttibom-ops`
 **Fonte curta:** o que está feito agora e o próximo passo. Detalhe das fases →
 `docs/roadmap.md`. Blueprint → `docs/blueprint-inicial.md` §15.
@@ -979,13 +979,45 @@ em node:22 docker.
   o cumprimento + registrar o Modo A; teste de imagem; investigação B
   do retorno (agora coberta pelo projeto de memória).
 
-## Próximo passo (atualizado 2026-11-16)
+## Zernio — LIGADO e PROVADO + renomeação da página + Ana 24/7 + v10 (2026-11-16/17)
 
-1. **Messenger via Zernio** (passo 4 da ordem) — configurar e testar com mensagem real. O adapter Messenger via ADB (passo 5) foi posto de lado (D-004, 2026-11-16).
-2. **Painel reduzido** a Conteúdo + Planos (passo 6).
+### Zernio — canal LIGADO e PROVADO de ponta a ponta (2026-11-16 ~11:52 / 2026-11-17 08:17)
+- Conta Zernio conectada (accountId `6aed2e33…`, página "TutiBom" id 143473822920252, 1 seguidor, profileId Default). Plano gratuito: 2 contas, 10.000 msgs/mês.
+- Cifra do Deskcomm reposta (chave-mestra OAuth perdida; nova chave semeada em `private.app_secrets` + `.env`; `fn_encrypt_oauth` voltou a cifrar).
+- Endereço público corrigido para `https://deskcomm.petemcasa.com` (`publicBase()` exige `https:`).
+- Canal `zernio_social` `a7a7d71a-…` WORKING, "facebook · TutiBom", webhook registrado, **IA pausada** (mensagens vão para atendimento humano).
+- **PROVADO 2026-11-17 08:17:** o usuário mandou "ola" para a página TutiBom e CHEGOU no Deskcomm (conversa facebook `48d6fafe-…`, mensagem inbound `6ceb6310-…`, body "ola", delivered).
+- WhatsApp (WAHA) saudável após a troca da chave (sessão TUTTIBOM WORKING, 0 falhas).
+
+### Renomeação da página — SOLICITADA (2026-11-17 ~10:16)
+- **Decisão do usuário (2026-11-17 08:49):** renomear a PÁGINA de "TutiBom" (um T) para "TuttiBom" (dois T's). A marca continua "TuttiBom"; nada de reestruturar documentos/código/Ana/Deskcomm/agentes.
+- Correção: o botão antigo de migração perfil→Página foi aposentado — NÃO existe conversão que leve os seguidores junto. A TuttiBom Novidade (518 seguidores) é perfil pessoal e NÃO pode ser conectada; a página ligada tem só 1 seguidor.
+- **Solicitação enviada 2026-11-17 ~10:16** (usuário digitou a senha via noVNC e clicou "Solicitar alteração"). O Facebook analisa (até 3 dias); depois de aprovado, não dá para mudar de novo por 60 dias.
+- Verificado ~10:16: nome ainda "TutiBom" no Facebook, no Zernio e no Deskcomm — esperado (só muda após aprovar). ID da página não mudou, então a conexão não se afeta.
+- Decisão registrada em `docs/decisoes/D-005-2026-11-17-renomear-pagina-tuttibom.md`.
+
+### "olá" de teste — FECHADO (2026-11-17 ~10:38)
+- Lead José Vieira (`6ad9c080-…`) encerrado como perdido, motivo `other`, via `crm_close_demand`.
+- Conversa facebook `48d6fafe-…` resolvida no painel (Assumir → Fechar → confirmar). Verificado: conversas abertas 15 → 14.
+- Aprendizado: fechar o lead NÃO resolve a conversa; a conversa precisa ser fechada à parte no painel, e o botão Fechar só funciona depois de Assumir.
+
+### Ana 24/7 — CONFIRMADO e MUDADO + v10 em rascunho (2026-11-17 ~10:54–11:40)
+- **CONFIRMADO ~10:54: a Ana NÃO era 24/7; respondia só das 7h às 22h.** `channel_knobs` estava VAZIA (0 linhas) — valia o `PACING_DEFAULTS` (disparo 7–22h E resposta 7–22h). Comportamento: 10 mensagens chegaram fora da janela e 0 respostas foram enviadas fora dela (98 outbound no total).
+- **MUDADO ~11:00 a pedido do usuário ("mude"):** gravado em `channel_knobs` `resposta_start_hour=0` e `resposta_end_hour=24` nas duas sessões WORKING (WhatsApp TUTTIBOM e Facebook/Zernio). Verificado: resposta efetiva 0–24h, disparo continua 7–22h. É a forma prevista no código (`0..24` = "responde 24h").
+- **Prova pendente:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora, sem esperar as 7h.
+- **Ana v10 — RASCUNHO CRIADO ~11:40 (usuário aprovou o texto exato):** v10 (`365fc131-…`, status `draft`, 12.449 caracteres) com 2 mudanças sobre a v9 (publicada): (1) seção nova `# Horário de atendimento` — WhatsApp 24h, produção só no horário comercial, quem resolve produção é a equipe técnica ou o gerente no horário comercial; (2) `# Limites` — ao chamar uma pessoa, Ana diz que é um assunto que não cabe a ela e que quem resolve é a equipe técnica ou o gerente no horário comercial; nunca diz que vai transferir para um humano, nem que é robô/atendente virtual. **v9 continua publicada e viva** — nada mudou para os clientes até o usuário publicar a v10 no painel (um clique).
+- Decisão registrada em `docs/decisoes/D-006-2026-11-17-ana-24-7.md`.
+
+### Queda do sistema (2026-11-16 à noite)
+- Deskcomm e 9Router em HTTP 530 (origem inalcançável), PC/Tailscale/SSH fora — a varredura do gestor das 20:00 NÃO rodou. Sistema voltou na manhã de 2026-11-17; a varredura das 08:00 rodou normal, sem mudança.
+
+## Próximo passo (atualizado 2026-11-17)
+
+1. **Aguardar a aprovação da renomeação da página** (Facebook, até 3 dias a partir de 2026-11-17 ~10:16): verificar se o nome virou **TuttiBom** na página, via API do Zernio e no Deskcomm (display_name do canal deve virar `facebook · TuttiBom`).
+2. **Usuário:** publicar a v10 da Ana no painel (um clique) — para as regras de 24h e do handoff humanizado valerem ao vivo.
 3. **Usuário:** publicar o rascunho do Fluxo A no painel (um clique) e fazer o teste do áudio em produção.
-4. **Confirmar a janela da Ana 24/7** contra o padrão 7–22h do Deskcomm.
-5. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03
-   (não mudar o prompt sem aprovação).
+4. **Prova da Ana 24/7:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora.
+5. **Painel reduzido** a Conteúdo + Planos (passo 6) — plano em `docs/plano-painel-v2.md`, para discutir antes de construir.
+6. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03 (não mudar o prompt sem aprovação).
 
-Concluído desde a versão anterior: memória por contato + roteador Jev (deploy 2026-11-13); correção do ack de áudio e regra de devolver o cumprimento + Modo A (aplicados); investigação B — parte A deployada, parte B com rascunho escolhido aguardando publicação pelo usuário; gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas).
+Concluído desde a versão anterior: Zernio ligado e PROVADO (2026-11-17 08:17); renomeação da página solicitada (aguardando Facebook); "olá" de teste fechado; Ana 24/7 confirmada e mudada; Ana v10 em rascunho (aguardando publicação); gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas); memória por contato + roteador Jev (deploy 2026-11-13).

@@ -5,7 +5,7 @@ Data: 2026-11-16 (America/Sao_Paulo, UTC-3) · Branch: `social/fb-ig` · Status:
 ## Links
 - Editor Magic Patterns (precisa de login na conta do José): https://www.magicpatterns.com/c/7fm8x7puzjvafafgwpjwm2
 - Preview do MP (também pede login, não serve para público): https://project-fortunate-dune-581.magicpatterns.app
-- Artifact desta versão (catálogo `/3d` e identidade de Natal): `f6c5bf01-36ad-43d7-b709-d9b30ba9bcfa`. O artifact anterior, ainda com CTAs no WhatsApp mas sem a página `/3d` nem a temporada de Natal, é `88dac4bb-7a43-4eaf-82bb-b07ac00d2093`. O ainda anterior, `889da5ce-4ffb-4126-b5a1-056ccee5ee8d`, apontava para o Messenger.
+- Artifact desta versão (catálogo `/3d` e identidade de Natal): `43a5f6f4-4d35-4cc0-990b-9da9329d3da0` (confirmado 2026-11-17 via API do Magic Patterns — é o artefato do editor `7fm8x7puzjvafafgwpjwm2`). O anterior, `f6c5bf01-36ad-43d7-b709-d9b30ba9bcfa`, também já tinha `/3d` e Natal. Antes dele, `88dac4bb-7a43-4eaf-82bb-b07ac00d2093`, ainda com CTAs no WhatsApp mas sem a página `/3d` nem a temporada de Natal. O ainda anterior, `889da5ce-4ffb-4126-b5a1-056ccee5ee8d`, apontava para o Messenger.
 - Prints (box do agente, sufixo `-natal`): `/workspace/tuttibom/site/prototipo-mobile-home-natal.png`, `prototipo-mobile-3d-natal.png`, `prototipo-desktop-home-natal.png`, e as versões `*-full-natal.png` de home e `/3d` (mobile e desktop), mais `prototipo-mobile-sticky-natal.png`. Renderizados localmente a partir do código do artifact, porque o preview do MP exige login. Os prints com sufixo `-whatsapp` são da versão anterior, só com WhatsApp e sem `/3d`.
 - Anúncios (imagens IA, 1080×1080 e 1080×1350): `criativos/anuncios/2026-11-natal/` no worktree, com `manifest.md`.
 

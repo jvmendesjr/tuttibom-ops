@@ -1230,9 +1230,9 @@ Decisão: `docs/decisoes/D-009-2026-11-17-identidade-visual-logo.md`. Página of
 **Falta concluir (ações ao vivo, com dono):**
 - [ ] Aplicar capa A3b + foto de perfil (monograma TB) no Facebook, na janela com o `profile-fb` livre (dono do `fb_agent` para o agente; baixar o PNG do monograma sem regenerar).
 - [ ] Trocar a bio da página para WhatsApp/site — falta Pangram + aprovação do texto exato.
-- [ ] Publicar o site no Framer — **não existe projeto da TuttiBom no Framer** (o único projeto da conta é "Heartwarming Company", 1 página Home, sem menção à loja; verificado 2026-11-17). Criar o projeto a partir do protótipo é decisão do usuário.
+- [ ] Publicar o site no Framer — **projeto criado 2026-11-17** ("TuttiBom", `BDhe0URLFRQFGavqPZy6`, URL em `.env.ferramentas`); páginas (home, `/3d`, `/fitas`) em construção a partir do protótipo Magic Patterns `43a5f6f4-…`, sem publicar. Publicar continua sendo decisão do usuário.
 - [ ] Pangram (textos e imagens) — **bloqueado: a conta de API está sem créditos** (verificado 2026-11-17). Recarregar antes de aprovar bio e F1-02.
 - [ ] Recuperar o acesso do Instagram — o @ da loja não está em nenhum doc; só o usuário diz o @, recupera, converte para profissional e liga à Página.
-- [ ] Aguardar a aprovação da renomeação da página (Facebook, até 3 dias a partir de 2026-11-17 ~10:16). Verificado 2026-11-17 ~17:26 via Zernio: ainda **"TutiBom"**.
+- [x] Aguardar a aprovação da renomeação da página — **APROVADA e verificada 2026-11-17 ~17:37** (leitura pública da página mostra "TuttiBom"; o Zernio ainda guarda o nome antigo em cache).
 
 Depois da identidade visual, continuar o restante do roadmap (itens abertos do checklist §6 e próximos passos do `docs/ESTADO.md`).

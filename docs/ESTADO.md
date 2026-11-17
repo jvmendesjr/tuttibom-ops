@@ -1005,6 +1005,7 @@ em node:22 docker.
 - **Solicitação enviada 2026-11-17 ~10:16** (usuário digitou a senha via noVNC e clicou "Solicitar alteração"). O Facebook analisa (até 3 dias); depois de aprovado, não dá para mudar de novo por 60 dias.
 - Verificado ~10:16: nome ainda "TutiBom" no Facebook, no Zernio e no Deskcomm — esperado (só muda após aprovar). ID da página não mudou, então a conexão não se afeta.
 - Verificado 2026-11-17 ~17:26 via API do Zernio: nome ainda **"TutiBom"** (`username`/`displayName` da conta `6aed2e33…`) — a análise do Facebook continua.
+- **APROVADA — verificado 2026-11-17 ~17:37:** leitura pública da página (`facebook.com/profile.php?id=100089750066330`) mostra o nome **"TuttiBom"** (dois T's), conta profissional, 1 seguidor. O usuário estava certo: no Facebook já está com dois T's. O Zernio ainda mostra "TutiBom" porque guarda o nome de quando conectou (cache) — o nome novo não se propagou para lá sozinho. A confirmar se o Deskcomm atualiza o display do canal (`facebook · TutiBom`) ou se precisa de alguma ação.
 - Decisão registrada em `docs/decisoes/D-005-2026-11-17-renomear-pagina-tuttibom.md`.
 
 ### "olá" de teste — FECHADO (2026-11-17 ~10:38)
@@ -1033,14 +1034,14 @@ em node:22 docker.
 - **Bio (rascunho 2026-11-17):** `criativos/bio-2026-11-17.md` — intro 99/100, WhatsApp `wa.me/558881022939`, site só como campo (sem URL inventada), sem preço. Pangram pendente.
 - **Posts F1-02 (rascunho 2026-11-17):** `criativos/f1-02-natal.md` — 8 legendas com os JPEGs de Natal já existentes; CTA no Messenger; rótulo de IA em todas; sem preço. Pangram pendente.
 - **Pangram — BLOQUEADO 2026-11-17:** a conta de API conectada está sem créditos (`check_for_ai` devolve "needs more API credits"). Os textos já estão separados e prontos para checar quando houver crédito. Não é falta de chave (o acesso é OAuth no mcporter).
-- **Framer — não existe projeto da TuttiBom:** o único projeto da conta é "Heartwarming Company" (`qi3wsBhQ2RgBmZdnOgvR`, criado 2026-09-01) — só 1 página "Home", sem nenhuma menção a TuttiBom/fita. Publicar o site = criar projeto novo a partir do protótipo Magic Patterns (`43a5f6f4-…`); `FRAMER_PROJECT_URL` continua A DEFINIR. Criar é decisão do usuário.
+- **Framer — projeto criado 2026-11-17:** "TuttiBom" (`BDhe0URLFRQFGavqPZy6`), URL em `.env.ferramentas` (fora do git); páginas (home, `/3d`, `/fitas`) em construção a partir do protótipo Magic Patterns `43a5f6f4-…`, sem publicar.
 - **Instagram:** o @ da loja não está em nenhum doc; a conta não é profissional e não está ligada à Página. Só o usuário diz o @ (ou cria), recupera o acesso, converte para profissional e liga à Página.
 - **Divergência a confirmar:** `docs/site-prototipo.md` cita `f6c5bf01-…` como artefato atual; este ESTADO registra `43a5f6f4-…` — confirmar no Magic Patterns antes de publicar o site.
 - Decisões da frente renumeradas no merge com a main: Pangram D-007, Página oficial D-008, Identidade D-009.
 
 ## Próximo passo (atualizado 2026-11-17)
 
-1. **Aguardar a aprovação da renomeação da página** (Facebook, até 3 dias a partir de 2026-11-17 ~10:16): verificar se o nome virou **TuttiBom** na página, via API do Zernio e no Deskcomm (display_name do canal deve virar `facebook · TuttiBom`).
+1. **Renomeação APROVADA 2026-11-17 (verificado na página pública, nome "TuttiBom").** Falta confirmar se o Zernio e o Deskcomm passam a mostrar o nome novo sozinhos ou se precisam de alguma atualização.
 2. **Usuário:** publicar o rascunho do Fluxo A no painel (um clique) e fazer o teste do áudio em produção.
 3. **Prova da Ana 24/7:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora.
 4. **Painel reduzido** a Conteúdo + Planos — **ADIADO para após a produção inicial** (decisão do usuário 2026-11-17 ~15:08). Plano em `docs/plano-painel-v2.md`.

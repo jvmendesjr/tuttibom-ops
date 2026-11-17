@@ -1011,6 +1011,16 @@ em node:22 docker.
 ### Queda do sistema (2026-11-16 à noite)
 - Deskcomm e 9Router em HTTP 530 (origem inalcançável), PC/Tailscale/SSH fora — a varredura do gestor das 20:00 NÃO rodou. Sistema voltou na manhã de 2026-11-17; a varredura das 08:00 rodou normal, sem mudança.
 
+## Frente social (branch `social/fb-ig`) — site, catálogo, identidade (2026-11-16/17)
+
+- **Site (protótipo Magic Patterns, aprovado):** editor `7fm8x7puzjvafafgwpjwm2`, artefato atual `43a5f6f4-…` (home, `/3d`, `/fitas`). CTAs vão para o WhatsApp (Ana, sessão `tutibom`), sem preço. `/fitas`: só 15 mm e 22 mm, bloco padrão de larguras no rodapé, imagem de escala medida como única referência. Tema de Natal até o Natal. Sem chaveiro NFC. Publicação no Framer e domínio: pendentes.
+- **Catálogo 3D:** `docs/pesquisa-catalogo-3d.md` (MakerWorld só com licença que permita vender; Natal, formatura, vela de LED, religiosos top 5). Kobra X multicolor; cor confirmada pelo usuário com o lead qualificado.
+- **Anúncios:** ~60 imagens de IA em `criativos/anuncios/2026-11-natal/` (+ `manifest.md`; Pangram pendente).
+- **Identidade visual (D-009):** família de logo no estilo selo (Cormorant Garamond; lacre #3E241C, pergaminho #F6EBD8, ouro #C9A15B, fita #C45C32). Board `4sv1smovt25gtjegmhdhbq` é a referência fixa; o site usa os componentes copiados verbatim (diff idêntico). Regra: imagens aprovadas não mudam, só o logo.
+- **Capa + foto de perfil (Magic Patterns `oa6jym3ubfzkmwqd4lrydc`, artefato `b4f96dc8-…`):** capa = `capa-A3b.png` original (SHA-256 confere) com o wordmark novo no lugar do "TUTTIBOM" antigo; perfil = monograma TB. Usuário: "vamos deixar assim". **Não aplicadas no Facebook** — `profile-fb` ocupado pelo fb_agent.
+- **Página oficial (D-008):** o usuário apontou `profile.php?id=100089750066330`. A D-005 registra o page id 143473822920252 (Zernio). **Conferir se é a mesma Página** antes de aplicar. `scripts/fb_trocar_capa.py` ainda mira `tuttibom10` (perfil pessoal) — corrigir antes de rodar.
+- Decisões da frente renumeradas no merge com a main: Pangram D-007, Página oficial D-008, Identidade D-009.
+
 ## Próximo passo (atualizado 2026-11-17)
 
 1. **Aguardar a aprovação da renomeação da página** (Facebook, até 3 dias a partir de 2026-11-17 ~10:16): verificar se o nome virou **TuttiBom** na página, via API do Zernio e no Deskcomm (display_name do canal deve virar `facebook · TuttiBom`).
@@ -1019,5 +1029,7 @@ em node:22 docker.
 4. **Prova da Ana 24/7:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora.
 5. **Painel reduzido** a Conteúdo + Planos (passo 6) — plano em `docs/plano-painel-v2.md`, para discutir antes de construir.
 6. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03 (não mudar o prompt sem aprovação).
+7. **Frente social:** aplicar capa A3b com logo novo + foto de perfil (monograma TB) quando o `profile-fb` for liberado, depois de confirmar o id da Página e apontar o `fb_trocar_capa.py` para ela; trocar a bio para WhatsApp/site.
+8. **Frente social:** chave do Pangram (textos e imagens); publicar o site no Framer; recuperar o acesso do Instagram; refazer os posts F1-02 com as imagens de Natal.
 
 Concluído desde a versão anterior: Zernio ligado e PROVADO (2026-11-17 08:17); renomeação da página solicitada (aguardando Facebook); "olá" de teste fechado; Ana 24/7 confirmada e mudada; Ana v10 em rascunho (aguardando publicação); gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas); memória por contato + roteador Jev (deploy 2026-11-13).

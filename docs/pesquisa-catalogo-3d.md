@@ -1,6 +1,6 @@
 # Pesquisa: catálogo de impressão 3D da TuttiBom
 
-Data da coleta: 16/11/2026 (horário de Fortaleza, UTC-3). Situação: rascunho para o José escolher. Este documento **não define preço de venda da TuttiBom**: os valores abaixo são o que o mercado pratica.
+Data da coleta: 16/11/2026 (America/Sao_Paulo, UTC-3). Atualizado em 16/11/2026 com a expansão de Formatura, Natal e vela de LED, e com a decisão de NFC. Situação: rascunho para o José escolher. Este documento **não define preço de venda da TuttiBom**: os valores abaixo são o que o mercado pratica.
 
 ## Como foi feito
 
@@ -32,9 +32,9 @@ Dos 50, **49 têm licença comercial confirmada** (CC0 = 14, CC BY = 16, CC BY-S
 | 2 | Llavero nombre personalizable (chaveiro nome) | Chaveiros | https://makerworld.com/en/models/1489534 | Vendável (CC BY, citar o autor) | Nome, cor | 656 / 355 / 157 | idem [M1][M3][M4] | B | Alta |
 | 3 | Gerador de chaveiro multicamada | Chaveiros | https://makerworld.com/en/models/2049361 | Vendável (CC BY, citar o autor) | Nome, camadas de cor | 3.269 / 725 / 827 | idem [M1][M4] | B/M | Alta |
 | 4 | Tag de mala com texto/emoji | Chaveiros/presentes | https://makerworld.com/en/models/1446187 | Vendável (CC BY, citar o autor) | Nome, telefone, emoji | 9.055 / 4.073 / 1.178 | não encontrado preço BR específico | B | Média: tag amarrada com fita |
-| 5 | Chaveiro NFC (redes/WhatsApp) | Empresas/brindes | https://makerworld.com/en/models/1043128 | Vendável (CC0, domínio público) | Logo, cor, link gravado na tag NFC | 1.169 / 687 / 282 | ML kit 10 R$80; avulso R$22,50–25 [M7] | M (pausa p/ inserir tag) | Média: kit brinde com fita da marca |
-| 6 | NFC Tag Keychains | Empresas/brindes | https://makerworld.com/en/models/495976 | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Logo/ícone, link NFC | 10.524 / 5.291 / 2.387 | idem [M7] | M | Média |
-| 7 | Social NFC keychain | Empresas/brindes | https://makerworld.com/en/models/542129 | Vendável (CC BY; descrição: "FREE COMMERCIAL LICENCES"). Atenção: ícones são marcas de terceiros | Ícone de rede + link NFC | 6.833 / 3.393 / 3.187 | idem [M7] | M | Média |
+| 5 | Chaveiro NFC (redes/WhatsApp) | Empresas/brindes | https://makerworld.com/en/models/1043128 | Vendável (CC0, domínio público) — **fora: sem NFC** | Logo, cor, link gravado na tag NFC | 1.169 / 687 / 282 | ML kit 10 R$80; avulso R$22,50–25 [M7] | M (pausa p/ inserir tag) | **fora: sem NFC** (José, 16/11/2026): não entra no catálogo nem no site |
+| 6 | NFC Tag Keychains | Empresas/brindes | https://makerworld.com/en/models/495976 | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) — **fora: sem NFC** | Logo/ícone, link NFC | 10.524 / 5.291 / 2.387 | idem [M7] | M | **fora: sem NFC** (José, 16/11/2026): não entra no catálogo nem no site |
+| 7 | Social NFC keychain | Empresas/brindes | https://makerworld.com/en/models/542129 | Vendável (CC BY; descrição: "FREE COMMERCIAL LICENCES"). Atenção: ícones são marcas de terceiros — **fora: sem NFC** | Ícone de rede + link NFC | 6.833 / 3.393 / 3.187 | idem [M7] | M | **fora: sem NFC** (José, 16/11/2026): não entra no catálogo nem no site |
 | 8 | Placa "Pague com Pix" QR editável | Empresas/brindes | https://makerworld.com/en/models/1195169 | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | QR do cliente, nome/logo | 6.892 / 2.738 / 2.248 | Placa Pix acrílico ML R$43,54, +100 vendidos (não 3D) [M8] | M (2 cores) | Alta: kit lojista placa + fita da marca |
 | 9 | Plaquinha Pix Brasil logo+QR | Empresas/brindes | https://makerworld.com/en/models/2808453 | Vendável (CC0, domínio público) | Logo + QR | 6.355 / 2.187 / 2.086 | idem [M8] | M | Alta |
 | 10 | Placa Pix + Instagram + Wi-fi | Empresas/brindes | https://makerworld.com/en/models/3149376 | Vendável (CC0, domínio público) | QR Pix, @, senha wi-fi | 716 / 445 / 427 | idem [M8] | M | Alta |
@@ -112,7 +112,7 @@ Só entram modelos vendáveis e personalizáveis (CC0, BY ou BY-SA; nenhum BY-ND
 
 **Empresas / brindes**
 11. **Placa Pix com logo e QR** (#9 CC0 ou #8 CC BY-SA). Pode ir em kit lojista com a fita da marca; a placa Pix de acrílico tem +100 vendidos no ML a R$43,54 [M8].
-12. **Chaveiro NFC com o link do negócio** (#5 CC0 ou #6 CC BY-SA). No ML, kit de 10 sai a R$80; avulso, R$22,50–25 [M7].
+12. **Chaveiro NFC com o link do negócio** (#5 CC0 ou #6 CC BY-SA) — **fora: sem NFC**. José confirmou em 16/11/2026 que não tem tags NFC. Sai do catálogo e do site. No mercado, kit de 10 sai a R$80; avulso, R$22,50–25 [M7]. O chaveiro/tag com nome ou logo (#13 / #1) permanece.
 13. **Chaveiro/tag com nome ou logo em lote** (#1 CC0, que é "COMMERCIAL USE ALLOWED"). Na Shopee, o líder de chaveiro com nome faz 443 vendas por mês e o kit com logo, 183 por mês [M1].
 
 **Decor**
@@ -139,13 +139,16 @@ Impressora confirmada pelo José em 16/11/2026: **Anycubic Kobra X**, multicolor
 
 Não foi confirmado se a máquina do José é a versão avulsa (4 cores) ou a Combo com ACE 2 Pro (até 19). Para o top 15, 4 cores nativas bastam: a maioria das peças é 1 ou 2 cores.
 
-**LED e tags NFC:** pendente — o José confirma se tem. Isso decide se a luminária (item 14) e o chaveiro NFC (item 12) entram no catálogo.
+**LED e tags NFC (atualizado em 16/11/2026):**
+- **Tags NFC — fora: sem NFC.** José confirmou que não tem tags NFC. Os modelos #5, #6 e #7 e o item 12 do top 15 saem do catálogo e do site.
+- **Velas de LED tipo tealight — confirmado.** José tem e usa. Entram porta-velas, lanternas e luminárias feitas para essa vela.
+- **Litofania lua (item 14):** o volume cabe; a vela de LED existe; a base de luz específica da luminária lua **não foi confirmada** (a tealight comum pode não servir). O item fica no documento, mas não entra como card do site até haver base e imagem adequadas.
 
 A página da loja, no Q3, escreve por engano "print volume of the Kobra S1 Max"; a tabela de especificações da mesma página, o manual e o FAQ dizem 260 × 260 × 260 mm para a Kobra X.
 
 ### Top 15 × capacidade da Kobra X
 
-Nenhum item do top 15 fica "não cabe" só pelo volume de 260 mm. O que depende de acessório (LED ou tag NFC) ficou marcado à parte.
+Nenhum item do top 15 fica "não cabe" só pelo volume de 260 mm. O que depende de acessório ficou marcado à parte. O item 12 saiu do catálogo (**fora: sem NFC**).
 
 1. **Topo de bolo com nome e idade** (#15 / #16) — **cabe**. Peça típica bem abaixo de 260 mm. (O contato com alimento do bolo continua pendente, e não é limite da impressora.)
 2. **Caixinha dobrável personalizável** (#18) — **cabe**.
@@ -158,12 +161,60 @@ Nenhum item do top 15 fica "não cabe" só pelo volume de 260 mm. O que depende 
 9. **Rosa com haste** (#26) — **cabe**. Se a haste montada passar de 260 mm de altura, imprime em partes (flor + haste), prática comum desse tipo de modelo.
 10. **Caixa-presente com trava** (#25) — **cabe**.
 11. **Placa Pix com logo e QR** (#9 / #8) — **cabe**. (O uso do logo Pix do Banco Central continua pendente, e não é limite da impressora.)
-12. **Chaveiro NFC com o link do negócio** (#5 / #6) — **depende de LED-NFC**. O tamanho cabe; só entra no catálogo se o José confirmar que tem tags NFC.
+12. **Chaveiro NFC com o link do negócio** (#5 / #6) — **fora: sem NFC**. O tamanho cabe na Kobra X, mas José confirmou em 16/11/2026 que não tem tags NFC. Não entra no catálogo nem no site.
 13. **Chaveiro/tag com nome ou logo em lote** (#1) — **cabe**. Duas cores cabem no sistema nativo de 4 cores.
-14. **Luminária com foto (litofania)** (#37 / #38) — **depende de LED-NFC**. O volume típico da lua ou do cubo cabe na mesa; só entra no catálogo se o José confirmar que tem LED.
+14. **Luminária com foto (litofania)** (#37 / #38) — **cabe** no volume; vela de LED tealight confirmada; a base de luz específica da luminária lua **não foi confirmada**. Fica no documento, fora dos cards do site por enquanto.
 15. **Plaquinha de identificação com nome e telefone** (#45 / #46) — **cabe**.
 
 Materiais: todos os itens do top 15 se fazem em PLA, que a Kobra X aceita. PETG, TPU e ASA ficam disponíveis se algum item pedir (placa externa, flexível, etc.).
+
+## Expansão Formatura, Natal e vela de LED (16/11/2026)
+
+Busca extra no MakerWorld (`select/design2` + conferência da licença em `design-service/design/<id>`), com os mesmos critérios da tabela principal: só CC0, BY ou BY-SA; venda da peça impressa permitida; sem BY-NC, SDFL ou BY-ND para peça personalizada; sem personagem ou marca de terceiro. Entraram **14 modelos novos**. A bola de Natal já listada (#29, 53386, CC BY-SA) permanece como referência, mas no site a bola usada é a #N5, com imagem nova.
+
+Peças pensadas para vela de LED tealight (confirmada pelo José). Volume máximo considerado: 260 mm (Kobra X, 4 cores nativas). O Combo / 19 cores continua sem confirmação.
+
+**Porta-canudo / porta-diploma de formatura:** não foi encontrado modelo comercial no MakerWorld (os resultados eram de outro tipo de tubo, ou tinham marca/personagem). Se o José quiser, pode ser desenho próprio da TuttiBom; a fonte precisa permitir uso comercial.
+
+No site (`/3d`) só entram, por enquanto, os itens que têm imagem gerada por IA. Itens do top 15 ainda sem imagem exclusiva (números, bloquinhos, letreiro, mamadeira/anjinho, marcador, números de mesa, placa Pix, chaveiro com nome genérico, litofania, plaquinha pet) ficam neste documento, não como card do site.
+
+Licença conferida de novo na API em 16/11/2026. Downloads são os do MakerWorld nesse dia.
+
+### Formatura
+
+| # | Nome no catálogo | Modelo (autor) | URL | Licença | Como personalizar | Cabe na Kobra X |
+|---|---|---|---|---|---|---|
+| F1 | Capelo personalizável (topo ou decoração) | Graduation Cap – Customizable Decoration (zelvacrafting) | https://makerworld.com/en/models/1493267-graduation-cap-customizable-decoration | Vendável (CC0) | Nome, curso ou ano no próprio fatiador | Cabe (peça pequena de mesa / topo) |
+| F2 | Chaveiro de formando com nome | Graduation Keychain - FREE COMMERCIAL USE (Cardboard Junkie) | https://makerworld.com/en/models/1478383-graduation-keychain-free-commercial-use | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Nome no chaveiro; há versão só com capelo e toga | Cabe |
+| F3 | Potinho capelo (lembrancinha) | Chapéu de Formatura 4cm - Capelo (Feito Amor) | https://makerworld.com/en/models/2039959-4cm-graduation-cap-mortarboard | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Cor; enche com doce pequeno | Cabe (4 cm) |
+| F4 | Caixa de presente capelo | graduation cap gift box (user_2127972141) | https://makerworld.com/en/models/2768265-graduation-cap-gift-box | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Cor; caixa para presente de formatura | Cabe (peça pequena, ~40 g no perfil do autor) |
+
+### Natal
+
+| # | Nome no catálogo | Modelo (autor) | URL | Licença | Como personalizar | Cabe na Kobra X |
+|---|---|---|---|---|---|---|
+| N5 | Bola de Natal com nome | Bola de Natal com Nome Personalizável com fundo (Carlos Pinheiro) | https://makerworld.com/en/models/2055786-customizable-name-christmas-ornament-with-backgrou | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Nome no fatiador (o autor cita a fonte Bernadette; se for usada, confirmar licença comercial da fonte) | Cabe |
+| N6 | Árvore de Natal com nome | arvore de natal com nome (Rafael Farias) | https://makerworld.com/en/models/3464698-christmas-tree-with-name | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Nomes na árvore | Cabe |
+| N7 | Enfeite de árvore com nome | Christmas Tree Ornament – Customizable Name (Ted's 3D Prints) | https://makerworld.com/en/models/3492784-christmas-tree-ornament-customizable-name | Vendável (CC BY, citar o autor) | Nome em relevo | Cabe |
+| N8 | Placa Feliz Natal | Feliz Natal – Árvore e Gorro de Papai Noel (Titan pay 3d) | https://makerworld.com/en/models/3352281-merry-christmas-christmas-tree-and-santa-hat | Vendável (CC0) | Cor; texto do modelo é o próprio “Feliz Natal” | Cabe |
+| N9 | Presépio modular | Modular Bethlehem (Tomhis18) | https://makerworld.com/en/models/2069263-modular-bethlehem | Vendável (CC BY, citar o autor) | Cor; figuras avulsas (menino, Maria, José, reis, animais) | Cabe (peças pequenas, conjunto modular) |
+| N10 | Lanterna natalina para vela de LED | Deer and Snowman Round Lantern (lindnjoe) | https://makerworld.com/en/models/63324-deer-and-snowman-round-lantern | Vendável (CC BY, citar o autor) | Tamanho (o autor sugere aumentar); vela de LED no centro | Cabe; montagem trabalhosa (camadas finas + base) |
+| N11 | Porta-vela árvore de Natal (LED) | Christmas Tree Tealight Holder (3d project) | https://makerworld.com/en/models/2092407-christmas-tree-tealight-holder | Vendável (CC0) | Cor; abertura para tealight de 37,5 mm | Cabe (221 × 175 × 43 mm) |
+| N12 | Luminária Natal Papai Noel (LED) | Luminária Natal Papai Noel (3D.RS) | https://makerworld.com/en/models/3467205-santa-claus-christmas-lamp | Vendável (CC BY, citar o autor) | Cor; só iluminação LED de baixa temperatura (o autor veda vela com chama) | Cabe (conferir escala no fatiador antes de imprimir) |
+| N13 | Veado Voronoi de Natal | Voronoi Holiday Christmas Deer (Štístkáč) | https://makerworld.com/en/models/86094-voronoi-holiday-christmas-deer | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Tamanho / cor; a luz atravessa a malha | Cabe nas escalas típicas de 16–25 cm; conferir a altura dos chifres no fatiador |
+
+Relacionado, já estava no levantamento: **#29** [Custom Name Christmas Ornaments](https://makerworld.com/en/models/53386) (CC BY-SA, citar o autor).
+
+### Vela de LED (o ano inteiro)
+
+| # | Nome no catálogo | Modelo (autor) | URL | Licença | Como personalizar | Cabe na Kobra X |
+|---|---|---|---|---|---|---|
+| L14 | Porta-vela VØID Glow | VØID Glow - Candle Holders and Base Plate (DueMakers) | https://makerworld.com/en/models/2219175-void-glow-candle-holders-and-base-plate | Vendável (CC BY-SA, citar o autor; remix sob a mesma licença) | Cor; feito para tealight a bateria; base para 3 peças na placa completa | Cabe (o autor avisa que a placa da base inteira não cabe na A1 Mini; na Kobra X de 260 mm cabe) |
+
+### Fora desta expansão
+
+- Modelos rejeitados na triagem (exemplos): tampas com marca Stanley, personagem Flork, Star Wars, lanternas de Halloween, presépios com licença BY-NC.
+- **NFC:** ver item 12 e #5–7 — **fora: sem NFC**.
 
 ## Mercado local e regional
 
@@ -196,9 +247,9 @@ Materiais: todos os itens do top 15 se fazem em PLA, que a Kobra X aceita. PETG,
 1. **Licença pode mudar.** O criador pode trocar a licença depois. Antes de publicar cada produto, salvar um print da página do modelo com a data. Para BY e BY-SA, pôr o crédito do autor no site ou catálogo.
 2. **#20 (caixinha estrela):** a licença diz BY-SA, mas a descrição pede permissão. Não usar sem resposta do autor.
 3. **Membership** (para modelos SDFL populares, como os geradores de chaveiro com nome) só vale enquanto se paga, e os termos variam por criador. Não assinar sem ler os termos e sem decisão do José.
-4. **Marcas de terceiros:** ícones de Instagram, WhatsApp e TikTok nos chaveiros NFC (#5–7) e o logo Pix (#8–10). Conferir o manual de uso da marca Pix do Banco Central e, de preferência, usar a logo do cliente. Não confirmado.
+4. **Marcas de terceiros:** ícones de Instagram, WhatsApp e TikTok nos chaveiros NFC (#5–7, agora **fora: sem NFC**) e o logo Pix (#8–10). Conferir o manual de uso da marca Pix do Banco Central e, de preferência, usar a logo do cliente. Não confirmado.
 5. **Contato com alimento:** topos de bolo (#15–16, #32) encostam no bolo. Filamento e uso (com base ou espeto) precisam ser confirmados pelo José.
-6. **Tempo de impressão e material:** ainda não medidos na máquina da TuttiBom. A impressora foi confirmada em 16/11/2026: Anycubic Kobra X, multicolor nativa de 4 cores (até 19 com ACE 2 Pro, não confirmado se a unidade do José tem o Combo), volume 260 × 260 × 260 mm, materiais PLA / PETG / TPU / PVA / PLA-CF / PETG-CF / ASA (o FAQ também cita ABS em material único). Continua pendente: se há LED e tags NFC; quais filamentos estão de fato em casa (o José disse cores variadas, e a Ana não promete cor até ele ampliar a gama e liberar); e o tempo/consumo reais de cada peça. Ver a seção "Capacidade da impressora".
+6. **Tempo de impressão e material:** ainda não medidos na máquina da TuttiBom. A impressora foi confirmada em 16/11/2026: Anycubic Kobra X, multicolor nativa de 4 cores (até 19 com ACE 2 Pro, não confirmado se a unidade do José tem o Combo), volume 260 × 260 × 260 mm, materiais PLA / PETG / TPU / PVA / PLA-CF / PETG-CF / ASA (o FAQ também cita ABS em material único). Atualizado em 16/11/2026: José tem velas de LED tipo tealight e **não tem tags NFC** (item 12 e modelos #5–7: **fora: sem NFC**). Continua pendente: se a unidade é a Combo com ACE 2 Pro (até 19 cores); a base de luz da luminária lua; quais filamentos estão de fato em casa (o José disse cores variadas, e a Ana não promete cor até ele ampliar a gama e liberar); e o tempo/consumo reais de cada peça. Ver a seção "Capacidade da impressora".
 7. **Preços BR** vêm de trechos de busca e de blogs com data de coleta (ML e Elo7 bloquearam a leitura direta). Servem de faixa, não de tabela. Nenhum preço da TuttiBom foi definido.
 8. **Pedidos em lote** (casamento, brinde): prazo e capacidade da máquina, mais amostra física aprovada antes do lote, segundo a prática citada em [M2].
 9. **Imagens:** as fotos do MakerWorld servem só como **referência interna**. Para publicar, usar foto da peça impressa pela TuttiBom ou imagem gerada e rotulada como IA. As fotos dos modelos são do autor, e a licença do arquivo não cobre necessariamente reproduzir as fotos.

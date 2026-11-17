@@ -10,8 +10,9 @@ ou digitado — só navegação e leitura, até o usuário pedir outra coisa.
 
 Fila de tarefas por arquivo (operador é o Muse, via ssh):
   - escrever a tarefa em /tmp/fb-agent-job.json:
-    {"id": "t1", "action": "goto"|"locate"|"click"|"shot",
-     "target": "descrição do alvo para o Jev", "url": "https://..."}
+    {"id": "t1", "action": "goto"|"locate"|"click"|"type"|"shot",
+     "target": "descrição do alvo para o Jev", "url": "https://...",
+     "text": "texto a digitar (só type, nunca segredo)"}
   - o agente lê, executa e escreve o resultado em /tmp/fb-agent-result.json
     + print em /tmp/fb-agent-shot.png
   - para parar: touch /tmp/fb-agent.stop (fecha o navegador de forma limpa)
@@ -59,6 +60,25 @@ def do_locate(page, target: str) -> dict:
     return out
 
 
+def do_type(page, target: str, text: str) -> dict:
+    """Localiza o campo com o Jev, clica para focar, seleciona tudo (Ctrl+A)
+    e digita o texto — ou seja, SUBSTITUI o conteúdo do campo.
+    NUNCA usar para segredo — só para valores não sensíveis (ex.: nome da página).
+    Adicionado 2026-11-17 para renomear a página TutiBom → TuttiBom (pedido do usuário)."""
+    found = do_locate(page, target)
+    if not found["loc"]:
+        return {"ok": False, "action": "type", "found": found}
+    time.sleep(1.0)
+    page.mouse.click(found["loc"]["x"], found["loc"]["y"])
+    time.sleep(1.0)
+    page.keyboard.press("Control+a")
+    time.sleep(0.5)
+    page.keyboard.type(text, delay=30)
+    time.sleep(1.0)
+    shot(page)
+    return {"ok": True, "action": "type", "found": found, "shot": str(SHOT)}
+
+
 def do_click(page, target: str) -> dict:
     antes = ver_pagina(page)
     found = do_locate(page, target)
@@ -85,6 +105,8 @@ def do_job(page, job: dict) -> dict:
         return {"ok": True, "action": "locate", "found": do_locate(page, job["target"])}
     if action == "click":
         return do_click(page, job["target"])
+    if action == "type":
+        return do_type(page, job["target"], job.get("text", ""))
     if action == "shot":
         n = shot(page)
         return {"ok": True, "action": "shot", "bytes": n, "page": ver_pagina(page), "shot": str(SHOT)}

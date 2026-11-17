@@ -669,3 +669,36 @@ WhatsApp (conversa do Junior e uma conversa nova de cliente sobre MDF).
   9Router.
 - Detalhe em `docs/ESTADO.md` (seção 2026-11-09) e
   `docs/decisoes/D-001-2026-11-09-ana-v9-volta-9router.md`.
+
+## 17. Atualização 2026-11-17 — 3 frentes delegadas, revisadas e juntadas + MCP v0.1.1
+
+Muse como coordenador; Cursor agent (`--print --trust`, `grok-4.7-high`)
+no PC, um por worktree/branch a partir da `main` `cdd9497`. Merges
+`57d2af8` (identidade), `c8e96b1` (contratos F4), `12a19f4` (skill 5);
+estado em `0c9f1d9`.
+
+- **F1 identidade (D-009):** `fb_trocar_capa.py` corrigido para a página
+  oficial `100089750066330`; `--dry-run` exit 2 (`profile-fb` ocupado
+  pelo `fb_agent`). Bio e posts F1-02 em rascunho. Ações ao vivo
+  pendentes (janela do `profile-fb`, Pangram, Framer, Instagram).
+- **F2 contratos F4:** `Publicacao`/`Criativo`/`Lead` (Pydantic v2),
+  CLI `scripts/validate_contratos.py`, 68 testes, `make check` verde.
+- **F3 skill 5:** `skills/tuttibom-facebook-social/` — fonte
+  `coreyhaines31/marketingskills` skill `social` v2.5.2, commit
+  `1f83744…`, MIT; `SKILL.md` byte-idêntico ao upstream.
+- **MCP v0.1.1 (`cdd9497`):** `onde_esta_tudo` calculado no disco a
+  cada chamada (o texto fixo desatualizado fazia todo agente novo
+  sinalizar uma falha que não existia); autenticação única por
+  ferramenta, já feita no PC.
+- **Lição:** as sessões do Cursor tiveram o shell recusado — nenhuma
+  verificação rodou nelas; o coordenador rodou tudo (testes, dry-run,
+  Pangram, Framer, Zernio). Lançar por script (`/tmp/launch-frentes.sh`,
+  `nohup` + `disown`); o comando inline por ssh travou e lançou
+  agentes duplicados (um par por frente foi morto).
+- **Bloqueios ao vivo:** Pangram sem créditos na conta de API;
+  Framer sem projeto da TuttiBom (o único projeto é "Heartwarming
+  Company"); renomeação da página ainda não aprovada (Zernio mostra
+  "TutiBom" em 2026-11-17 17:26); Instagram sem @ no repo.
+
+Detalhe em `docs/ESTADO.md` (seções "Frente social" e "Próximo passo")
+e `docs/roadmap.md` §6/§14; entregas em `docs/frentes/`.

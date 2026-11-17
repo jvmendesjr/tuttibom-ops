@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "magic-patterns": {
+      "httpUrl": "https://mcp.magicpatterns.com/mcp",
+      "headers": { "Authorization": "Bearer $MAGIC_PATTERNS_API_KEY" }
+    },
+    "pangram": { "httpUrl": "https://www.pangram.com/mcp" },
+    "gamma": { "httpUrl": "https://mcp.gamma.app/mcp" },
+    "framer": { "httpUrl": "https://mcp.framer.com/mcp" }
+  }
+}

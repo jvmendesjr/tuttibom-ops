@@ -29,3 +29,30 @@ set -a; . /home/pc/Workspace/tuttibom-ops/.env.ferramentas; set +a
 - Nunca imprimir, logar, commitar ou colar valor no chat; conferir só presença (`[ -n "$VAR" ]`).
 - Um token por agente quando a ferramenta permitir; trocar chave = editar só este arquivo.
 - Variável vazia = ferramenta sem acesso; o agente avisa e não improvisa outra via.
+
+## MCPs (todos os agentes do PC)
+
+Configuração no próprio repo, sem segredo (as chaves vêm do `.env.ferramentas` por variável):
+
+| Cliente | Arquivo |
+|---|---|
+| Claude Code | `.mcp.json` |
+| Cursor / cursor-agent | `.cursor/mcp.json` |
+| Gemini CLI | `.gemini/settings.json` |
+| mcporter | `config/mcporter.json` |
+
+| MCP | Endereço oficial | Autenticação |
+|---|---|---|
+| magic-patterns | `https://mcp.magicpatterns.com/mcp` | `MAGIC_PATTERNS_API_KEY` (Bearer) |
+| pangram | `https://www.pangram.com/mcp` | OAuth (login uma vez por cliente) |
+| gamma | `https://mcp.gamma.app/mcp` | OAuth; a `GAMMA_API_KEY` serve à API REST |
+| framer | `https://mcp.framer.com/mcp` | OAuth |
+
+Abrir o agente com as variáveis carregadas:
+
+```bash
+scripts/com-ferramentas.sh claude        # ou cursor-agent, gemini
+scripts/com-ferramentas.sh mcporter list
+```
+
+Se uma ferramenta passar a aceitar chave no MCP, troca-se só a entrada dela nesses quatro arquivos.

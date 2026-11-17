@@ -1,0 +1,48 @@
+# Site TuttiBom no Framer
+
+Skill do fluxo do site da loja no Framer: construir e ajustar as páginas a
+partir do protótipo do Magic Patterns, sem publicar sem decisão do usuário.
+Ler antes de qualquer tarefa no projeto Framer.
+
+## O que nunca fazer
+
+- **Nunca reexecutar os programas de construção** (`/tmp/framer-build-home.js`,
+  `/tmp/framer-build-3d.js`, `/tmp/framer-build-fitas.js`) — eles duplicariam o
+  conteúdo. Ajustes SÓ por patch ou programa cirúrgico via `framer.exec`.
+- **Nunca publicar** sem a decisão explícita do usuário. O site existe só no
+  editor até lá. Domínio pendente.
+- **Nunca colocar preço** em lugar nenhum do site — o protótipo também não tem.
+- Nunca inventar texto, prazo, endereço ou link que não esteja no protótipo.
+
+## Layout — a lição da sobreposição (2026-11-17)
+
+- As seções da Home foram construídas sobrepostas (print do usuário): textos
+  por cima de cartões, respiro zerado. Causa: stacks com gap 0 entre seções.
+- **"siblings too close" do linter é bug real, não aviso cosmético.** Seções
+  em stack vertical precisam de gap explícito; cada seção, de padding próprio.
+- Depois de qualquer ajuste de layout, verificar lendo a árvore: gaps maiores
+  que zero, nenhuma seção invadindo a outra, nenhum aviso restante.
+- Só o breakpoint Desktop (1200 px) foi construído; mobile e tablet herdam o
+  empilhamento — revisar no editor antes de publicar.
+
+## Conteúdo
+
+- Fonte: protótipo Magic Patterns, editor `7fm8x7puzjvafafgwpjwm2`, artefato
+  `43a5f6f4-4d35-4cc0-990b-9da9329d3da0` (só leitura; nada alterado lá).
+- Projeto Framer: "TuttiBom", id `BDhe0URLFRQFGavqPZy6`. Páginas: Home `/`,
+  Impressão 3D `/3d`, Fitas `/fitas`.
+- CTAs vão para o WhatsApp (`wa.me/558881022939`) com as mensagens exatas de
+  `data/site.ts` do artefato. Imagens via CDN público do Magic Patterns.
+- Créditos de modelo onde existirem (ex.: "Modelo: @kayocavalcantte, licença
+  CC BY"). Metadados (título/descrição) em cada página.
+- Cores: fundo `#F6EBD8`, texto `#3E241C`, ouro `#C9A15B`, fita `#C45C32`.
+  Fontes: Cormorant Garamond (títulos) + Inter (texto). Tema de Natal até o
+  Natal.
+
+## Verificação
+
+- 3 páginas com paths `/`, `/3d`, `/fitas`, nenhuma em draft.
+- Conferir links (internos, âncoras, wa.me com as mensagens exatas) e a
+  ausência de preço antes de entregar.
+- A revisão visual final é do usuário, no editor — o agente verifica pela
+  árvore e registra o que ficou para o olho humano.

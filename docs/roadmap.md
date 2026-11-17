@@ -436,6 +436,7 @@ do Postgres app local; organograma completo dos agentes.
 - [x] Skill 4 adaptada entra na estrutura do Paperclip (Conteúdo via Muse) — em `skills/tuttibom-facebook-conteudo/SKILL.md` no PC
 - [x] Skill 2 (motion-reels) — regras aproveitadas no reel de teste (2026-11-05, 271 linhas, fonte lida integralmente incl. meio 1600–1900) — em `skills/tuttibom-facebook-motion/SKILL.md` no PC
 - [x] Skill 5 (social) — pilares e calendário aproveitados depois do começo — **FEITA 2026-11-17** (frente delegada, merge `12a19f4`): `skills/tuttibom-facebook-social/` (fonte `coreyhaines31/marketingskills` skill `social` v2.5.2, commit `1f83744…`, MIT; `SKILL.md` e referências byte-idênticos ao upstream)
+- [x] Política de skills (D-010, 2026-11-17): todo fluxo tem sua skill; o brief a nomeia; Jev `choose` desempata — `skills/tuttibom-navegacao-camofox/` e `skills/tuttibom-framer-site/` criadas
 - [ ] Skill 3 (pp-facebook-marketplace) — descartada para uso; só referência de desenho
 
 **Painel v2 e MCP (2026-11-05):**
@@ -447,6 +448,7 @@ do Postgres app local; organograma completo dos agentes.
 - [ ] Painel v2 aprovado pelo usuário (abas e ordem)
 - ~~Aba Leads (10ª aba)~~ — CANCELADA 2026-11-05 (ver seção 10): o kanban do Deskcomm é a visão de leads; não se constrói a aba
 - [ ] Messenger registrado como origem das interações (Marketplace → Messenger → triagem/resposta)
+- [ ] Atendimento no Messenger (D-011, planejado 2026-11-17): Ana (ou outro agente) atende no canal; WhatsApp como opção, nunca obrigação — conferir o prompt da Ana v10, ligar a IA no canal Zernio (com aprovação), testar com mensagem real
 - [ ] Padrões escolhidos no Mobbin e protótipo no Magic Patterns
 - [ ] Painel v2 rebuildado como HTML só leitura, mockado
 - [ ] Painel v2 hospedado no PC (Tailscale) com mídia do Drive copiada na atualização

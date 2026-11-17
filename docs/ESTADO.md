@@ -20,7 +20,7 @@ reutilizando o PQBR2 como modelo e descartando o que não faz sentido aqui
 | codebase-memory projeto `TUTTIBOM` (mode full) | **feito** (indexado) |
 | Paperclip empresa TuttiBom (3110) | **não criado** (F1) |
 | Agente CEO | **não criado** (F1) |
-| Contratos Pydantic v2 | **não criado** (F4) |
+| Contratos Pydantic v2 | **feito 2026-11-17** — `Publicacao`/`Criativo`/`Lead` + CLI `scripts/validate_contratos.py` + 68 testes pytest, `make check` verde; piloto passa, preço inventado falha |
 | Temporal namespace `tuttibom` | **não criado** (F5) |
 | Postgres app local | **não criado** (F1/F5) |
 | Git / branch `paperclip-9router` | **não criado** (F0 pendente) |
@@ -71,6 +71,15 @@ real (brutos)" e "vídeo real" — o fundo é render fictício.
 Pendente: alinhar o caminho de render Remotion/HyperFrames ainda
 citado no doc e na skill do estúdio com o caminho Paperclip
 (Muse + FFmpeg/código).
+
+**Skill 5 FEITA 2026-11-17:** `skills/tuttibom-facebook-social/` —
+fonte `coreyhaines31/marketingskills` skill `social` v2.5.2, commit
+`1f83744…` (MIT), vendoring com `FONTE.md` + `TUTTIBOM.md` (PT-BR,
+manda na operação) + `LICENSE` + 4 referências; `SKILL.md` e
+referências byte-idênticos ao upstream (verificado pelo coordenador);
+travas embutidas (aprovação do texto e da imagem exatos, sem preço no
+post, sem dado de comprador, Camofox D-004, regra de imagens corrigida
+2026-11-06, Pangram D-007); Facebook primeiro, outros canais fora.
 
 ## Próximo passo
 
@@ -995,6 +1004,7 @@ em node:22 docker.
 - Correção: o botão antigo de migração perfil→Página foi aposentado — NÃO existe conversão que leve os seguidores junto. A TuttiBom Novidade (518 seguidores) é perfil pessoal e NÃO pode ser conectada; a página ligada tem só 1 seguidor.
 - **Solicitação enviada 2026-11-17 ~10:16** (usuário digitou a senha via noVNC e clicou "Solicitar alteração"). O Facebook analisa (até 3 dias); depois de aprovado, não dá para mudar de novo por 60 dias.
 - Verificado ~10:16: nome ainda "TutiBom" no Facebook, no Zernio e no Deskcomm — esperado (só muda após aprovar). ID da página não mudou, então a conexão não se afeta.
+- Verificado 2026-11-17 ~17:26 via API do Zernio: nome ainda **"TutiBom"** (`username`/`displayName` da conta `6aed2e33…`) — a análise do Facebook continua.
 - Decisão registrada em `docs/decisoes/D-005-2026-11-17-renomear-pagina-tuttibom.md`.
 
 ### "olá" de teste — FECHADO (2026-11-17 ~10:38)
@@ -1019,7 +1029,13 @@ em node:22 docker.
 - **Anúncios:** ~60 imagens de IA em `criativos/anuncios/2026-11-natal/` (+ `manifest.md`; Pangram pendente).
 - **Identidade visual (D-009):** família de logo no estilo selo (Cormorant Garamond; lacre #3E241C, pergaminho #F6EBD8, ouro #C9A15B, fita #C45C32). Board `4sv1smovt25gtjegmhdhbq` é a referência fixa; o site usa os componentes copiados verbatim (diff idêntico). Regra: imagens aprovadas não mudam, só o logo.
 - **Capa + foto de perfil (Magic Patterns `oa6jym3ubfzkmwqd4lrydc`, artefato `b4f96dc8-…`):** capa = `capa-A3b.png` original (SHA-256 confere) com o wordmark novo no lugar do "TUTTIBOM" antigo; perfil = monograma TB. Usuário: "vamos deixar assim". **Não aplicadas no Facebook** — `profile-fb` ocupado pelo fb_agent.
-- **Página oficial (D-008):** é a página `100089750066330` (ID canônico do Facebook, `profile.php?id=100089750066330`); a D-005 registra o outro ID dela, `143473822920252` (o que o Zernio usa). **Confirmado: é a mesma Página**, dois formatos de número. `scripts/fb_trocar_capa.py` ainda mira `tuttibom10` (perfil pessoal) — corrigir antes de rodar.
+- **Página oficial (D-008):** é a página `100089750066330` (ID canônico do Facebook, `profile.php?id=100089750066330`); a D-005 registra o outro ID dela, `143473822920252` (o que o Zernio usa). **Confirmado: é a mesma Página**, dois formatos de número. `scripts/fb_trocar_capa.py` **corrigido 2026-11-17** (aponta para a página oficial; aceita TuttiBom/TutiBom, recusa o perfil pessoal; `--dry-run` verificado pelo coordenador, exit 2: `profile-fb` ocupado pelo `fb_agent`, sem abrir o navegador — aplicar só na janela combinada).
+- **Bio (rascunho 2026-11-17):** `criativos/bio-2026-11-17.md` — intro 99/100, WhatsApp `wa.me/558881022939`, site só como campo (sem URL inventada), sem preço. Pangram pendente.
+- **Posts F1-02 (rascunho 2026-11-17):** `criativos/f1-02-natal.md` — 8 legendas com os JPEGs de Natal já existentes; CTA no Messenger; rótulo de IA em todas; sem preço. Pangram pendente.
+- **Pangram — BLOQUEADO 2026-11-17:** a conta de API conectada está sem créditos (`check_for_ai` devolve "needs more API credits"). Os textos já estão separados e prontos para checar quando houver crédito. Não é falta de chave (o acesso é OAuth no mcporter).
+- **Framer — não existe projeto da TuttiBom:** o único projeto da conta é "Heartwarming Company" (`qi3wsBhQ2RgBmZdnOgvR`, criado 2026-09-01) — só 1 página "Home", sem nenhuma menção a TuttiBom/fita. Publicar o site = criar projeto novo a partir do protótipo Magic Patterns (`43a5f6f4-…`); `FRAMER_PROJECT_URL` continua A DEFINIR. Criar é decisão do usuário.
+- **Instagram:** o @ da loja não está em nenhum doc; a conta não é profissional e não está ligada à Página. Só o usuário diz o @ (ou cria), recupera o acesso, converte para profissional e liga à Página.
+- **Divergência a confirmar:** `docs/site-prototipo.md` cita `f6c5bf01-…` como artefato atual; este ESTADO registra `43a5f6f4-…` — confirmar no Magic Patterns antes de publicar o site.
 - Decisões da frente renumeradas no merge com a main: Pangram D-007, Página oficial D-008, Identidade D-009.
 
 ## Próximo passo (atualizado 2026-11-17)
@@ -1029,7 +1045,8 @@ em node:22 docker.
 3. **Prova da Ana 24/7:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora.
 4. **Painel reduzido** a Conteúdo + Planos — **ADIADO para após a produção inicial** (decisão do usuário 2026-11-17 ~15:08). Plano em `docs/plano-painel-v2.md`.
 5. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03 (não mudar o prompt sem aprovação).
-6. **Frente social:** aplicar capa A3b com logo novo + foto de perfil (monograma TB) quando o `profile-fb` for liberado; id da Página confirmado (`100089750066330` = `143473822920252`); apontar o `fb_trocar_capa.py` para ela; trocar a bio para WhatsApp/site.
-7. **Frente social:** chave do Pangram (textos e imagens); publicar o site no Framer; recuperar o acesso do Instagram; refazer os posts F1-02 com as imagens de Natal.
+6. **Frente social — preparação pronta 2026-11-17; ações ao vivo pendentes:** script da capa corrigido + dry-run ok (aguardando janela com `profile-fb` livre); monograma TB só no Magic Patterns (baixar o PNG sem regenerar); bio e F1-02 em rascunho, aguardando Pangram (sem créditos) e a aprovação do texto exato.
+7. **Frente social — usuário:** dizer o @ do Instagram (ou criar), recuperar o acesso, converter para profissional e ligar à Página; decidir a criação do projeto Framer para o site (não existe projeto da TuttiBom lá); recarregar os créditos do Pangram para liberar bio e F1-02.
+8. **3 frentes delegadas e juntadas 2026-11-17** (coordenação Muse; Cursor `grok-4.7-high`; merges `57d2af8`/`c8e96b1`/`12a19f4` na main; MCP corrigido v0.1.1 `cdd9497`; contratos F4 e skill 5 feitos — ver §6/§14 do roadmap). Os agentes delegados tiveram o shell recusado nas sessões deles — nenhuma verificação rodou neles; o coordenador rodou tudo (68 testes, dry-run, Pangram, Framer, Zernio).
 
-Concluído desde a versão anterior: Zernio ligado e PROVADO (2026-11-17 08:17); renomeação da página solicitada (aguardando Facebook); "olá" de teste fechado; Ana 24/7 confirmada e mudada; **Ana v10 PUBLICADA 2026-11-17 ~15:08** (v10 agora é a versão viva); gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas; rascunho da rotina reconstruído, conferido contra o código e commitado 2026-11-17, corrigindo a referência do roadmap §9); memória por contato + roteador Jev (deploy 2026-11-13); ferramentas externas para todos os agentes (§13, feito 2026-11-17); pasta do PC sincronizada com o GitHub (estava 38 commits atrás, agora em dia).
+Concluído desde a versão anterior: Zernio ligado e PROVADO (2026-11-17 08:17); renomeação da página solicitada (aguardando Facebook; verificado 17:26, ainda "TutiBom"); "olá" de teste fechado; Ana 24/7 confirmada e mudada; **Ana v10 PUBLICADA 2026-11-17 ~15:08** (v10 agora é a versão viva); gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas; rascunho da rotina reconstruído, conferido contra o código e commitado 2026-11-17, corrigindo a referência do roadmap §9); memória por contato + roteador Jev (deploy 2026-11-13); ferramentas externas para todos os agentes (§13, feito 2026-11-17); pasta do PC sincronizada com o GitHub (estava 38 commits atrás, agora em dia); **3 frentes (identidade, contratos F4, skill 5) delegadas, revisadas e juntadas na main (2026-11-17)**; MCP corrigido definitivamente (v0.1.1, `onde_esta_tudo` calculado no disco, autenticação única).

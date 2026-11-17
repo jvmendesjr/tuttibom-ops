@@ -131,6 +131,7 @@ gratuito de IA na legenda.
     ação + data de follow-up obrigatórias, sem dado pessoal no repo.
 - Validadores `scripts/validate_*.py` e testes pytest, como no PQBR2.
   Nada que falhe na validação chega à publicação.
+- **FEITO 2026-11-17** (frente delegada, merge `c8e96b1`): `src/tuttibom/contratos/` com `Publicacao`/`Criativo`/`Lead`, CLI `scripts/validate_contratos.py`, 68 testes, `make check` verde. Divergências do catálogo registradas em `docs/frentes/contratos-fila-entrega.md`.
 
 ### 2.5 codebase-memory — memória do código
 
@@ -373,13 +374,13 @@ do Postgres app local; organograma completo dos agentes.
 - [ ] Preencher `fila_publicacao` e `catalogo` quando os arquivos chegarem ao PC
 - [ ] Conectar o MCP a um cliente de agente (quando houver outro agente)
 
-**F4 — Contratos (Pydantic v2):**
+**F4 — Contratos (Pydantic v2) — FEITO 2026-11-17 (frente delegada, merge `c8e96b1`; 68 testes, `make check` verde; piloto passa, preço inventado falha):**
 
-- [ ] Contrato `Publicacao`
-- [ ] Contrato `Criativo`
-- [ ] Contrato `Lead`
-- [ ] Validadores em `scripts/validate_*.py`
-- [ ] Testes pytest passando (texto do piloto passa; preço inventado falha)
+- [x] Contrato `Publicacao`
+- [x] Contrato `Criativo`
+- [x] Contrato `Lead`
+- [x] Validadores em `scripts/validate_*.py`
+- [x] Testes pytest passando (texto do piloto passa; preço inventado falha)
 
 **F5 — Temporal — CANCELADA 2026-11-05 (ver seção 10): sem namespace, worker ou workflow do TuttiBom; a orquestração de atendimento passa para o Deskcomm.**
 
@@ -434,7 +435,7 @@ do Postgres app local; organograma completo dos agentes.
 - [x] Skill 4 (content-creation) sanitizada e adaptada para PT-BR/voz TuttiBom (2026-11-05, 150 linhas, fonte lida integralmente)
 - [x] Skill 4 adaptada entra na estrutura do Paperclip (Conteúdo via Muse) — em `skills/tuttibom-facebook-conteudo/SKILL.md` no PC
 - [x] Skill 2 (motion-reels) — regras aproveitadas no reel de teste (2026-11-05, 271 linhas, fonte lida integralmente incl. meio 1600–1900) — em `skills/tuttibom-facebook-motion/SKILL.md` no PC
-- [ ] Skill 5 (social) — pilares e calendário aproveitados depois do começo
+- [x] Skill 5 (social) — pilares e calendário aproveitados depois do começo — **FEITA 2026-11-17** (frente delegada, merge `12a19f4`): `skills/tuttibom-facebook-social/` (fonte `coreyhaines31/marketingskills` skill `social` v2.5.2, commit `1f83744…`, MIT; `SKILL.md` e referências byte-idênticos ao upstream)
 - [ ] Skill 3 (pp-facebook-marketplace) — descartada para uso; só referência de desenho
 
 **Painel v2 e MCP (2026-11-05):**
@@ -1215,7 +1216,7 @@ framer, runway e magic-patterns; `higgsfield account status` = plano pro;
 para uso por script); Claude Code, Cursor e Gemini pedem o próprio login
 `/mcp` no primeiro uso. Geração que gasta crédito só quando a tarefa pedir.
 
-## 14. Fase — Frente social: identidade visual (D-009) — em andamento 2026-11-17
+## 14. Fase — Frente social: identidade visual (D-009) — preparação concluída 2026-11-17; ações ao vivo pendentes
 
 Decisão: `docs/decisoes/D-009-2026-11-17-identidade-visual-logo.md`. Página oficial: D-008 (página `100089750066330`; o outro ID dela, `143473822920252`, é o que o Zernio usa — é a mesma Página). Pangram como etapa fixa de qualidade: D-007 (texto público passa pelo detector antes da aprovação do usuário). Detalhe no `docs/ESTADO.md`, seção "Frente social".
 
@@ -1224,14 +1225,14 @@ Decisão: `docs/decisoes/D-009-2026-11-17-identidade-visual-logo.md`. Página of
 - Capa + foto de perfil prontas (Magic Patterns `oa6jym3ubfzkmwqd4lrydc`, artefato `b4f96dc8-…`): capa = `capa-A3b.png` original (SHA-256 confere) com o wordmark novo; perfil = monograma TB. Usuário: "vamos deixar assim".
 - Site protótipo no Magic Patterns (editor `7fm8x7puzjvafafgwpjwm2`, artefato `43a5f6f4-…`): home, `/3d`, `/fitas`; CTAs para o WhatsApp (Ana), sem preço. Tema de Natal até o Natal.
 - ID da página confirmado (2026-11-17): `100089750066330` = `143473822920252`, mesma Página.
+- **Frente delegada 2026-11-17 (coordenação Muse, Cursor `grok-4.7-high`, merge `57d2af8`):** `scripts/fb_trocar_capa.py` corrigido para a página oficial (aceita TuttiBom/TutiBom, recusa o perfil pessoal); `--dry-run` verificado pelo coordenador (exit 2: `profile-fb` ocupado, sem abrir o navegador). `scripts/fb_trocar_foto.py` + `criativos/perfil-2026-11-17/PASSOS.md` prontos (falta o PNG do monograma). Bio em rascunho (`criativos/bio-2026-11-17.md`, intro 99/100, sem preço). Posts F1-02 refeitos (`criativos/f1-02-natal.md`, 8 legendas com os JPEGs de Natal, rótulo de IA, sem preço). Entrega em `docs/frentes/identidade-visual-entrega.md`.
 
-**Falta concluir (próxima fase, nesta ordem):**
-- [ ] Aplicar capa A3b com logo novo + foto de perfil (monograma TB) no Facebook, quando o `profile-fb` for liberado. Antes: corrigir o `scripts/fb_trocar_capa.py` (ainda mira `tuttibom10`, perfil pessoal) para apontar para a página oficial.
-- [ ] Trocar a bio da página para WhatsApp/site.
-- [ ] Publicar o site no Framer (Framer já autenticado).
-- [ ] Chave do Pangram (textos e imagens).
-- [ ] Recuperar o acesso do Instagram.
-- [ ] Refazer os posts F1-02 com as imagens de Natal.
-- [ ] Aguardar a aprovação da renomeação da página (Facebook, até 3 dias a partir de 2026-11-17 ~10:16) e verificar se o nome virou **TuttiBom**.
+**Falta concluir (ações ao vivo, com dono):**
+- [ ] Aplicar capa A3b + foto de perfil (monograma TB) no Facebook, na janela com o `profile-fb` livre (dono do `fb_agent` para o agente; baixar o PNG do monograma sem regenerar).
+- [ ] Trocar a bio da página para WhatsApp/site — falta Pangram + aprovação do texto exato.
+- [ ] Publicar o site no Framer — **não existe projeto da TuttiBom no Framer** (o único projeto da conta é "Heartwarming Company", 1 página Home, sem menção à loja; verificado 2026-11-17). Criar o projeto a partir do protótipo é decisão do usuário.
+- [ ] Pangram (textos e imagens) — **bloqueado: a conta de API está sem créditos** (verificado 2026-11-17). Recarregar antes de aprovar bio e F1-02.
+- [ ] Recuperar o acesso do Instagram — o @ da loja não está em nenhum doc; só o usuário diz o @, recupera, converte para profissional e liga à Página.
+- [ ] Aguardar a aprovação da renomeação da página (Facebook, até 3 dias a partir de 2026-11-17 ~10:16). Verificado 2026-11-17 ~17:26 via Zernio: ainda **"TutiBom"**.
 
 Depois da identidade visual, continuar o restante do roadmap (itens abertos do checklist §6 e próximos passos do `docs/ESTADO.md`).

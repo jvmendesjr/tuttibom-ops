@@ -1002,11 +1002,11 @@ em node:22 docker.
 - Conversa facebook `48d6fafe-…` resolvida no painel (Assumir → Fechar → confirmar). Verificado: conversas abertas 15 → 14.
 - Aprendizado: fechar o lead NÃO resolve a conversa; a conversa precisa ser fechada à parte no painel, e o botão Fechar só funciona depois de Assumir.
 
-### Ana 24/7 — CONFIRMADO e MUDADO + v10 em rascunho (2026-11-17 ~10:54–11:40)
+### Ana 24/7 — CONFIRMADO e MUDADO + v10 PUBLICADA (2026-11-17 ~10:54–15:08)
 - **CONFIRMADO ~10:54: a Ana NÃO era 24/7; respondia só das 7h às 22h.** `channel_knobs` estava VAZIA (0 linhas) — valia o `PACING_DEFAULTS` (disparo 7–22h E resposta 7–22h). Comportamento: 10 mensagens chegaram fora da janela e 0 respostas foram enviadas fora dela (98 outbound no total).
 - **MUDADO ~11:00 a pedido do usuário ("mude"):** gravado em `channel_knobs` `resposta_start_hour=0` e `resposta_end_hour=24` nas duas sessões WORKING (WhatsApp TUTTIBOM e Facebook/Zernio). Verificado: resposta efetiva 0–24h, disparo continua 7–22h. É a forma prevista no código (`0..24` = "responde 24h").
 - **Prova pendente:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora, sem esperar as 7h.
-- **Ana v10 — RASCUNHO CRIADO ~11:40 (usuário aprovou o texto exato):** v10 (`365fc131-…`, status `draft`, 12.449 caracteres) com 2 mudanças sobre a v9 (publicada): (1) seção nova `# Horário de atendimento` — WhatsApp 24h, produção só no horário comercial, quem resolve produção é a equipe técnica ou o gerente no horário comercial; (2) `# Limites` — ao chamar uma pessoa, Ana diz que é um assunto que não cabe a ela e que quem resolve é a equipe técnica ou o gerente no horário comercial; nunca diz que vai transferir para um humano, nem que é robô/atendente virtual. **v9 continua publicada e viva** — nada mudou para os clientes até o usuário publicar a v10 no painel (um clique).
+- **Ana v10 — PUBLICADA 2026-11-17 ~15:08 (usuário, um clique no painel):** v10 (`365fc131-…`, 12.449 caracteres) com 2 mudanças sobre a v9: (1) seção nova `# Horário de atendimento` — WhatsApp 24h, produção só no horário comercial, quem resolve produção é a equipe técnica ou o gerente no horário comercial; (2) `# Limites` — ao chamar uma pessoa, Ana diz que é um assunto que não cabe a ela e que quem resolve é a equipe técnica ou o gerente no horário comercial; nunca diz que vai transferir para um humano, nem que é robô/atendente virtual. **v10 agora é a versão viva; v9 substituída.**
 - Decisão registrada em `docs/decisoes/D-006-2026-11-17-ana-24-7.md`.
 
 ### Queda do sistema (2026-11-16 à noite)
@@ -1019,18 +1019,17 @@ em node:22 docker.
 - **Anúncios:** ~60 imagens de IA em `criativos/anuncios/2026-11-natal/` (+ `manifest.md`; Pangram pendente).
 - **Identidade visual (D-009):** família de logo no estilo selo (Cormorant Garamond; lacre #3E241C, pergaminho #F6EBD8, ouro #C9A15B, fita #C45C32). Board `4sv1smovt25gtjegmhdhbq` é a referência fixa; o site usa os componentes copiados verbatim (diff idêntico). Regra: imagens aprovadas não mudam, só o logo.
 - **Capa + foto de perfil (Magic Patterns `oa6jym3ubfzkmwqd4lrydc`, artefato `b4f96dc8-…`):** capa = `capa-A3b.png` original (SHA-256 confere) com o wordmark novo no lugar do "TUTTIBOM" antigo; perfil = monograma TB. Usuário: "vamos deixar assim". **Não aplicadas no Facebook** — `profile-fb` ocupado pelo fb_agent.
-- **Página oficial (D-008):** o usuário apontou `profile.php?id=100089750066330`. A D-005 registra o page id 143473822920252 (Zernio). **Conferir se é a mesma Página** antes de aplicar. `scripts/fb_trocar_capa.py` ainda mira `tuttibom10` (perfil pessoal) — corrigir antes de rodar.
+- **Página oficial (D-008):** é a página `100089750066330` (ID canônico do Facebook, `profile.php?id=100089750066330`); a D-005 registra o outro ID dela, `143473822920252` (o que o Zernio usa). **Confirmado: é a mesma Página**, dois formatos de número. `scripts/fb_trocar_capa.py` ainda mira `tuttibom10` (perfil pessoal) — corrigir antes de rodar.
 - Decisões da frente renumeradas no merge com a main: Pangram D-007, Página oficial D-008, Identidade D-009.
 
 ## Próximo passo (atualizado 2026-11-17)
 
 1. **Aguardar a aprovação da renomeação da página** (Facebook, até 3 dias a partir de 2026-11-17 ~10:16): verificar se o nome virou **TuttiBom** na página, via API do Zernio e no Deskcomm (display_name do canal deve virar `facebook · TuttiBom`).
-2. **Usuário:** publicar a v10 da Ana no painel (um clique) — para as regras de 24h e do handoff humanizado valerem ao vivo.
-3. **Usuário:** publicar o rascunho do Fluxo A no painel (um clique) e fazer o teste do áudio em produção.
-4. **Prova da Ana 24/7:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora.
-5. **Painel reduzido** a Conteúdo + Planos (passo 6) — plano em `docs/plano-painel-v2.md`, para discutir antes de construir.
-6. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03 (não mudar o prompt sem aprovação).
-7. **Frente social:** aplicar capa A3b com logo novo + foto de perfil (monograma TB) quando o `profile-fb` for liberado, depois de confirmar o id da Página e apontar o `fb_trocar_capa.py` para ela; trocar a bio para WhatsApp/site.
-8. **Frente social:** chave do Pangram (textos e imagens); publicar o site no Framer; recuperar o acesso do Instagram; refazer os posts F1-02 com as imagens de Natal.
+2. **Usuário:** publicar o rascunho do Fluxo A no painel (um clique) e fazer o teste do áudio em produção.
+3. **Prova da Ana 24/7:** a próxima mensagem que chegar fora de 7–22h deve ser respondida na hora.
+4. **Painel reduzido** a Conteúdo + Planos — **ADIADO para após a produção inicial** (decisão do usuário 2026-11-17 ~15:08). Plano em `docs/plano-painel-v2.md`.
+5. **Lembrete:** revisão do frete aproximado em 2026-12-06 11:00 -03 (não mudar o prompt sem aprovação).
+6. **Frente social:** aplicar capa A3b com logo novo + foto de perfil (monograma TB) quando o `profile-fb` for liberado; id da Página confirmado (`100089750066330` = `143473822920252`); apontar o `fb_trocar_capa.py` para ela; trocar a bio para WhatsApp/site.
+7. **Frente social:** chave do Pangram (textos e imagens); publicar o site no Framer; recuperar o acesso do Instagram; refazer os posts F1-02 com as imagens de Natal.
 
-Concluído desde a versão anterior: Zernio ligado e PROVADO (2026-11-17 08:17); renomeação da página solicitada (aguardando Facebook); "olá" de teste fechado; Ana 24/7 confirmada e mudada; Ana v10 em rascunho (aguardando publicação); gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas); memória por contato + roteador Jev (deploy 2026-11-13).
+Concluído desde a versão anterior: Zernio ligado e PROVADO (2026-11-17 08:17); renomeação da página solicitada (aguardando Facebook); "olá" de teste fechado; Ana 24/7 confirmada e mudada; **Ana v10 PUBLICADA 2026-11-17 ~15:08** (v10 agora é a versão viva); gestor via MCP (rotina aprovada, token ativo, agendamento 3×/dia, P1–P7 aplicadas; rascunho da rotina reconstruído, conferido contra o código e commitado 2026-11-17, corrigindo a referência do roadmap §9); memória por contato + roteador Jev (deploy 2026-11-13); ferramentas externas para todos os agentes (§13, feito 2026-11-17); pasta do PC sincronizada com o GitHub (estava 38 commits atrás, agora em dia).

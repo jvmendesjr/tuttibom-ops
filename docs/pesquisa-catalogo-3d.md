@@ -123,6 +123,48 @@ Só entram modelos vendáveis e personalizáveis (CC0, BY ou BY-SA; nenhum BY-ND
 
 Se o José quiser um item "geek" de giro rápido, os articulados #49 e #50 (CC0, "Free to Sell") são os mais vendidos do país em volume (Shopee R$13–37 [M1]). A margem é baixa e eles não combinam com as fitas, por isso ficaram fora do top 15.
 
+## Capacidade da impressora
+
+Impressora confirmada pelo José em 16/11/2026: **Anycubic Kobra X**, multicolor, "cores variadas, qualquer cor". A confirmação da cor com o cliente fica com o José depois que o lead for qualificado, até ele ampliar a gama de filamentos e liberar a Ana para responder cores.
+
+### Especificações oficiais (coletadas em 16/11/2026)
+
+| Item | Especificação | Fonte |
+|---|---|---|
+| Volume de impressão | 260 × 260 × 260 mm | [Loja oficial Anycubic](https://store.anycubic.com/products/kobra-x); [manual do usuário EN (PDF)](https://wiki.anycubic.com/kobra-x/M02010203-Kobra%20X%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8C-EN-260106.pdf); [FAQ oficial](https://wiki.anycubic.com/zh/fdm-3d-printer/anycubic-kobra-x/faq) |
+| Cores por peça | 4 nativas; expansível a 19 com 4 unidades do ACE 2 Pro (a loja chama isso de "Native 4-color \| Expandable to 19") | [Loja oficial](https://store.anycubic.com/products/kobra-x) (Q4/Q5); [FAQ oficial](https://wiki.anycubic.com/zh/fdm-3d-printer/anycubic-kobra-x/faq) |
+| Materiais suportados | PLA, PETG, TPU, PVA, PLA-CF, PETG-CF e ASA na ficha da loja. O FAQ e o Q2 da loja também listam ABS em material único, e mistura PLA+TPU (68D) e PLA+PVA. TPU 95A não é compatível com o ACE 2 Pro, segundo a página da Combo. | [Loja oficial](https://store.anycubic.com/products/kobra-x); [FAQ oficial](https://wiki.anycubic.com/zh/fdm-3d-printer/anycubic-kobra-x/faq); [Kobra X Combo (AU)](https://www.anycubic.au/products/kobra-x-combo-3d-printer) |
+| Bico | Padrão 0,4 mm em aço endurecido; opcionais 0,25 / 0,6 / 0,8 mm; até 300 °C | [Loja oficial](https://store.anycubic.com/products/kobra-x) |
+| Mesa | PEI, até 100 °C | [Loja oficial](https://store.anycubic.com/products/kobra-x); [manual EN](https://wiki.anycubic.com/kobra-x/M02010203-Kobra%20X%E7%94%A8%E6%88%B7%E6%89%8B%E5%86%8C-EN-260106.pdf) |
+
+Não foi confirmado se a máquina do José é a versão avulsa (4 cores) ou a Combo com ACE 2 Pro (até 19). Para o top 15, 4 cores nativas bastam: a maioria das peças é 1 ou 2 cores.
+
+**LED e tags NFC:** pendente — o José confirma se tem. Isso decide se a luminária (item 14) e o chaveiro NFC (item 12) entram no catálogo.
+
+A página da loja, no Q3, escreve por engano "print volume of the Kobra S1 Max"; a tabela de especificações da mesma página, o manual e o FAQ dizem 260 × 260 × 260 mm para a Kobra X.
+
+### Top 15 × capacidade da Kobra X
+
+Nenhum item do top 15 fica "não cabe" só pelo volume de 260 mm. O que depende de acessório (LED ou tag NFC) ficou marcado à parte.
+
+1. **Topo de bolo com nome e idade** (#15 / #16) — **cabe**. Peça típica bem abaixo de 260 mm. (O contato com alimento do bolo continua pendente, e não é limite da impressora.)
+2. **Caixinha dobrável personalizável** (#18) — **cabe**.
+3. **Números ornamentais de aniversário** (#17) — **cabe**. Números muito grandes de festa podem ser impressos em partes ou em escala menor.
+4. **Bloquinhos com o nome do bebê** (#33) — **cabe**.
+5. **Letreiro ou placa com nome para porta de maternidade** (#34 / #35) — **cabe**, com ressalva: nomes longos podem passar de 260 mm na horizontal e aí a peça precisa ser dividida ou reduzida.
+6. **Mini mamadeira ou anjinho de lembrancinha** (#36 / #30 / #31) — **cabe**.
+7. **Marcador de taça ou de lugar com nome** (#21 / #22) — **cabe**.
+8. **Números de mesa** (#23 / #24) — **cabe**.
+9. **Rosa com haste** (#26) — **cabe**. Se a haste montada passar de 260 mm de altura, imprime em partes (flor + haste), prática comum desse tipo de modelo.
+10. **Caixa-presente com trava** (#25) — **cabe**.
+11. **Placa Pix com logo e QR** (#9 / #8) — **cabe**. (O uso do logo Pix do Banco Central continua pendente, e não é limite da impressora.)
+12. **Chaveiro NFC com o link do negócio** (#5 / #6) — **depende de LED-NFC**. O tamanho cabe; só entra no catálogo se o José confirmar que tem tags NFC.
+13. **Chaveiro/tag com nome ou logo em lote** (#1) — **cabe**. Duas cores cabem no sistema nativo de 4 cores.
+14. **Luminária com foto (litofania)** (#37 / #38) — **depende de LED-NFC**. O volume típico da lua ou do cubo cabe na mesa; só entra no catálogo se o José confirmar que tem LED.
+15. **Plaquinha de identificação com nome e telefone** (#45 / #46) — **cabe**.
+
+Materiais: todos os itens do top 15 se fazem em PLA, que a Kobra X aceita. PETG, TPU e ASA ficam disponíveis se algum item pedir (placa externa, flexível, etc.).
+
 ## Mercado local e regional
 
 **Cariri**
@@ -156,7 +198,7 @@ Se o José quiser um item "geek" de giro rápido, os articulados #49 e #50 (CC0,
 3. **Membership** (para modelos SDFL populares, como os geradores de chaveiro com nome) só vale enquanto se paga, e os termos variam por criador. Não assinar sem ler os termos e sem decisão do José.
 4. **Marcas de terceiros:** ícones de Instagram, WhatsApp e TikTok nos chaveiros NFC (#5–7) e o logo Pix (#8–10). Conferir o manual de uso da marca Pix do Banco Central e, de preferência, usar a logo do cliente. Não confirmado.
 5. **Contato com alimento:** topos de bolo (#15–16, #32) encostam no bolo. Filamento e uso (com base ou espeto) precisam ser confirmados pelo José.
-6. **Tempo de impressão e material:** ainda não medidos na máquina da TuttiBom. Falta confirmar com o José qual impressora e se ela tem AMS/multicolor (vários modelos são "No AMS", em 2 cores por troca de filamento); filamentos disponíveis (PLA, PLA seda ou acetinado, PETG para áreas externas, TPU); se há LED e tags NFC NTAG215 em estoque; e tamanho máximo da mesa.
+6. **Tempo de impressão e material:** ainda não medidos na máquina da TuttiBom. A impressora foi confirmada em 16/11/2026: Anycubic Kobra X, multicolor nativa de 4 cores (até 19 com ACE 2 Pro, não confirmado se a unidade do José tem o Combo), volume 260 × 260 × 260 mm, materiais PLA / PETG / TPU / PVA / PLA-CF / PETG-CF / ASA (o FAQ também cita ABS em material único). Continua pendente: se há LED e tags NFC; quais filamentos estão de fato em casa (o José disse cores variadas, e a Ana não promete cor até ele ampliar a gama e liberar); e o tempo/consumo reais de cada peça. Ver a seção "Capacidade da impressora".
 7. **Preços BR** vêm de trechos de busca e de blogs com data de coleta (ML e Elo7 bloquearam a leitura direta). Servem de faixa, não de tabela. Nenhum preço da TuttiBom foi definido.
 8. **Pedidos em lote** (casamento, brinde): prazo e capacidade da máquina, mais amostra física aprovada antes do lote, segundo a prática citada em [M2].
 9. **Imagens:** as fotos do MakerWorld servem só como **referência interna**. Para publicar, usar foto da peça impressa pela TuttiBom ou imagem gerada e rotulada como IA. As fotos dos modelos são do autor, e a licença do arquivo não cobre necessariamente reproduzir as fotos.

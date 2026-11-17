@@ -594,7 +594,7 @@ falta.
 
 ## Registro 2026-11-16 ~10:25 — ferramentas pagas do usuário no pipeline
 
-- **Pangram (detector de IA):** etapa fixa antes da aprovação de todo texto público; auditoria de tom da Ana por amostra anonimizada (relatório, sem mexer em produção). Ver `docs/decisoes/D-005-...pangram...md`.
+- **Pangram (detector de IA):** etapa fixa antes da aprovação de todo texto público; auditoria de tom da Ana por amostra anonimizada (relatório, sem mexer em produção). Ver `docs/decisoes/D-007-...pangram...md`.
 - **Mobbin:** referência de composição (conectado).
 - **Magic Patterns:** protótipo do site/catálogo da loja e do painel reduzido; telas "site para printar" para post/carrossel (conectado).
 - **Framer:** publicação do site/catálogo (a conectar quando chegar a hora).

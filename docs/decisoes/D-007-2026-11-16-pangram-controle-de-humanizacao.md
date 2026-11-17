@@ -1,4 +1,4 @@
-# D-005 — 2026-11-16 — Pangram (detector de IA) como controle de humanização
+# D-007 — 2026-11-16 — Pangram (detector de IA) como controle de humanização
 
 **Data:** 2026-11-16 ~10:25 (America/Fortaleza)
 **Decisor:** usuário

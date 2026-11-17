@@ -1,4 +1,4 @@
-# D-007 — 2026-11-17 — Identidade visual: família de logo no estilo selo
+# D-009 — 2026-11-17 — Identidade visual: família de logo no estilo selo
 
 **Data:** 2026-11-17 ~10:53 (America/Fortaleza)
 **Decisor:** usuário

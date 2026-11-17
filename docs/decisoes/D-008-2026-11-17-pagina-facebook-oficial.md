@@ -1,4 +1,4 @@
-# D-006 — 2026-11-17 — Página oficial do Facebook da loja
+# D-008 — 2026-11-17 — Página oficial do Facebook da loja
 
 **Data:** 2026-11-17 ~10:21 (America/Fortaleza)
 **Decisor:** usuário
@@ -16,3 +16,8 @@
 
 - Confirmar que o id `100089750066330` é a Página conectada ao Zernio (a que recebeu o "ola" de teste); se não for, reconectar no Zernio, decisão do usuário.
 - Aplicar capa e bio na janela do `profile-fb` combinada com o dono do fb_agent.
+
+## Nota de integração (2026-11-17, merge com main)
+
+- Renumerada de D-006 para D-008: na main, D-005 é a renomeação da Página e D-006 é a Ana 24/7.
+- A D-005 da main registra a Página ligada ao Zernio/Deskcomm como **id 143473822920252**. Aqui o usuário passou `profile.php?id=100089750066330`. Na Página no formato novo do Facebook, o id do perfil da Página (`profile.php?id=`) pode ser diferente do page id da Graph/Zernio; **conferir se é a mesma Página** antes de aplicar capa/foto. O script `scripts/fb_trocar_capa.py` ainda aponta para `tuttibom10` (perfil pessoal) e precisa mirar a Página antes de rodar.

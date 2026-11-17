@@ -1189,3 +1189,28 @@ atualização (2026-11-13):
    depois que o Deskcomm estiver configurado. Detalhe no §9 de
    `docs/rascunho-rotina-diaria-gestor.md`. Não entra na rotina
    do gestor v1 (o MCP não tem ferramenta de saúde).
+
+---
+
+## 13. Fase — Acesso às ferramentas externas para todos os agentes — **FEITO 2026-11-17**
+
+Não existia no plano; entrou e fechou no mesmo dia. Objetivo: qualquer
+agente que rode comando no PC (Claude Code, Cursor, Gemini, Grok Bot,
+outros) usa as ferramentas sem conector próprio.
+
+| Peça | Status |
+|---|---|
+| Ferramentas: Magic Patterns, Pangram, Gamma, Framer, Runway | **feito** — MCP oficial via `mcporter`, OAuth compartilhado em `~/.mcporter`; Magic Patterns por chave |
+| Higgsfield | **feito** — CLI oficial `higgsfield` (o login MCP deles falha fora do Claude Code: emissor OAuth divergente) |
+| Chaves | `.env.ferramentas` (modo 600, fora do git); `scripts/com-ferramentas.sh` carrega |
+| Configs sem segredo | `.mcp.json`, `.cursor/mcp.json`, `.gemini/settings.json`, `config/mcporter.json` |
+| Descoberta | `AGENTS.md` (Acessos de apoio) + `tuttibom-mcp` (instruções e `onde_esta_tudo`) apontam para `docs/acesso-ferramentas.md` |
+| Fora do escopo | Zernio e Deskcomm (já integrados no app); nada exposto no catálogo MCP do Deskcomm (compartilhado com a Ana em produção) |
+
+**Prova:** `mcporter list` mostra as ferramentas de pangram, gamma,
+framer, runway e magic-patterns; `higgsfield account status` = plano pro;
+`tuttibom-mcp` segue com 12 tools.
+
+**Resta (opcional):** `PANGRAM_API_KEY` e `GAMMA_API_KEY` vazias (só
+para uso por script); Claude Code, Cursor e Gemini pedem o próprio login
+`/mcp` no primeiro uso. Geração que gasta crédito só quando a tarefa pedir.

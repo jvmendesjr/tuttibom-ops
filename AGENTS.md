@@ -36,6 +36,7 @@ Estado curto: `docs/ESTADO.md`.
 | **Hindsight** `http://127.0.0.1:8890` bank `tuttibom` | memória de decisões/lições; sem segredos e sem dado de comprador |
 | **codebase-memory-mcp** projeto `TUTTIBOM` | busca de código/docs; reindex `mode full` |
 | **tuttibom-mcp** | stdio só leitura; **só indica**: estado, mapa, checklist, fila, catálogo, roadmap, decisões, árvore, busca, git — `scripts/tuttibom-mcp` |
+| **Ferramentas externas** (Magic Patterns, Pangram, Gamma, Framer, Runway, Higgsfield) | já autenticadas no PC: `scripts/com-ferramentas.sh mcporter call <ferramenta>.<ação>`; Higgsfield pela CLI `higgsfield`; chaves só em `.env.ferramentas` — guia `docs/acesso-ferramentas.md` |
 
 Config de clientes MCP: `docs/operacao/mcp-clients.md`.
 

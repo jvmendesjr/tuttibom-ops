@@ -40,7 +40,11 @@ mcp = FastMCP(
         "IP/porta viva de ADB ou código de pareamento em arquivo, doc ou "
         "memória; nunca dado de comprador no repo, no painel ou no Hindsight; "
         "mídia 100% fictícia, zero foto/vídeo de cliente; nunca segredos. "
-        "Regras completas: AGENTS.md."
+        "Regras completas: AGENTS.md.\n"
+        "FERRAMENTAS EXTERNAS (Magic Patterns, Pangram, Gamma, Framer, Runway, "
+        "Higgsfield): já autenticadas no PC; usar via `mcporter call` (config "
+        "`config/mcporter.json`) e CLI `higgsfield`; guia em "
+        "`docs/acesso-ferramentas.md`. Geração gasta crédito: só quando a tarefa pedir."
     ),
 )
 
@@ -239,6 +243,7 @@ def onde_esta_tudo() -> str:
 | Modelos (LLM) | 9Router `http://127.0.0.1:20128/v1` (não o :20130 do PQBR2) | `config/modelos_9router.json` |
 | Código | `src/tuttibom/`, `config/`, `scripts/`, `tests/` | `arvore`, `buscar_codigo` |
 | Trabalho local | `work/` (gitignored) | não versionar |
+| Ferramentas externas (Magic Patterns, Pangram, Gamma, Framer, Runway, Higgsfield) | `docs/acesso-ferramentas.md`; chaves em `.env.ferramentas` (600, fora do git) | `scripts/com-ferramentas.sh mcporter call <ferramenta>.<ação>`; Higgsfield: `higgsfield` |
 | Segredos | nunca em arquivo no repo; só por referência (nome) | NUNCA ler/expor via MCP |
 | S10 (conta da loja) | ponto de execução ADB = PC; pareamento por chave do PC | nunca IP/porta/código de pareamento em arquivo |
 | PQBR2 (modelo) | `/home/pc/Workspace/PQBR2` | só referência; não editar |

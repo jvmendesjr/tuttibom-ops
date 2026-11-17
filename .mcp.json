@@ -3,10 +3,29 @@
     "magic-patterns": {
       "type": "http",
       "url": "https://mcp.magicpatterns.com/mcp",
-      "headers": { "Authorization": "Bearer ${MAGIC_PATTERNS_API_KEY}" }
+      "headers": {
+        "Authorization": "Bearer ${MAGIC_PATTERNS_API_KEY}"
+      }
     },
-    "pangram": { "type": "http", "url": "https://www.pangram.com/mcp" },
-    "gamma": { "type": "http", "url": "https://mcp.gamma.app/mcp" },
-    "framer": { "type": "http", "url": "https://mcp.framer.com/mcp" }
+    "pangram": {
+      "type": "http",
+      "url": "https://www.pangram.com/mcp"
+    },
+    "gamma": {
+      "type": "http",
+      "url": "https://mcp.gamma.app/mcp"
+    },
+    "framer": {
+      "type": "http",
+      "url": "https://mcp.framer.com/mcp"
+    },
+    "higgsfield": {
+      "type": "http",
+      "url": "https://mcp.higgsfield.ai/mcp"
+    },
+    "runway": {
+      "type": "http",
+      "url": "https://mcp.runwayml.com/mcp"
+    }
   }
 }

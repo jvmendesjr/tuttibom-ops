@@ -47,6 +47,8 @@ Configuração no próprio repo, sem segredo (as chaves vêm do `.env.ferramenta
 | pangram | `https://www.pangram.com/mcp` | OAuth (login uma vez por cliente) |
 | gamma | `https://mcp.gamma.app/mcp` | OAuth; a `GAMMA_API_KEY` serve à API REST |
 | framer | `https://mcp.framer.com/mcp` | OAuth |
+| higgsfield | `https://mcp.higgsfield.ai/mcp` | OAuth (créditos do plano) |
+| runway | `https://mcp.runwayml.com/mcp` | OAuth (créditos do plano) |
 
 Abrir o agente com as variáveis carregadas:
 

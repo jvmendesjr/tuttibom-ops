@@ -1,5 +1,14 @@
 #!/home/pc/Workspace/tuttibom-ops/prototype-vision/.venv/bin/python
-"""fb_trocar_capa — troca a foto de capa da Página "TuttiBom Novidade".
+"""fb_trocar_capa — troca a foto de capa da Página oficial da loja.
+
+Página: https://www.facebook.com/profile.php?id=100089750066330
+(id canônico 100089750066330 = id Zernio 143473822920252, D-008).
+Não é o perfil pessoal tuttibom10 ("TuttiBom Novidade").
+
+Nome visível: "TuttiBom" depois que o Facebook aprovar a renomeação
+(D-005, solicitada 2026-11-17 ~10:16). Enquanto a análise não sair,
+o título continua "TutiBom" — os dois são aceitos. "TuttiBom Novidade"
+aborta: é o perfil pessoal.
 
 Roda SÓ numa janela combinada: o fb_agent.py parado e o profile-fb livre.
 Reaproveita o camofox_driver.launch() do prototype-vision da main
@@ -11,7 +20,7 @@ Fluxo (D-004: navegação humana, pausas aleatórias, print pelo Jev):
      Camoufox com o perfil, imagem existente. Qualquer sinal de uso -> aborta
      (não mata nada).
   2. Abre a Página, checa checkpoint/login/2FA/alerta de bot e confirma o
-     nome "TuttiBom Novidade" visível.
+     nome "TuttiBom" (ou "TutiBom", enquanto a renomeação não aprova).
   3. Editar foto da capa -> Enviar foto -> set_files com o PNG -> espera o
      preview -> Salvar alterações.
   4. Print final em /tmp/fb-capa-aplicada.png, fecha o navegador e confere
@@ -40,8 +49,13 @@ PROTO = Path("/home/pc/Workspace/tuttibom-ops/prototype-vision")
 PROFILE = PROTO / "profile-fb"
 WORKTREE = Path(__file__).resolve().parent.parent
 IMAGEM_PADRAO = WORKTREE / "criativos" / "capa-2026-11-16" / "capa-A3b.png"
-URL_PAGINA = "https://www.facebook.com/tuttibom10"
-NOME_PAGINA = "TuttiBom Novidade"
+# Página oficial (D-008). O id 143473822920252 é o mesmo número no Zernio.
+URL_PAGINA = "https://www.facebook.com/profile.php?id=100089750066330"
+PAGE_ID = "100089750066330"
+NOME_APROVADO = "TuttiBom"
+NOME_ENQUANTO_ANALISA = "TutiBom"
+NOMES_ACEITOS = (NOME_APROVADO, NOME_ENQUANTO_ANALISA)
+PERFIL_PESSOAL = "TuttiBom Novidade"
 SHOT_FINAL = Path("/tmp/fb-capa-aplicada.png")
 SHOT_PREVIEW = Path("/tmp/fb-capa-preview.png")
 SHOT_ALERTA = Path("/tmp/fb-capa-alerta.png")
@@ -134,8 +148,8 @@ def checar_processos() -> list:
             achados.append(f"processo fb_agent ativo: pid {d.name}")
         elif "-profile" in argv and perfil in argv and "camoufox" in argv[0].lower():
             achados.append(f"Camoufox usando o profile-fb: pid {d.name}")
-        elif "fb_trocar_capa.py" in nomes and "python" in os.path.basename(argv[0]):
-            achados.append(f"outra execução do fb_trocar_capa: pid {d.name}")
+        elif ({"fb_trocar_capa.py", "fb_trocar_foto.py"} & nomes) and "python" in os.path.basename(argv[0]):
+            achados.append(f"outra execução de troca no Facebook: pid {d.name} ({' '.join(nomes & {'fb_trocar_capa.py', 'fb_trocar_foto.py'})})")
     return achados
 
 
@@ -170,6 +184,39 @@ class Abortar(Exception):
         super().__init__(motivo)
         self.codigo = codigo
         self.motivo = motivo
+
+
+def confirmar_nome(page) -> str:
+    """Confere o h1 da Página. Aceita TuttiBom ou TutiBom. Recusa o perfil pessoal."""
+    try:
+        titulos = page.get_by_role("heading").all_inner_texts()
+    except Exception:  # noqa: BLE001
+        titulos = []
+    limpos = [" ".join(t.split()) for t in titulos if t and t.strip()]
+    if any(PERFIL_PESSOAL in t for t in limpos):
+        page.screenshot(path=str(SHOT_FALHA), type="png")
+        raise Abortar(
+            3,
+            f"caiu no perfil pessoal '{PERFIL_PESSOAL}' — a capa é da Página "
+            f"{PAGE_ID}. Print em {SHOT_FALHA}",
+        )
+    for esperado in NOMES_ACEITOS:
+        if esperado in limpos:
+            return esperado
+        alvo = page.get_by_role("heading", name=esperado, exact=True)
+        try:
+            if alvo.count() and alvo.first.is_visible():
+                return esperado
+        except Exception:  # noqa: BLE001
+            continue
+    page.screenshot(path=str(SHOT_FALHA), type="png")
+    vistos = ", ".join(repr(t) for t in limpos[:8]) or "(nenhum heading)"
+    raise Abortar(
+        3,
+        f"nome da Página não confirmado (esperado '{NOME_APROVADO}' ou, "
+        f"enquanto o Facebook analisa, '{NOME_ENQUANTO_ANALISA}'). "
+        f"Headings: {vistos}. Print em {SHOT_FALHA}",
+    )
 
 
 def checar_alerta(page, etapa: str) -> None:
@@ -250,13 +297,12 @@ def aplicar(imagem: Path) -> int:
             log(f"aberto: título '{page.title()}' | {url_limpa(page.url)}")
             checar_alerta(page, "abertura")
 
-            nome = page.locator(f"h1:has-text('{NOME_PAGINA}')")
-            if not (nome.count() and nome.first.is_visible()):
-                nome = page.get_by_text(NOME_PAGINA, exact=True)
-            if not (nome.count() and nome.first.is_visible()):
-                page.screenshot(path=str(SHOT_FALHA), type="png")
-                raise Abortar(3, f"nome '{NOME_PAGINA}' não está visível — print em {SHOT_FALHA}")
-            log(f"nome '{NOME_PAGINA}' visível")
+            visto = confirmar_nome(page)
+            if visto == NOME_ENQUANTO_ANALISA:
+                log(f"nome '{visto}' visível — renomeação ainda em análise; "
+                    f"o esperado depois da aprovação é '{NOME_APROVADO}'")
+            else:
+                log(f"nome '{visto}' visível")
 
             page.mouse.wheel(0, -600)  # garante o topo da Página (capa à vista)
             reading_pause(2.0, 4.0)
@@ -347,7 +393,8 @@ def main() -> int:
 
     bloqueios, info = precheck(imagem)
     log(f"perfil: {PROFILE}")
-    log(f"Página: {URL_PAGINA} (nome esperado '{NOME_PAGINA}')")
+    log(f"Página: {URL_PAGINA} (id {PAGE_ID}; nome esperado '{NOME_APROVADO}', "
+        f"aceito enquanto analisa: '{NOME_ENQUANTO_ANALISA}')")
     if info:
         log(f"imagem: {info}")
     if bloqueios:
@@ -363,7 +410,9 @@ def main() -> int:
         for passo in (
             "abrir o Camoufox com o profile-fb (impressão digital fixa, humanize, Xfce :0)",
             f"abrir {URL_PAGINA} e abortar se houver checkpoint/login/2FA/alerta de bot",
-            f"confirmar o nome '{NOME_PAGINA}' visível",
+            f"confirmar o nome '{NOME_APROVADO}' visível "
+            f"(ou '{NOME_ENQUANTO_ANALISA}' enquanto a renomeação não aprova; "
+            f"abortar se aparecer '{PERFIL_PESSOAL}')",
             "Editar foto da capa > Enviar foto > set_files com a imagem",
             f"esperar o preview (print em {SHOT_PREVIEW}) > Salvar alterações",
             f"print final em {SHOT_FINAL}, fechar o navegador e conferir o lock liberado",

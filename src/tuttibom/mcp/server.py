@@ -18,7 +18,7 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 ROOT = Path(os.environ.get("TUTTIBOM_ROOT", Path(__file__).resolve().parents[3]))
-VERSAO = "0.1.0"
+VERSAO = "0.1.1"
 
 mcp = FastMCP(
     "tuttibom-mcp",
@@ -32,19 +32,24 @@ mcp = FastMCP(
         "AO TERMINAR: chamar `checklist_fim_operacao` e cumprir: código/config "
         "→ decisão (se houver) → blueprint/roadmap → retain Hindsight tuttibom "
         "(sanitizado) → reindex CBM se a árvore mudou.\n"
-        "REGRAS DO TUTTIBOM (não negociar): S10 é o ambiente principal da conta "
-        "da loja; nada é publicado, enviado ou combinado em preço sem aprovação "
-        "do usuário ao texto exato; antes de agir sobre telemetria, conferir a "
-        "identidade do aparelho (S10 Lite SM-G770F); antes de cada toque no S10, "
-        "verificar a tela acordada (desligada ≠ acordada); nunca registrar "
-        "IP/porta viva de ADB ou código de pareamento em arquivo, doc ou "
-        "memória; nunca dado de comprador no repo, no painel ou no Hindsight; "
-        "mídia 100% fictícia, zero foto/vídeo de cliente; nunca segredos. "
-        "Regras completas: AGENTS.md.\n"
+        "REGRAS DO TUTTIBOM (não negociar): Camofox é o navegador único "
+        "(D-004); S10/ADB pausado — não tocar no S10 sem decisão nova do "
+        "usuário; nada é publicado, enviado ou combinado em preço sem "
+        "aprovação do usuário ao texto exato; antes de agir no Facebook ou "
+        "no painel, conferir o perfil do navegador (profile-fb/profile-panel) "
+        "e a sessão; todo print passa pelo Jev; nunca registrar IP/porta viva "
+        "de ADB ou código de pareamento em arquivo, doc ou memória; nunca dado "
+        "de comprador no repo, no painel ou no Hindsight; imagens reais só com "
+        "autorização para demonstrar, amostra personalizada é render fictício "
+        "(correção 2026-11-06 — a regra '100% fictícia' como regra geral está "
+        "superada); nunca segredos. Regras completas: AGENTS.md.\n"
         "FERRAMENTAS EXTERNAS (Magic Patterns, Pangram, Gamma, Framer, Runway, "
-        "Higgsfield): já autenticadas no PC; usar via `mcporter call` (config "
-        "`config/mcporter.json`) e CLI `higgsfield`; guia em "
-        "`docs/acesso-ferramentas.md`. Geração gasta crédito: só quando a tarefa pedir."
+        "Higgsfield): autenticação ÚNICA por ferramenta, JÁ FEITA no PC — usar "
+        "como está, via `mcporter call` (config `config/mcporter.json`) e CLI "
+        "`higgsfield`; guia em `docs/acesso-ferramentas.md`. O agente NUNCA pede, "
+        "cria ou usa token de outro agente; se uma ferramenta responder sem "
+        "acesso, registrar como bloqueio, não improvisar outra via. Geração gasta "
+        "crédito: só quando a tarefa pedir."
     ),
 )
 
@@ -85,9 +90,9 @@ def estado() -> str:
     try:
         partes.append(_ler("docs/ESTADO.md"))
     except FileNotFoundError:
-        # Melhoria vs PQBR2: o TuttiBom não tem ESTADO.md; o estado curto vive
-        # no blueprint (seção 15) e no roadmap. Não inventar conteúdo.
-        partes.append("(docs/ESTADO.md ainda não existe; estado curto em "
+        # docs/ESTADO.md existe no repo canônico; este fallback só vale se
+        # o arquivo não estiver neste diretório. Não inventar conteúdo.
+        partes.append("(docs/ESTADO.md não encontrado neste diretório; estado curto em "
                       "docs/blueprint-inicial.md §15 e docs/roadmap.md)")
     try:
         partes.append("## roadmap (resumo)\n" + _ler("docs/roadmap.md", 12_000))
@@ -97,8 +102,8 @@ def estado() -> str:
         partes.append("## git HEAD\n" + _run(["git", "log", "-1", "--oneline"]))
         partes.append("## branch\n" + _run(["git", "status", "-sb"]))
     else:
-        partes.append("## git\n(este diretório ainda NÃO é um repo git — "
-                      "reconciliação F0 pendente; não inventar branch/commit)")
+        partes.append("## git\n(este diretório não é um repo git — verificar; o repo "
+                      "canônico tem git desde 2026-11, branch main; não inventar branch/commit)")
     return "\n\n".join(partes)
 
 
@@ -193,10 +198,10 @@ def buscar_codigo(padrao: str, glob: str = "*.md") -> str:
 def git_status() -> str:
     """Status git + remotes + últimos 8 commits (ou aviso claro se não é repo git)."""
     if not _eh_git():
-        return ("Este diretório ainda NÃO é um repo git.\n"
-                "Reconciliação (F0) pendente: o tuttibom-ops local da VM também "
-                "não é repo git (publicação por snapshot no GitHub) e o blueprint "
-                "no PC nasceu fora do git. Não criar repo/branch aqui sem a F0.")
+        return ("Este diretório não é um repo git.\n"
+                "Verificar: o repo canônico tem git desde 2026-11 (main, remoto "
+                "GitHub jvmendesjr/tuttibom-ops). Não criar repo/branch aqui sem "
+                "conferir onde está o repo canônico.")
     return "\n\n".join(
         [
             "## status\n" + _run(["git", "status", "-sb"]),
@@ -224,28 +229,34 @@ def ler_doc(caminho: str) -> str:
 @mcp.tool()
 def onde_esta_tudo() -> str:
     """Mapa de onde fica cada coisa do TuttiBom (repo, docs, memórias externas, painel). Só leitura."""
+    # Mapa calculado, não fixo: o que era texto fixo ("ainda sem git",
+    # "ainda não existe no PC") ficou desatualizado e fazia todo agente novo
+    # sinalizar uma falha que não existia. Conferir no disco a cada chamada.
+    git_txt = "git, branch `main`, remoto GitHub `jvmendesjr/tuttibom-ops`" if _eh_git() else "sem git — verificar"
+    fila_txt = "`ops/fila-publicacao.md`" + (" (existe)" if (ROOT / "ops/fila-publicacao.md").is_file() else " (ainda não existe)")
+    cat_txt = "`catalogo/produto-fita-cetim.md`" + (" (existe)" if (ROOT / "catalogo/produto-fita-cetim.md").is_file() else " (ainda não existe)")
     return f"""# Onde está tudo — TuttiBom (tuttibom-mcp {VERSAO})
 
 | O quê | Onde | Como acessar |
 |---|---|---|
-| Repositório (PC, ainda sem git) | `{ROOT}` | `arvore`, `git_status`; F0 pendente |
+| Repositório (PC) | `{ROOT}` — {git_txt} | `arvore`, `git_status` |
 | Blueprint | `docs/blueprint-inicial.md` (§15 = Paperclip) | `ler_doc`, `estado` |
 | Roadmap | `docs/roadmap.md` (F0–F8, decisões) | `roadmap` |
 | Decisões canônicas | `docs/decisoes/D-*.md` | `decisoes` |
 | Propostas (não canônicas) | `docs/propostas/<tema>/` | `propostas` |
 | Operação / clientes MCP | `docs/operacao/` | `ler_doc` |
-| Fila de publicação | `ops/fila-publicacao.md` (ainda não existe no PC) | `fila_publicacao` |
-| Catálogo (fita de cetim) | `catalogo/produto-fita-cetim.md` (ainda não existe no PC) | `catalogo` |
+| Fila de publicação | {fila_txt} | `fila_publicacao` |
+| Catálogo (fita de cetim) | {cat_txt} | `catalogo` |
 | Regras para agentes | `AGENTS.md` | `ler_doc` |
 | Memória externa | Hindsight `http://127.0.0.1:8890` bank **`tuttibom`** | recall no início; retain no fim (sanitizado, sem dado de comprador) |
 | Memória de código | codebase-memory-mcp projeto **`TUTTIBOM`** | busca/grafo; reindex `mode full` (`docs/operacao/codebase-memory.md` quando existir) |
-| Painel / tarefas | Paperclip instância 3110 (tailnet) — empresa TuttiBom **ainda não criada** | roadmap F1 |
+| Painel / tarefas | Paperclip F1 CANCELADA 2026-11-05 (Deskcomm atende); painel reduzido adiado para após a produção inicial | `docs/plano-painel-v2.md` |
 | Modelos (LLM) | 9Router `http://127.0.0.1:20128/v1` (não o :20130 do PQBR2) | `config/modelos_9router.json` |
 | Código | `src/tuttibom/`, `config/`, `scripts/`, `tests/` | `arvore`, `buscar_codigo` |
 | Trabalho local | `work/` (gitignored) | não versionar |
-| Ferramentas externas (Magic Patterns, Pangram, Gamma, Framer, Runway, Higgsfield) | `docs/acesso-ferramentas.md`; chaves em `.env.ferramentas` (600, fora do git) | `scripts/com-ferramentas.sh mcporter call <ferramenta>.<ação>`; Higgsfield: `higgsfield` |
+| Ferramentas externas (Magic Patterns, Pangram, Gamma, Framer, Runway, Higgsfield) | `docs/acesso-ferramentas.md`; autenticação ÚNICA por ferramenta, já feita no PC (Magic Patterns por chave em `.env.ferramentas`; demais por OAuth no mcporter; Higgsfield só pela CLI) | `scripts/com-ferramentas.sh mcporter call <ferramenta>.<ação>`; Higgsfield: `higgsfield` |
 | Segredos | nunca em arquivo no repo; só por referência (nome) | NUNCA ler/expor via MCP |
-| S10 (conta da loja) | ponto de execução ADB = PC; pareamento por chave do PC | nunca IP/porta/código de pareamento em arquivo |
+| Conta da loja | Camofox é o navegador único (D-004); S10/ADB pausado | `docs/decisoes/D-004-*.md`; nunca IP/porta/código de pareamento em arquivo |
 | PQBR2 (modelo) | `/home/pc/Workspace/PQBR2` | só referência; não editar |
 
 Ao terminar: `checklist_fim_operacao`.
@@ -285,9 +296,9 @@ def checklist_fim_operacao() -> str:
         if sujos:
             linhas.append("\n```\n" + "\n".join(sujos[:60]) + "\n```")
     else:
-        linhas.append("\n## Situação atual\n⚠ diretório ainda NÃO é repo git (F0 pendente) — "
-                      "não há status/commit para checar; documentar a mudança no "
-                      "blueprint/roadmap e, quando houver repo, commitar.")
+        linhas.append("\n## Situação atual\n⚠ diretório sem repo git — "
+                      "verificar; o repo canônico tem git desde 2026-11; "
+                      "documentar a mudança no blueprint/roadmap e, quando houver repo, commitar.")
     return "\n".join(linhas)
 
 
@@ -322,9 +333,8 @@ def fila_publicacao() -> str:
     try:
         return _ler("ops/fila-publicacao.md")
     except FileNotFoundError:
-        return ("(ops/fila-publicacao.md ainda NÃO existe neste diretório no PC.\n"
-                "A fila vive no tuttibom-ops local da VM / GitHub e ainda não foi "
-                "trazida para cá (F0). Não inventar itens de fila.)")
+        return ("(ops/fila-publicacao.md não encontrado neste diretório.\n"
+                "Não inventar itens de fila.)")
 
 
 @mcp.tool()
@@ -333,9 +343,8 @@ def catalogo() -> str:
     try:
         return _ler("catalogo/produto-fita-cetim.md")
     except FileNotFoundError:
-        return ("(catalogo/produto-fita-cetim.md ainda NÃO existe neste diretório no PC.\n"
-                "O catálogo vive no tuttibom-ops local da VM / GitHub e ainda não foi "
-                "trazido para cá (F0). Não inventar preços ou especificações.)")
+        return ("(catalogo/produto-fita-cetim.md não encontrado neste diretório.\n"
+                "Não inventar preços ou especificações.)")
 
 
 def main() -> None:

@@ -40,6 +40,13 @@ Estado curto: `docs/ESTADO.md`.
 
 Config de clientes MCP: `docs/operacao/mcp-clients.md`.
 
+**Autenticação das ferramentas externas: UMA por ferramenta, já feita no
+PC** — ver `docs/acesso-ferramentas.md`. O agente usa como está e NUNCA
+pede, cria ou usa token de outro agente; variável ausente no
+`.env.ferramentas` não significa sem acesso (a maioria autentica por
+OAuth no mcporter). Se uma ferramenta responder sem acesso, registrar
+como bloqueio, não improvisar outra via.
+
 ## Desenvolvimento por agentes — regra de delegação (2026-11-13)
 
 - **O Muse implementa tudo ele mesmo.** O desenvolvimento/código/debug é feito pelo Muse diretamente; nada vai para o Cursor (nem para o Agy) até o usuário pedir explicitamente para delegar. Quando o usuário pedir, o agente delegado é o Cursor no PC, via terminal `cursor agent`, usando a cota do Cursor do usuário; o Muse escreve os roteiros/tarefas (briefs em `/tmp/brief-*.md`), revisa os resultados e coordena.

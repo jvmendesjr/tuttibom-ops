@@ -17,11 +17,21 @@ Ler antes de qualquer tarefa no projeto Framer.
 ## Layout — a lição da sobreposição (2026-11-17)
 
 - As seções da Home foram construídas sobrepostas (print do usuário): textos
-  por cima de cartões, respiro zerado. Causa: stacks com gap 0 entre seções.
-- **"siblings too close" do linter é bug real, não aviso cosmético.** Seções
-  em stack vertical precisam de gap explícito; cada seção, de padding próprio.
-- Depois de qualquer ajuste de layout, verificar lendo a árvore: gaps maiores
-  que zero, nenhuma seção invadindo a outra, nenhum aviso restante.
+  por cima de cartões, respiro zerado.
+- **Causa real (confirmada na árvore): o programa de construção criava os
+  stacks sem declarar altura, e o Framer aplicava a altura padrão do FrameNode
+  — 100 px fixos — em cada seção.** O conteúdo (500–1500 px por seção)
+  transbordava com overflow visível para dentro da seção seguinte. O gap 0
+  entre as seções NÃO era a causa (só fazia as seções se tocarem) e o aviso
+  "siblings too close" era sintoma, não causa.
+- **Regra: todo FrameNode de stack precisa de `height: "auto"` (fit content)
+  ou de altura explícita intencional — nunca deixar a altura em branco**,
+  porque o padrão de 100 px quebra a página inteira silenciosamente.
+  Correção feita por patch (174 nós, `100px` → `auto`, sem reexecutar os
+  programas de construção): 0 ocorrências de `100px` restantes, linter vazio.
+- Depois de qualquer ajuste de layout, verificar lendo a árvore: alturas
+  `auto` onde o conteúdo manda, gaps maiores que zero, nenhuma seção invadindo
+  a outra, nenhum aviso restante.
 - Só o breakpoint Desktop (1200 px) foi construído; mobile e tablet herdam o
   empilhamento — revisar no editor antes de publicar.
 

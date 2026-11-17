@@ -15,6 +15,7 @@ reutilizando o PQBR2 como modelo e descartando o que não faz sentido aqui
 |---|---|
 | Estrutura (`company/`, `config/`, `src/`, `scripts/`, `tests/`, `work/`, `docs/`) | **feito** |
 | `tuttibom-mcp` stdio só leitura, 12 tools | **feito** (testado; ver `docs/operacao/mcp-clients.md`) |
+| Ferramentas externas (Magic Patterns, Pangram, Gamma, Framer, Runway, Higgsfield) | **feito 2026-11-17** — autenticadas no PC; `mcporter` + CLI `higgsfield`; chaves em `.env.ferramentas` (600, fora do git); apontadas no `AGENTS.md` e no `tuttibom-mcp` (instruções + `onde_esta_tudo`); guia `docs/acesso-ferramentas.md` |
 | Hindsight bank `tuttibom` | **feito** (limpo, separado de `pqbr2`) |
 | codebase-memory projeto `TUTTIBOM` (mode full) | **feito** (indexado) |
 | Paperclip empresa TuttiBom (3110) | **não criado** (F1) |

@@ -1,6 +1,6 @@
 # Pesquisa: catálogo de impressão 3D da TuttiBom
 
-Data da coleta: 16/11/2026 (America/Sao_Paulo, UTC-3). Atualizado em 16/11/2026 com a expansão de Formatura, Natal e vela de LED, e com a decisão de NFC. Situação: rascunho para o José escolher. Este documento **não define preço de venda da TuttiBom**: os valores abaixo são o que o mercado pratica.
+Data da coleta: 16/11/2026 (America/Sao_Paulo, UTC-3). Atualizado em 16/11/2026 com a expansão de Formatura, Natal e vela de LED, com a decisão de NFC, e com o top 5 religioso adiantado no site (revisão do José depois). Situação: rascunho para o José escolher. Este documento **não define preço de venda da TuttiBom**: os valores abaixo são o que o mercado pratica.
 
 ## Como foi feito
 
@@ -215,6 +215,22 @@ Relacionado, já estava no levantamento: **#29** [Custom Name Christmas Ornament
 
 - Modelos rejeitados na triagem (exemplos): tampas com marca Stanley, personagem Flork, Star Wars, lanternas de Halloween, presépios com licença BY-NC.
 - **NFC:** ver item 12 e #5–7 — **fora: sem NFC**.
+
+## Top 5 religiosos (16/11/2026)
+
+Adiantado no site e nos anúncios por decisão do José (t39u), com revisão dele depois. Fonte: seção "Religiosos (16/11/2026)" em `docs/referencias-reels-3d.md` (commit `ed707b8`). Licenças lidas na API pública do MakerWorld em 16/11/2026. No site, o crédito de CC BY e CC BY-ND aparece na ficha do card. Sem preços.
+
+**Regra de atribuição:** CC BY e CC BY-ND pedem crédito ao criador (ficha do produto e/ou site). CC0 não exige atribuição. CC BY-ND: vender a peça **como está**, sem personalizar o STL (sem gravar nome no modelo). A fita ou a tag da TuttiBom vai na embalagem, não no arquivo. Peça com nome, data ou versículo só entra em modelo que permita adaptação (CC0, BY, BY-SA) ou em desenho próprio.
+
+| # | Nome no catálogo | Modelo (autor) | URL | Licença | Como personalizar / restrição | Cabe na Kobra X |
+|---|---|---|---|---|---|---|
+| R1 | Presépio Sagrada Família | Holy Family – Minimalist Nativity Scene (@kayocavalcantte) | https://makerworld.com/en/models/2209571-holy-family-minimalist-nativity-scene | Vendável (**CC BY**, citar o autor) | Cor; CC BY permite base com o nome da família. Crédito: @kayocavalcantte. | Cabe. 1 cor. Sem LED. |
+| R2 | Presépio porta-vela de LED | Nativity Scene Tealight Holder (@user_2448622146) | https://makerworld.com/en/models/1995883-nativity-scene-tealight-holder | Vendável (**CC BY-ND**, citar o autor). O autor escreve “Free for commercial use.” | Venda **como está**. **Não** personalizar o STL. Fita TuttiBom na embalagem. Só vela de LED (já confirmada). Crédito: @user_2448622146. | Cabe. 1 peça, 1 cor, sem suporte. |
+| R3 | Terço e Medalha Milagrosa | Rosary – 5 Decades – On Card (@Catholic) + Miraculous Medal (@Catholic) | https://makerworld.com/en/models/422571-rosary-5-decades-on-card-for-organization e https://makerworld.com/en/models/421454-miraculous-medal | Vendável (**CC0**, sem atribuição obrigatória) | Cor; dá para imprimir só uma **dezena** (10 contas + 1 grande + cruz) como lembrancinha de batizado. A medalha pode ir com argola. | Cabe. 1–2 cores. Furo das contas 1,75 mm, para cordão. |
+| R4 | Placa de batizado, comunhão ou crisma | Desenho próprio da TuttiBom (nome, data, versículo, cruz ou pomba) | — | Sem licença de terceiro. A fonte usada precisa permitir uso comercial (ex.: Google Fonts/OFL). | Personalização máxima sob demanda, o mesmo ofício da árvore de nomes. Não usar o STL exclusivo de terceiros (ex.: 2762193). | Cabe. 1–2 cores. Sem LED. |
+| R5 | Chaveiro Padre Cícero | Padre Cicero – Chaveiro (TioLira) (@tiolira) | https://makerworld.com/en/models/3276192-padre-cicero-keychain-tiolira | Vendável (**CC BY-ND**, citar o autor) | Venda **como está**, com crédito a @tiolira. **Não** gravar nome ou contato no modelo. Estátua de prateleira: só desenho tradicional próprio, nunca o modelo “Funko” (3274013, Standard). | Cabe. 1–2 cores. Sem LED. Romarias de Juazeiro. |
+
+Os três presépios do site não se confundem: o **modular** (N9, 2069263, CC BY) fica em Natal; o **Sagrada Família** (R1) e o **porta-vela** (R2) ficam em Religiosos.
 
 ## Mercado local e regional
 

@@ -6,7 +6,7 @@ Geração: Magic Patterns `generate_image`, OS `1bQLQVdU8LfJL1sqGFexPU`, convers
 Regras comuns a todas as imagens: **IA: sim**. Sem foto real. Sem texto pedido na cena (a ferramenta do Magic Patterns deforma letra). Sem logo, marca d’água ou personagem de terceiro. Paleta pérola `#F6EDE3`, dourado `#C9A227`, pinho discreto, rosa bebê suave. Fotos de MakerWorld serviram só como referência de forma, não foram copiadas.
 **Pangram: pendente** em todas (textos e imagens), até existir `PANGRAM_API_KEY`.
 
-Cada peça tem dois recortes: `*-1080x1080.jpg` (centro) e `*-1080x1350.jpg` (recorte 4:5, um pouco mais do topo). Originais no CDN do Magic Patterns, listados abaixo.
+Cada peça tem dois recortes: `*-1080x1080.jpg` (centro) e `*-1080x1350.jpg` (recorte 4:5, um pouco mais do topo). Originais no CDN do Magic Patterns, listados abaixo. Exceção: `fitas-escala-15-22` foi recomposta de forma determinística nas duas proporções (o 1080×1080 não é um recorte do 1080×1350); ver a linha e a nota de medição.
 
 O metadata das imagens no OS não guarda o texto exato da chamada `generate_image`. A coluna “Prompt (cena pedida)” reconstitui a cena que foi pedida na geração, a partir do briefing e do produto.
 
@@ -39,11 +39,25 @@ O metadata das imagens no OS não guarda o texto exato da chamada `generate_imag
 | placa-religiosa | Placa de batizado, comunhão ou crisma | Cream standing plaque with a raised cross and dove, smooth blank panel (no letters), gold edge, blush ribbon, respectful still life. | Desenho TuttiBom (sem STL de terceiro) | https://cdn.magicpatterns.com/patterns/generated-images/eb3d95c9-21a2-4b04-bd9d-b0ebf24b0cd2.jpg |
 | chaveiro-padre-cicero | Chaveiro Padre Cícero | Small stylized 3D-printed keychain of Padre Cícero, adult proportions, traditional hat and cassock, visible print layers, not a photograph, not Funko, no engraved name, blush ribbon. (Houve uma 1ª geração mais infantil; usamos a 2ª.) | [3276192](https://makerworld.com/en/models/3276192-padre-cicero-keychain-tiolira) — CC BY-ND, @tiolira (peça como está) | https://cdn.magicpatterns.com/patterns/generated-images/592b6788-5123-43c0-a9d2-d6b07ef7494b.jpg |
 
-| fitas-escala-15-22 | Escala das fitas 15 mm e 22 mm | Top-down still life of two narrow blush satin gift ribbons in true relative scale beside a Brazilian 1-real coin (27 mm), 15 mm thinner, 22 mm slightly narrower than the coin, no lettering, no sash. | Fitas TuttiBom (não é modelo MakerWorld). Só 15 mm e 22 mm. | https://cdn.magicpatterns.com/patterns/generated-images/9d226e6c-791d-4290-b2df-7724a0c62c0c.jpg |
+| fitas-escala-15-22 | Escala das fitas 15 mm e 22 mm | **Escala verificada por medição (16/11/2026).** A imagem gerada por IA tinha a proporção errada: o anel externo da moeda de R$ 1 mede 331,00 px na foto original (não ~245 px; essa leitura subestimava o anel dourado, e a moeda encostava na borda direita), e as fitas mediam 157,0 px (~12,8 mm) e 274,4 px (~22,4 mm), razão 1,75 em vez de 22/15 = 1,47. Recomposta de forma determinística com Python/PIL: altura da fita = 15 ou 22 × (diâmetro medido / 27), com rótulos discretos «15 mm», «22 mm» e «moeda de R$ 1 = 27 mm». No JPEG final 1080×1350: moeda 330,50 px (12,2407 px/mm), fita 15 mm = 183,35 px (14,98 mm), fita 22 mm = 268,89 px (21,97 mm), razão 1,4665 (alvo 1,4667). A moeda e o linho vêm da foto de origem; as fitas foram desenhadas na escala medida, sem confiar na IA para a largura. | Fitas TuttiBom. Só 15 mm e 22 mm. | Foto de origem (moeda e linho): https://cdn.magicpatterns.com/patterns/generated-images/9d226e6c-791d-4290-b2df-7724a0c62c0c.jpg |
 | fitas-arvore | Fitas na árvore de Natal | Christmas tree with narrow blush and cream satin gift ribbons and small bows, never a wide sash, no lettering. | Fitas TuttiBom, 15 mm ou 22 mm. | https://cdn.magicpatterns.com/patterns/generated-images/6b83d081-4259-470b-a5a6-f74464758263.jpg |
 | fitas-presentes | Laços em presentes | Cream gift boxes tied with narrow blush satin ribbons and bows, pine sprig, Christmas table, no lettering. | Fitas TuttiBom, 15 mm ou 22 mm. | https://cdn.magicpatterns.com/patterns/generated-images/d1c45108-5e50-4982-bc6e-950b5bc9bcfa.jpg |
 | fitas-peca-3d | Fita numa peça 3D | Small cream 3D-printed box tied with a narrow blush satin ribbon, pine, Christmas mood, no lettering. | Fita TuttiBom em peça 3D. | https://cdn.magicpatterns.com/patterns/generated-images/f21aefed-f772-48ca-b6a6-b51018c22bc3.jpg |
 | fitas-embalagem | Fita na embalagem | Cream paper wrapping or bag closed with a narrow blush satin bow, gold bauble and pine, no lettering. | Fitas TuttiBom, 15 mm ou 22 mm. | https://cdn.magicpatterns.com/patterns/generated-images/89967ae3-2cba-437e-916f-f8b2d964eb7f.jpg |
+
+
+## Escala das fitas — medição (16/11/2026, America/Sao_Paulo)
+
+`fitas-escala-15-22` é a única peça desta pasta cuja proporção foi corrigida fora do gerador de imagens. Método: detecção do anel dourado externo da moeda de R$ 1 (27 mm) por transição de cor ao longo de 360 raios; diâmetro na fonte = 331,00 px; fitas sintéticas com textura de cetim da própria foto, na altura 15 × (331/27) e 22 × (331/27); verificação no arquivo final.
+
+| Arquivo | Moeda (px) | Fita 15 mm (px / mm) | Fita 22 mm (px / mm) | Razão |
+|---|---|---|---|---|
+| fonte IA (antes) | 331,00 | 157,0 / 12,81 | 274,4 / 22,38 | 1,75 |
+| `fitas-escala-15-22-1080x1350.jpg` | 330,50 | 183,35 / 14,98 | 268,89 / 21,97 | 1,4665 |
+| `fitas-escala-15-22-1080x1080.jpg` | 330,50 | 183,35 / 14,98 | 268,88 / 21,97 | 1,4665 |
+
+Alvo: 22/15 = 1,4667. Desvio da moeda no arquivo final: 0,50 px (0,15 %). As faixas CSS da página `/fitas` repetem 15 mm e 22 mm em proporção (não são tamanho físico garantido em qualquer tela). As fotos decorativas (árvore, presentes, peça 3D, embalagem) não pretendem ser escala; foram revistas e não mostram fita larga tipo faixa, então não foram trocadas.
+
 
 Contagem: 30 stems × 2 tamanhos = **60 arquivos JPEG**, mais este `manifest.md`.
 

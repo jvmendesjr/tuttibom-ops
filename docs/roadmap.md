@@ -1214,3 +1214,24 @@ framer, runway e magic-patterns; `higgsfield account status` = plano pro;
 **Resta (opcional):** `PANGRAM_API_KEY` e `GAMMA_API_KEY` vazias (só
 para uso por script); Claude Code, Cursor e Gemini pedem o próprio login
 `/mcp` no primeiro uso. Geração que gasta crédito só quando a tarefa pedir.
+
+## 14. Fase — Frente social: identidade visual (D-009) — em andamento 2026-11-17
+
+Decisão: `docs/decisoes/D-009-2026-11-17-identidade-visual-logo.md`. Página oficial: D-008 (página `100089750066330`; o outro ID dela, `143473822920252`, é o que o Zernio usa — é a mesma Página). Pangram como etapa fixa de qualidade: D-007 (texto público passa pelo detector antes da aprovação do usuário). Detalhe no `docs/ESTADO.md`, seção "Frente social".
+
+**Feito:**
+- Família de logo em estilo selo (Cormorant Garamond; lacre #3E241C, pergaminho #F6EBD8, ouro #C9A15B, fita #C45C32). Board `4sv1smovt25gtjegmhdhbq` é a referência fixa; o site usa os componentes copiados verbatim.
+- Capa + foto de perfil prontas (Magic Patterns `oa6jym3ubfzkmwqd4lrydc`, artefato `b4f96dc8-…`): capa = `capa-A3b.png` original (SHA-256 confere) com o wordmark novo; perfil = monograma TB. Usuário: "vamos deixar assim".
+- Site protótipo no Magic Patterns (editor `7fm8x7puzjvafafgwpjwm2`, artefato `43a5f6f4-…`): home, `/3d`, `/fitas`; CTAs para o WhatsApp (Ana), sem preço. Tema de Natal até o Natal.
+- ID da página confirmado (2026-11-17): `100089750066330` = `143473822920252`, mesma Página.
+
+**Falta concluir (próxima fase, nesta ordem):**
+- [ ] Aplicar capa A3b com logo novo + foto de perfil (monograma TB) no Facebook, quando o `profile-fb` for liberado. Antes: corrigir o `scripts/fb_trocar_capa.py` (ainda mira `tuttibom10`, perfil pessoal) para apontar para a página oficial.
+- [ ] Trocar a bio da página para WhatsApp/site.
+- [ ] Publicar o site no Framer (Framer já autenticado).
+- [ ] Chave do Pangram (textos e imagens).
+- [ ] Recuperar o acesso do Instagram.
+- [ ] Refazer os posts F1-02 com as imagens de Natal.
+- [ ] Aguardar a aprovação da renomeação da página (Facebook, até 3 dias a partir de 2026-11-17 ~10:16) e verificar se o nome virou **TuttiBom**.
+
+Depois da identidade visual, continuar o restante do roadmap (itens abertos do checklist §6 e próximos passos do `docs/ESTADO.md`).

@@ -28,13 +28,13 @@ Quando o Instagram estiver ligado à Página, o botão de WhatsApp pode entrar l
 
 ## Arquitetura
 - Home (`/`) com 4–6 destaques de impressão 3D e o botão **Ver catálogo 3D**.
-- Página própria `/3d` (`Catalog3dPage`), no mesmo protótipo (react-router-dom 6.30.2), para o catálogo não sobrecarregar a home.
+- Página própria `/3d` (`Catalog3dPage`) e página `/fitas` (`CatalogFitasPage`), no mesmo protótipo (react-router-dom 6.30.2).
 - O chaveiro NFC **não entra** no site: José confirmou em 16/11/2026 que não tem tags NFC. No doc do catálogo o item ficou marcado **fora: sem NFC**.
 
 ## Seções da home (em ordem)
-1. Header: estrela dourada + wordmark TUTTIBOM + pílula "Chama no WhatsApp". Âncoras: Fitas `/#fitas`, Impressão 3D `/3d`, Como pedir `/#como-pedir`.
+1. Header: estrela dourada + wordmark TUTTIBOM + pílula "Chama no WhatsApp". Links: Fitas `/fitas`, Impressão 3D `/3d`, Como pedir `/#como-pedir`.
 2. Hero: "TUTTIBOM · CRATO-CE · TEMPORADA DE NATAL" / "Fitas personalizadas & impressão 3D" / "Detalhes feitos para a sua ocasião — também no Natal, no Cariri." / botão "Chama no WhatsApp" + link "Ver o que fazemos" para `#destaques-3d`. Imagem nova de natureza-morta de Natal (IA).
-3. O que fazemos: cards Fitas personalizadas e Impressão 3D; o card 3D leva a `/3d` com o botão "Ver catálogo 3D", além do CTA de WhatsApp da linha.
+3. O que fazemos: cards Fitas personalizadas e Impressão 3D; o card 3D leva a `/3d` ("Ver catálogo 3D"); o de fitas leva a `/fitas` ("Ver fitas") e tem um rodapé discreto do bloco padrão de larguras (texto só, sem a foto, para não poluir).
 4. Destaques 3D (6 cards): bola de Natal com nome, porta-vela árvore, lanterna natalina, topo de bolo, capelo de formatura e caixinha, cada um com "Chama no WhatsApp" e mensagem pronta da peça; botão "Ver catálogo 3D" no fim do bloco.
 5. Para cada ocasião (grade 2×3): Aniversário, Chá de bebê, Casamento, Empresas, Formatura, Natal. Cada card abre o WhatsApp com a ocasião.
 6. Como pedir em 3 passos: Chama no WhatsApp → A gente monta a ideia com você → Produção e entrega combinadas (pelo WhatsApp).
@@ -50,15 +50,22 @@ Quando o Instagram estiver ligado à Página, o botão de WhatsApp pode entrar l
 - Itens do levantamento ainda sem imagem exclusiva ficam só em `docs/pesquisa-catalogo-3d.md`, não como card.
 - CTA final de WhatsApp no rodapé da página.
 
+## Página `/fitas`
+
+- Catálogo de fitas personalizadas, tema de Natal (árvore, presentes, peça 3D, embalagem). Sem preço, sem comprimento de rolo, sem outras larguras além das listadas.
+- A **única referência de tamanho** é o bloco padrão `FitasLargurasPadrao` na parte inferior da página, antes do rodapé: a foto medida `fitas-escala-15-22` (commit `ff8a23b`) e o texto curto «Larguras disponíveis: 15 mm e 22 mm» e «moeda de R$ 1 = 27 mm».
+- As larguras vivem em `FITAS_LARGURAS` em `data/site.ts`; tamanho futuro entra só adicionando um item. Não há faixas CSS de proporção nem outra imagem de escala no site.
+- Prints do bloco: `/workspace/tuttibom/site/prototipo-mobile-fitas-padrao.png` e `prototipo-desktop-fitas-padrao.png`.
+
 ## Regras de conteúdo (verificadas no código)
-- Sem preços, sem medidas, prazos, materiais, números de clientes, avaliações ou depoimentos.
+- Sem preços, prazos, materiais, números de clientes, avaliações ou depoimentos. As únicas medidas no site são as larguras de fita (15 mm e 22 mm) e a referência da moeda de R$ 1 (27 mm), só no bloco padrão de `/fitas` (e no rodapé discreto do card de fitas da home).
 - Todos os CTAs do site (hero, pílula do header, barra fixa, cards de produto, cards de ocasião, "Como pedir", CTA final e rodapé) apontam para `https://wa.me/<número da sessão tutibom>?text=<mensagem url-encoded>` (função `whatsappUrl` e constante `WHATSAPP_NUMBER` em `data/site.ts`). Mensagens prontas, sem preço, por seção ou por peça. Texto do botão: "Chama no WhatsApp".
 - Redes sociais → `#PLACEHOLDER`.
 - O número no `wa.me` é o comercial público da loja (sessão WAHA `tutibom`, org `deskcomm-local`, conferido em 16/11/2026 por GET em `/api/sessions/tutibom/me` e na tabela `channel_sessions`). Não é dado pessoal de cliente.
 - Aviso de IA em dois pontos (galeria e rodapé).
 
 ## Imagens
-- Todas geradas por IA no Magic Patterns (`generate_image`, OS `1bQLQVdU8LfJL1sqGFexPU`, conversa `tuttibom natal`), CDN `cdn.magicpatterns.com/patterns/generated-images/...`. Nenhuma foto real. Fotos de MakerWorld serviram só como referência de forma, não foram copiadas; sem logos ou marcas d'água de terceiros.
+- Quase todas geradas por IA no Magic Patterns (`generate_image`, OS `1bQLQVdU8LfJL1sqGFexPU`, conversa `tuttibom natal`), CDN `cdn.magicpatterns.com/patterns/generated-images/...`. A foto de escala `fitas-escala-15-22` foi recomposta de forma determinística (PIL) sobre a foto de origem e verificada por medição (commit `ff8a23b`); é a única referência de tamanho. Nenhuma foto real da loja. Fotos de MakerWorld serviram só como referência de forma, não foram copiadas; sem logos ou marcas d'água de terceiros.
 - 20 imagens no total (hero, fitas, e 18 peças / cenas). Arquivo para anúncio em `criativos/anuncios/2026-11-natal/` (1080×1080 e 1080×1350) com `manifest.md`.
 - Observações de geração (não impedem o uso): o potinho capelo saiu com suculenta; o topo de bolo lembra bolo de casamento de dois andares, com placa em branco; a caixinha ficou mais rendada do que uma caixa dobrável simples; a placa de Natal é um pouco mais gráfica. A ferramenta de imagem do Magic Patterns não recebe pedido de texto na cena, porque o texto sai ilegível.
 - Pangram: pendente (textos e imagens), quando `PANGRAM_API_KEY` existir.
@@ -69,7 +76,7 @@ Quando o Instagram estiver ligado à Página, o botão de WhatsApp pode entrar l
 - Canva Print Shop — "How it works" em 3 passos para produto impresso: https://mobbin.com/screens/86ec3ab9-7b80-423d-ba57-1525c07b63db
 
 ## Pendências
-- José revisar o protótipo no editor (home + `/3d`, identidade de Natal, catálogo sem NFC) e aprovar copy/seções.
+- José revisar o protótipo no editor (home + `/3d` + `/fitas`, identidade de Natal, catálogo sem NFC, bloco padrão de larguras) e aprovar copy/seções.
 - Trocar, no futuro, parte das imagens por fotos reais autorizadas da peça impressa pela TuttiBom (por enquanto, só IA).
 - Links reais de Facebook/Instagram (o WhatsApp do site já usa o número da sessão `tutibom`).
 - Botão da Página do Facebook e legendas continuam no Messenger até outra decisão.

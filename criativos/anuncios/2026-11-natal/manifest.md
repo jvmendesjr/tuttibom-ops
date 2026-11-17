@@ -56,7 +56,7 @@ O metadata das imagens no OS não guarda o texto exato da chamada `generate_imag
 | `fitas-escala-15-22-1080x1350.jpg` | 330,50 | 183,35 / 14,98 | 268,89 / 21,97 | 1,4665 |
 | `fitas-escala-15-22-1080x1080.jpg` | 330,50 | 183,35 / 14,98 | 268,88 / 21,97 | 1,4665 |
 
-Alvo: 22/15 = 1,4667. Desvio da moeda no arquivo final: 0,50 px (0,15 %). As faixas CSS da página `/fitas` repetem 15 mm e 22 mm em proporção (não são tamanho físico garantido em qualquer tela). As fotos decorativas (árvore, presentes, peça 3D, embalagem) não pretendem ser escala; foram revistas e não mostram fita larga tipo faixa, então não foram trocadas.
+Alvo: 22/15 = 1,4667. Desvio da moeda no arquivo final: 0,50 px (0,15 %). As faixas CSS de proporção foram removidas da `/fitas`. No site, esta foto (bloco padrão no rodapé da página, componente `FitasLargurasPadrao`) é a única referência de tamanho. As fotos decorativas (árvore, presentes, peça 3D, embalagem) não pretendem ser escala; foram revistas e não mostram fita larga tipo faixa, então não foram trocadas.
 
 
 Contagem: 30 stems × 2 tamanhos = **60 arquivos JPEG**, mais este `manifest.md`.

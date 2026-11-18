@@ -306,3 +306,38 @@ nada editado, nada publicado, nenhum upload)
   acima da Amostra; v11 usa "transferência" enquanto # Limites diz "Nunca
   diga que vai transferir a pessoa para um humano" (compatíveis — momento
   interno vs. o que ela diz à lead; observar no teste).
+
+## Ana não responde no WhatsApp (2026-11-18 ~00:25) — causa raiz: o modelo
+
+Dois testes do usuário ("Oi teste" 00:25 e "Olá" 00:43, conversa
+3577efc6, Junior +5588997111267) receberam só o ack ("Só um instante" /
+"Vou verificar"). Investigação no log e no banco do 9Router:
+
+- O combo `core-medio` no 9Router hoje é UM modelo só:
+  `cu/cursor-grok-4.5-high` (Cursor AgentService; combo mexido na noite
+  de 17/11, última edição 2026-11-18 00:21 -03). Chamadas sem ferramentas
+  funcionam (Hermes, classificadores `jailbreak_detect` /
+  `stage_classifier` passam) — por isso o usuário achou que o combo
+  funcionava. Mas o turno da Ana anexa as ferramentas do Deskcomm e o
+  modelo rejeita com 400: "Cursor AgentService requested an unsupported
+  IDE tool" / "returned an empty turn" (`modelo_sem_ferramentas`).
+- Prova do turno real: o job `inbound_turn`
+  (d8ac5f8d-3ec8-425f-b47c-2b69168c821f) falhou e repetiu as tentativas
+  às 03:44–03:48 UTC com o mesmo 400. Os testes no modo teste
+  (`agent_preview`) falham igual. O RAG e a v12 não têm nada com isso.
+- Falso rastro: o `ai-response-worker` pula os turnos com
+  `agent_inactive_or_missing` (`workers/ai-response-worker.ts:776`) —
+  esse worker só atende agentes LEGADOS (`precisaRecuperarLegado`); a Ana
+  é `rag_bot` moderna, então ele declina corretamente. O turno real é do
+  `inbound_turn`, que é o que falha no modelo. O nome do motivo induz ao
+  erro; não é problema de atribuição.
+- Painel conferido e OK: Ana é o agente ativo da conversa (modo
+  Automático, acks assinados "IA · Ana"), roteador "Roteador TuttiBom"
+  ativo, WhatsApp "IA aberta ao público", chave 9Router validada,
+  "22 de 27 capacidades ligadas".
+- Correção pendente: trocar o modelo (combo `core-medio` no 9Router ou
+  modelo da Ana no painel) por um que aceite chamadas com ferramentas, e
+  testar no modo teste antes de testar no WhatsApp. Atenção: os modelos
+  com prefixo `cu/` (Cursor) podem ter o mesmo problema; os candidatos
+  fora do Cursor são `ag/gemini-3.8-flash-high` (core-alto) e os GLM de
+  `warp`/`factory` (core-baixo) — confirmar no modo teste, não assumir.

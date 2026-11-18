@@ -196,8 +196,12 @@ a v12-B (clique do usuário).
 ## v11 publicada (2026-11-17 ~22:17, pelo usuário)
 
 O usuário colou o texto da v11 (`d011-v11-prompt.txt`, 12.553 caracteres) no
-campo "As instruções dele" e publicou. Verificação do selo "Publicado v11"
-delegada (só leitura, print em `~/workspace/d011-painel/v11-publicada.png`).
+campo "As instruções dele" e publicou. **Verificação 22:20 — v11 CONFIRMADA
+publicada (só leitura):** selo "Publicado v11 (rascunho v5 superado)",
+contador 12.553/20.000 (~2.959 tokens), seção "# Canal" presente no texto
+e o trecho final da regra nova de horário visível; sem divergências. Prints
+em `~/workspace/d011-painel/v11-publicada.png` e
+`v11-publicada-canal.png`.
 **Mudança de plano (22:17): o usuário vai colar as demais ele mesmo** —
 v12-B e RAG passados no chat. Ordem: carregar o RAG (IA › Conhecimento →
 "+ Adicionar material" → Documento → nome "Prazos, pagamento e entrega" →

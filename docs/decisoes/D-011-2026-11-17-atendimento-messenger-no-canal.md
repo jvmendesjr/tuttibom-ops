@@ -131,3 +131,13 @@ Arquivo: `~/workspace/d011-trim-proposta.md` (transcrição + cortes + totais).
   reais, então seria uma versão separada de qualquer jeito. A esclarecer
   antes de cortar: "regras de contato do aplicativo" e item 5 de pagamento +
   "(fastest payout, 80)".
+
+## Espelho do texto v10 (2026-11-17 ~21:17)
+
+Texto completo colado pelo usuário no chat; salvo em
+`docs/ana-prompt-v10.md` (cópia literal do texto vivo no painel; fonte da
+verdade continua sendo o painel). Resolve as lacunas L1–L11 da revisão de
+enxugamento: "(fastest payout, 80)" era "D0"; item 5 de pagamento é "Never
+claim payment was received without confirmation."; "regras de contato do
+aplicativo" segue sem definição no prompt. Finalização da revisão de
+enxugamento encomendada com o texto completo.

@@ -204,7 +204,10 @@ v12-B e RAG passados no chat. Ordem: carregar o RAG (IA › Conhecimento →
 colar o texto em "...ou cole o texto aqui" → "Adicionar ao acervo" →
 preparar e confirmar "O agente já sabe", trechos > 0) e SÓ DEPOIS publicar
 a v12-B (mesmo fluxo da v11). Sem o RAG preparado, a Ana não tem de onde
-tirar os números de envio.
+tirar os números de envio. **Mudança 22:19: o usuário delegou a carga do
+RAG a mim** ("não sei mexer" nessa parte) — carga delegada ao painel
+(upload do arquivo já no PC), sem tocar no prompt e sem publicar nada; a
+publicação da v12-B continua sendo o clique do usuário.
 
 ## Verificação do mecanismo de carga do RAG (2026-11-17 ~22:09 — só leitura,
 nada editado, nada publicado, nenhum upload)

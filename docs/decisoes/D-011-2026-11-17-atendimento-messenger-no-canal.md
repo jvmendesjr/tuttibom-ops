@@ -103,3 +103,31 @@ início, você pode oferecer o WhatsApp como opção, mas nunca obrigue a pessoa
 a mudar de canal: se ela quiser continuar aqui, continue aqui."
 
 Prints da confirmação em `~/workspace/d011-painel/`.
+
+## Revisão de enxugamento (proposta, 2026-11-17 ~21:14 — nada aplicado)
+
+Arquivo: `~/workspace/d011-trim-proposta.md` (transcrição + cortes + totais).
+
+- **Cobertura: só ~46% do prompt** (5.729 de 12.448 caracteres). Entre as
+  capturas há saltos de ~12 linhas em média — bem mais que as "1–2 linhas"
+  relatadas na exploração. O corpo inteiro de "# Quem já conhece a loja" e
+  ~2/3 do bloco em inglês não foram capturados. Nenhum corte pode ser
+  proposto com segurança sobre os ~54% não vistos (lacunas L1–L11 no arquivo).
+- **7 cortes propostos.** Seguros (C1 estilo duplicado, C2 lista única,
+  C4a pechincha): 227 caracteres, ~1% — quase não movem o total. C3 (prova
+  escrita fundida): ~50, risco baixo. C4b ("regras de contato do aplicativo"):
+  49, risco médio — esclarecer o que são essas regras antes de cortar.
+- **O corte real é o 8A** (bloco de referência em inglês → PT-BR condensado,
+  texto já redigido): −25% na estimativa conservadora, até −51% no cenário
+  otimista; risco médio (condensação/tradução pode perder nuance; ~2/3 do
+  bloco não lidos). **8B** (tirar os números do prompt, deixar só nos
+  materiais): risco alto, NÃO recomendado sem verificar número por número e
+  testar — o prompt é o único lugar garantido em todo turno.
+- **A v11 aprovada é mais longa que a v10** (+140 caracteres). Com os cortes
+  seguros, volta a ~−1%.
+- **Recomendação:** publicar a v11 agora (desbloqueia o Messenger) e fazer o
+  enxugamento como v12 — o trim exige recaptura do texto completo (rolagem
+  em passos de ~200 px ou copiar o conteúdo do campo) e teste com turnos
+  reais, então seria uma versão separada de qualquer jeito. A esclarecer
+  antes de cortar: "regras de contato do aplicativo" e item 5 de pagamento +
+  "(fastest payout, 80)".

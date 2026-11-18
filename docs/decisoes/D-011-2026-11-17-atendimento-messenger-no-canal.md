@@ -192,6 +192,48 @@ confere exatamente as duas mudanças aprovadas). Messenger com IA pausada
 até a v12 estar publicada e testada. Nova sequência: (1) publicar a v11
 (clique do usuário); (2) carregar o RAG; (3) testar a v12-B; (4) publicar
 a v12-B (clique do usuário).
+
+## Verificação do mecanismo de carga do RAG (2026-11-17 ~22:09 — só leitura,
+nada editado, nada publicado, nenhum upload)
+
+- **Materiais vivem em IA › Conhecimento** (`/app/ai/knowledge/sources`,
+  página "O que o agente sabe") — não na página da Ana nem em Configurações.
+  Acervo atual: 4 materiais, 2 prontos — "Base de conhecimento TuttiBom"
+  (Documento, "O agente já sabe", 22 trechos, consultado por: Ana) e "FAQ
+  TuttiBom" (Perguntas e respostas, 16 trechos, Ana); "Memória por contato"
+  e "Conversas anteriores" estão "Ainda não preparado" (0 trechos).
+- **Como se adiciona:** "+ Adicionar material" → diálogo "Ensinar algo novo
+  ao agente", 4 tipos; **Documento**: "Envie o arquivo (PDF, Markdown, CSV
+  ou texto) ou cole o conteúdo" — até 20 MB, sem limite visível no campo de
+  colar. Botões "Cancelar" / "Adicionar ao acervo".
+- **O RAG pode ser carregado:** arquivo `.md`, 7.149 caracteres / 7.410
+  bytes, muito abaixo de 20 MB. Recomendado o upload (o painel guarda o
+  original, igual à "Base de conhecimento TuttiBom"). **Arquivo já no PC:**
+  `/tmp/d011-v12-rag-entrega.md`, sha256 `ffcddfca55f49c6abff1252c3e8fe92ab
+  0ea7156eff34235abe2fef74b98d3ff`, idêntico ao da VM.
+- **A Ana vai consultar o material novo:** capacidades "Consultar o que a
+  empresa já sabe" (`crm_search_knowledge`) e "Ver os materiais
+  cadastrados" (`crm_list_knowledge_sources`) já LIGADAS em Capacidades ›
+  "Aprender e evoluir". Não há seletor por material — a capacidade é a
+  porta, já ligada. O preparo é pela OpenAI (chave da instalação).
+- **Procedimento exato:** A) publicar a v11 (Ana → Configuração →
+  "Conversar com o cliente" → campo "As instruções dele" (12.448/20.000)
+  → colar a v11 → "Salvar rascunho" → "Publicar"; o selo deve passar a
+  "Publicado v11". B) carregar o RAG (IA › Conhecimento → "+ Adicionar
+  material" → Documento → nome "Prazos, pagamento e entrega" → upload de
+  `/tmp/d011-v12-rag-entrega.md` → "Adicionar ao acervo" → preparar
+  ("Preparar de novo" se não disparar sozinho) → confirmar "O agente já
+  sabe", trechos > 0 e "Consultado por: Ana"). C) publicar a v12-B (mesmo
+  fluxo de A, texto em `d011-v12-prompt.txt`, 7.250 caracteres — cabe no
+  limite de 20.000) e testar com turnos reais não-locais.
+- **Observações (não são bloqueios):** "Procurar produto na loja" está com
+  1 falha em Capacidades (1 de 4 tentativas, última 07/11) — pré-existente,
+  vale olhar antes do teste da v12, porque o prompt enxuto depende do
+  catálogo para preços. "Memória por contato" existe como material, mas
+  nunca foi preparada (0 trechos, nenhum assistente) — pendência conhecida.
+- Prints da verificação em `~/workspace/d011-painel/` (`v12-ana-top.png`,
+  `v12-conhecimento.png`, `v12-add-doc4.png`, `v12-add-doc5.png`,
+  `v12-ler-bc2.png`, `v12-ana-lista2.png`, `v12-ana-lista3.png`).
 - **Nuances:** C2 "confirme os dados acima" aponta para lista duas seções
   acima da Amostra; v11 usa "transferência" enquanto # Limites diz "Nunca
   diga que vai transferir a pessoa para um humano" (compatíveis — momento

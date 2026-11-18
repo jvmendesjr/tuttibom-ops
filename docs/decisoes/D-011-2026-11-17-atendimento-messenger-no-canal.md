@@ -213,6 +213,18 @@ RAG a mim** ("não sei mexer" nessa parte) — carga delegada ao painel
 (upload do arquivo já no PC), sem tocar no prompt e sem publicar nada; a
 publicação da v12-B continua sendo o clique do usuário.
 
+## v12-B publicada (2026-11-17 ~23:35, pelo usuário)
+
+O usuário colou o texto da v12-B (`d011-v12-prompt.txt`, 7.250 caracteres)
+no campo "As instruções dele" e publicou — selo "Publicado v12". O RAG já
+estava carregado e preparado desde ~22:53, então a publicação estava
+desbloqueada. Verificação do selo e do contador (7.250/20.000) em curso
+(só leitura, print em `~/workspace/d011-painel/v12-publicada.png`).
+Próximo: testar com turnos reais não-locais (PAC, SEDEX, Correios, cor a
+importar) e confirmar que a Ana responde com os números do RAG e que
+"Consultado por" passa a mostrar Ana; depois ligar a IA no canal Zernio
+(com aprovação, em horário acompanhável).
+
 ## RAG carregado e preparado (2026-11-17 ~22:53)
 
 - **Material "Prazos, pagamento e entrega" (Documento), "O agente já

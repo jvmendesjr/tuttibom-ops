@@ -66,6 +66,11 @@ específico para Messenger? Quem atende se a Ana cair?
 3. Sem API da Meta — Zernio + Deskcomm + Camofox são as formas alternativas;
    regras de plataforma da Meta (janela 24h, tags) são operacionais, não
    entram no texto do prompt.
+4. Sem frase negativa sobre 24h (correção do usuário, 2026-11-17 ~21:07) —
+   não precisa constar; ela atende sem restrição de horário; só a
+   transferência para responsável/especialista respeita o horário comercial.
+   Enxugar o prompt ao máximo para garantir atendimento rápido, sem perder
+   qualidade nem trazer risco ao atendimento.
 
 ## Base da v11 — pesquisa de melhores práticas (2026-11-17)
 
@@ -82,12 +87,14 @@ convergentes); divergência não resolvida sobre divulgação de IA no WhatsApp.
 
 ## Rascunho da v11 (proposta — aguardando aprovação do texto exato)
 
-Substituir a linha do horário por:
+Substituir a linha do horário por (revisado 2026-11-17 ~21:07 — fora a frase
+negativa sobre 24h):
 
-"Você atende naturalmente, a qualquer hora, e sempre responde na hora.
-Nunca diga que resolve tudo 24 horas por dia. Quando não souber algo ou o
-assunto estiver fora do seu escopo, diga simplesmente que não pode resolver
-isso e que vai falar com o responsável."
+"Você atende sempre que a pessoa escrever — não há restrição de horário
+para atender. Quando não souber algo ou o assunto estiver fora do seu
+escopo, diga que não pode resolver isso e que vai falar com o responsável;
+a transferência para o responsável ou especialista acontece no horário
+comercial."
 
 E acrescentar a regra de canal:
 

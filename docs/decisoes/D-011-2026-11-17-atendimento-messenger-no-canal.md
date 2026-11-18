@@ -173,6 +173,14 @@ riscos), `~/workspace/d011-v12-rag-entrega.md` (documento RAG),
   Correios, cor a importar, Mercado Pago, amostra, pechincha). Publicar o
   Fluxo A é item separado (quando publicado, a cadência passa a ser imposta
   pelo sistema).
+
+## v12-B aprovada (2026-11-17 ~21:43 — direto, sem publicar a v11)
+
+Sequência: (1) carregar o RAG como material da Ana no Deskcomm; (2) testar
+com turnos reais; (3) publicar a v12-B no painel (clique do usuário).
+Verificação do mecanismo de carga de material delegada às 21:43 (só leitura
+no painel, sem editar nada) — o procedimento exato volta para aprovação
+antes de qualquer carga.
 - **Nuances:** C2 "confirme os dados acima" aponta para lista duas seções
   acima da Amostra; v11 usa "transferência" enquanto # Limites diz "Nunca
   diga que vai transferir a pessoa para um humano" (compatíveis — momento

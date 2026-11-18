@@ -141,3 +141,39 @@ enxugamento: "(fastest payout, 80)" era "D0"; item 5 de pagamento é "Never
 claim payment was received without confirmation."; "regras de contato do
 aplicativo" segue sem definição no prompt. Finalização da revisão de
 enxugamento encomendada com o texto completo.
+
+## Proposta da v12 (2026-11-17 ~21:25 — nada aplicado, nada publicado)
+
+Arquivos: `~/workspace/d011-v12-proposta.md` (texto completo + variantes +
+riscos), `~/workspace/d011-v12-rag-entrega.md` (documento RAG),
+`~/workspace/d011-v12-prompt.txt` (texto puro da v12-B, pronto para colar).
+
+- **v12-B (recomendada): 7.250 caracteres, −42% vs v10** (v10: 12.448; v11
+  aprovada: 12.553, +1%; v12-A só cortes seguros: 12.186, −2%). Prompt com
+  comportamento + caminho rápido local; referência num só documento RAG
+  (7.149 caracteres).
+- **Vereditos finais:** C1 −90 (sem risco); C2 −62 (baixo); **C3 revisado:
+  NÃO fazer** (economiza 1 caractere); C4 −17 (C4a −67; C4b resolvido —
+  "siga as regras de contato do aplicativo" não tem definição em lugar
+  nenhum; o roteiro documenta a cadência "no máximo 3 toques em 2 dias,
+  sempre com algo útil, e pare quando a pessoa responder"; o Fluxo A ainda
+  é rascunho, então nada impõe a regra fora do prompt — a v12 escreve a
+  regra por extenso); C5 (novo, ressalva da amostra fundida) −198 (baixo);
+  **8A-novo −4.936** (bloco inglês 6.467 → PT-BR enxuto 1.531 + RAG).
+- **Correção:** "30–35 dias" de importação CONSTA em `docs/prazos.md` (a
+  busca anterior usou "30 a 35"). Os únicos números que só existiam no
+  prompt são os rótulos Tier A/B — passam a viver no RAG.
+- **Notas fora do prompt e fora do RAG** (vivem nos docs do projeto):
+  "Urgency fee NOT decided (25%)" → `docs/prazos.md`; "No real link can
+  carry a value until the Facebook price is decided" → status do projeto.
+- **Decisão pendente:** publicar a v11 agora ou aprovar a v12-B e publicar
+  ela direto (inclui as mudanças da v11 — publicar a v11 fica sem sentido).
+  Pré-requisitos da v12-B: carregar o RAG como material da Ana no Deskcomm
+  + testar com turnos reais (preço, prazo com/sem estoque, PAC, SEDEX,
+  Correios, cor a importar, Mercado Pago, amostra, pechincha). Publicar o
+  Fluxo A é item separado (quando publicado, a cadência passa a ser imposta
+  pelo sistema).
+- **Nuances:** C2 "confirme os dados acima" aponta para lista duas seções
+  acima da Amostra; v11 usa "transferência" enquanto # Limites diz "Nunca
+  diga que vai transferir a pessoa para um humano" (compatíveis — momento
+  interno vs. o que ela diz à lead; observar no teste).

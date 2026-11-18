@@ -213,6 +213,42 @@ RAG a mim** ("não sei mexer" nessa parte) — carga delegada ao painel
 (upload do arquivo já no PC), sem tocar no prompt e sem publicar nada; a
 publicação da v12-B continua sendo o clique do usuário.
 
+## RAG carregado e preparado (2026-11-17 ~22:53)
+
+- **Material "Prazos, pagamento e entrega" (Documento), "O agente já
+  sabe"** — preparado automaticamente logo após a criação; **23 trechos**
+  (os prontos têm 22 e 16); acervo passou de 4 materiais · 2 prontos para
+  **5 materiais · 3 prontos**. Conteúdo conferido: detalhe do material com
+  o Markdown renderizado igual ao texto exato do RAG (início e fim
+  conferidos antes de enviar). Print em
+  `~/workspace/d011-painel/rag-carregado.png`.
+- **Método:** upload tentado primeiro, como pedido — o drive do painel não
+  tem ação de seletor de arquivos: ao clicar "Procurar...", abre o diálogo
+  nativo GTK, que o drive não opera. `xdotool` instalado (sudo sem senha)
+  para operar o diálogo: abriu a barra de local e digitou o caminho, mas o
+  diálogo fechou sem criar o material — mecanismo exato não identificado,
+  não insistido. **Cola (fallback autorizado):** reaberto o diálogo, tipo
+  Documento, nome "Prazos, pagamento e entrega" (o formulário retém estado
+  entre aberturas — na segunda tentativa o nome veio duplicado; corrigido
+  com Ctrl+A + redigitação e conferido único), colado o texto exato do RAG
+  (7.149 caracteres, início e fim conferidos no print — o placeholder
+  "# Política de troca" foi substituído, não somado) e clicado "Adicionar
+  ao acervo". Criou e preparou sozinho, sem "Preparar de novo".
+- **Divergência — "Consultado por: nenhum assistente ainda":** na tela da
+  Ana não existe seletor por material; a porta é a capacidade "Consultar o
+  que a empresa já sabe" (`crm_search_knowledge`), já ligada. A evidência
+  indica que "Consultado por" é por **uso**, não configuração: "Base de
+  conhecimento" e "FAQ" (usados em conversas reais) mostram Ana; "Memória
+  por contato" (nunca preparado) mostra nenhum; "Conversas anteriores"
+  (nunca preparado, mas a Ana lê o histórico em todo turno) mostra Ana.
+  Nada a ligar — o campo deve virar "Ana" na primeira consulta real, que
+  é o teste da v12 (turno não-local: PAC, SEDEX, Correios ou cor a
+  importar). Único item que depende da fase de teste para confirmar.
+- **Nada mais tocado:** prompt da Ana intacto, nenhum clique em
+  "Publicar", IA do Messenger não ligada, nenhum outro material editado.
+  Loop do painel vivo e livre no fim (navegador na página de Conhecimento).
+  Serialização respeitada com a verificação da v11 (~4,5 min de espera).
+
 ## Verificação do mecanismo de carga do RAG (2026-11-17 ~22:09 — só leitura,
 nada editado, nada publicado, nenhum upload)
 

@@ -193,6 +193,19 @@ até a v12 estar publicada e testada. Nova sequência: (1) publicar a v11
 (clique do usuário); (2) carregar o RAG; (3) testar a v12-B; (4) publicar
 a v12-B (clique do usuário).
 
+## v11 publicada (2026-11-17 ~22:17, pelo usuário)
+
+O usuário colou o texto da v11 (`d011-v11-prompt.txt`, 12.553 caracteres) no
+campo "As instruções dele" e publicou. Verificação do selo "Publicado v11"
+delegada (só leitura, print em `~/workspace/d011-painel/v11-publicada.png`).
+**Mudança de plano (22:17): o usuário vai colar as demais ele mesmo** —
+v12-B e RAG passados no chat. Ordem: carregar o RAG (IA › Conhecimento →
+"+ Adicionar material" → Documento → nome "Prazos, pagamento e entrega" →
+colar o texto em "...ou cole o texto aqui" → "Adicionar ao acervo" →
+preparar e confirmar "O agente já sabe", trechos > 0) e SÓ DEPOIS publicar
+a v12-B (mesmo fluxo da v11). Sem o RAG preparado, a Ana não tem de onde
+tirar os números de envio.
+
 ## Verificação do mecanismo de carga do RAG (2026-11-17 ~22:09 — só leitura,
 nada editado, nada publicado, nenhum upload)
 

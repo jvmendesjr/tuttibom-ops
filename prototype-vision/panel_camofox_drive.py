@@ -56,10 +56,11 @@ def get_fingerprint():
 
 
 def launch_panel():
-    """Abre o Camoufox com o perfil-panel. Real (:0) primeiro — é a tela que
-    o usuário vê pelo noVNC; virtual (Xvfb) como reserva, sem tocar a :0."""
+    """Abre o Camofox com o perfil-panel. Virtual (Xvfb) SEMPRE primeiro:
+    o painel nunca abre no :0 (display real do noVNC); :0 so entra como
+    reserva se o virtual falhar."""
     last = None
-    for display in ("real", "virtual"):
+    for display in ("virtual", "real"):
         try:
             if display == "real":
                 os.environ["DISPLAY"] = ":0"
@@ -127,6 +128,7 @@ def do_type(page, target: str, text: str) -> dict:
     time.sleep(1.0)
     page.mouse.click(found["loc"]["x"], found["loc"]["y"])
     time.sleep(1.0)
+    page.keyboard.press("Control+A")  # substitui o conteudo do campo, nao soma
     page.keyboard.type(text, delay=30)
     time.sleep(1.0)
     shot(page)

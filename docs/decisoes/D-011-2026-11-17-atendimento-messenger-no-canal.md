@@ -85,7 +85,7 @@ pesquisa) e fora qualquer menção a "resolve 24h". Ressalvas: páginas
 oficiais da Meta não foram abertas diretamente (citations secundárias
 convergentes); divergência não resolvida sobre divulgação de IA no WhatsApp.
 
-## Rascunho da v11 (proposta — aguardando aprovação do texto exato)
+## Rascunho da v11 — APROVADO 2026-11-17 ~21:09 (aguardando publicação — clique do usuário; em aberto publicar agora ou aguardar as propostas de enxugamento)
 
 Substituir a linha do horário por (revisado 2026-11-17 ~21:07 — fora a frase
 negativa sobre 24h):

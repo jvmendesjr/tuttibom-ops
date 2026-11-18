@@ -181,6 +181,17 @@ com turnos reais; (3) publicar a v12-B no painel (clique do usuário).
 Verificação do mecanismo de carga de material delegada às 21:43 (só leitura
 no painel, sem editar nada) — o procedimento exato volta para aprovação
 antes de qualquer carga.
+
+**Decisão do usuário (2026-11-17 ~21:52): publicar a v11 primeiro, depois
+a v12, para o histórico do painel ficar v10 → v11 → v12.** Motivos: cada
+versão é um checkpoint; se a v12 der problema, o retorno é para a v11 (e
+não para a v10, que tem a frase errada sobre o WhatsApp); separa os dois
+riscos (v11 testa horário + canal, v12 testa o RAG). Texto da v11 pronto
+para colar em `~/workspace/d011-v11-prompt.txt` (12.553 caracteres, diff
+confere exatamente as duas mudanças aprovadas). Messenger com IA pausada
+até a v12 estar publicada e testada. Nova sequência: (1) publicar a v11
+(clique do usuário); (2) carregar o RAG; (3) testar a v12-B; (4) publicar
+a v12-B (clique do usuário).
 - **Nuances:** C2 "confirme os dados acima" aponta para lista duas seções
   acima da Amostra; v11 usa "transferência" enquanto # Limites diz "Nunca
   diga que vai transferir a pessoa para um humano" (compatíveis — momento

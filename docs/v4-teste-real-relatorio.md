@@ -6,7 +6,7 @@ aconteceu de verdade — incluindo o que falhou.
 ## Janela
 
 - **Data e hora de início / fim:**
-- **Canal:** (Messenger / WhatsApp)
+- **Canal:** Messenger (decidido 2026-11-21)
 - **Cliente do teste:** (quem, sem expor dado pessoal aqui)
 - **Jeito de receber/responder:** (painel via Camofox / direto no canal)
 - **Palavra de parada combinada:**

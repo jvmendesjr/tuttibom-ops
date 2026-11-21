@@ -144,7 +144,7 @@ exato aprovado para prévia, endereço só após pago e fechado).
 
 ## Decisões pendentes do usuário (sem elas o V4 não começa)
 
-1. **Canal:** Messenger (recomendado) ou WhatsApp?
+1. **Canal: DECIDIDO 2026-11-21 — Messenger.**
 2. **Quem é o cliente do teste** (você mesmo, de outra conta, ou quem)?
 3. **Janela:** qual dia e hora?
 4. **Jeito de receber/responder:** painel via Camofox (opção 1) ou

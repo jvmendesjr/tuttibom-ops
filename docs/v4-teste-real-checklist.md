@@ -145,7 +145,14 @@ exato aprovado para prévia, endereço só após pago e fechado).
 ## Decisões pendentes do usuário (sem elas o V4 não começa)
 
 1. **Canal: DECIDIDO 2026-11-21 — Messenger.**
-2. **Quem é o cliente do teste** (você mesmo, de outra conta, ou quem)?
-3. **Janela:** qual dia e hora?
-4. **Jeito de receber/responder:** painel via Camofox (opção 1) ou
-   direto no canal (opção 2)?
+2. **Quem é o cliente do teste: Gleiciane (decidido 2026-11-21).**
+3. **Janela:** a combinar (teste começou a ser ligado 2026-11-21 ~16:51).
+4. **Jeito de receber/responder: Zernio (decidido 2026-11-21)** — as
+   mensagens chegam na caixa de entrada do painel e o Muse responde
+   por ali, como atendimento, seguindo só a skill.
+5. **Verificado no painel 2026-11-21 16:51:** canal facebook ·
+   TutiBom **Vinculada**, "Recebimento configurado. Novas mensagens
+   entram na caixa de entrada." e **"IA pausada — As mensagens chegam
+   para atendimento humano. A IA está pausada neste canal."** O número
+   de WhatsApp segue com "IA aberta ao público" (Ana viva) e NÃO é
+   tocado pelo teste.

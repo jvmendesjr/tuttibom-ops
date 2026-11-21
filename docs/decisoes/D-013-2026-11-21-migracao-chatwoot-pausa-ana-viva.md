@@ -178,3 +178,55 @@ A volta é sempre permitida e sempre registrada.
 - D-004 — Camofox é o navegador único; a operação do painel na
   execução da pausa segue o trinômio (Camofox + Jev, display
   virtual).
+
+## Adendo 2026-11-21 19:19 — pausa executada agora + arquitetura Chatwoot
+
+**Pausa antecipada.** O usuário pediu a pausa imediata do Deskcomm
+para garantir que ele não interfira nos testes — antecipando o
+passo 6 do §4 (que previa a pausa só depois do teste do WhatsApp
+no Chatwoot). Executado no painel às 19:19, via
+Conexões → cartão TUTTIBOM → "Configurar acesso da IA" →
+"Ativar modo de teste":
+
+- Antes: selo "IA aberta ao público".
+- Depois: selo **"IA em modo de teste"** + "Nenhum número
+  autorizado — a IA não responde ninguém neste canal." + aviso
+  "Acesso da IA atualizado." Verificado visualmente no painel.
+- Não existe ferramenta MCP para pausar a IA do canal
+  (`crm_resume_ai_attendance` devolve ao agente; publicar versão
+  e configurar canais são cliques no painel — ver
+  `docs/rascunho-mcp-gestor-funcoes.md`, "O que NÃO existe no
+  MCP"). A pausa foi por clique, como prevê o §5.
+- Messenger: IA já pausada desde 2026-11-16 — nada a fazer.
+- **Cobertura vigente: Fase A.** O usuário cobre o WhatsApp
+  manualmente; a vigília do WhatsApp via MCP ainda está por ativar
+  (decisão em aberto no §9).
+
+**Arquitetura do Chatwoot (decidida 2026-11-21 19:15):**
+
+- **Hospedagem no PC** (Docker: Rails + Sidekiq + Postgres +
+  Redis). Conta/organização **"TuttiBom"** (mesmo nome da org do
+  Deskcomm). **Contatos: a mesma base do Deskcomm** (importada para
+  o Chatwoot — via API, sem PII no repo).
+- **Messenger via Zernio, de início.** O Zernio já está logado e
+  rodando; o Messenger vem dele para o Chatwoot. Não há integração
+  nativa Zernio→Chatwoot com um clique: o caminho é uma ponte
+  pequena — webhook do Zernio (`message.received`, assinado com
+  HMAC-SHA256) → API do Chatwoot (criar contato/conversa/mensagem)
+  e volta (webhook do Chatwoot → API do Zernio para enviar). É o
+  mesmo padrão já provado publicamente (Zernio + Chatwoot + n8n);
+  aqui a ponte é um serviço pequeno nosso, no lugar do n8n. O
+  Zernio permite até 50 endpoints de webhook — o do Deskcomm fica
+  até a migração completar, como reserva.
+- **WhatsApp via WAHA, com o app oficial do Chatwoot** (integração
+  built-in, nos dois sentidos — verificado na documentação do
+  WAHA). O Chatwoot passa a concentrar os conectores.
+- **Atendimento no Chatwoot no escopo da Ana**, via skill de
+  operação do agente de atendimento (a escrever:
+  `skills/chatwoot-operacao/SKILL.md`, seguindo o D-010) — a
+  skill da Ana define o comportamento; a skill de operação define
+  o como dentro do Chatwoot (API, estados, etiquetas, webhooks).
+  O Muse absorve as duas ao atender via Chatwoot.
+- **Próximo passo:** montar o Chatwoot no PC (instalação +
+  organização + importação de contatos + WAHA + ponte Zernio +
+  skill de operação).

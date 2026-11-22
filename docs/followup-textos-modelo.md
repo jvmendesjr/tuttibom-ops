@@ -1,10 +1,13 @@
-# Follow-up automático da Ana — textos-modelo para aprovação
+# Follow-up automático da Ana — textos-modelo APROVADOS
 
-**Status:** PROPOSTA — nada aqui entra em vigor sem a aprovação do usuário.
+**Status:** APROVADO pelo usuário em 2026-11-21 23:02 — os 4 textos,
+a cadência (12 h / 24 h / 40 h) e a convenção de contagem do teto
+(`enviado` como registro oficial do toque).
 **Data:** 2026-11-21 · **Vertente:** nova (D-013) · **Código:**
 `services/chatwoot-ana/followup.py` + `templates_followup.json`
-**O que o usuário precisa aprovar:** os 4 textos abaixo, a cadência
-proposta e a criação do cron (corpo sugerido no fim).
+**O que o usuário aprovou (2026-11-21 23:02):** os 4 textos abaixo,
+a cadência proposta e a convenção de contagem do teto. O envio segue
+dependendo da revisão do rascunho pelo Muse, como Ana.
 
 ## Como funciona (resumo)
 
@@ -45,7 +48,7 @@ uma pergunta por vez, sem pressão, sem citar frete, sem prometer prazo,
 sem dizer que é virtual. O toque 3 encerra sem insistir; o de pagamento
 nunca afirma que o pagamento foi recebido.
 
-## Cadência PROPOSTA (a aprovar)
+## Cadência APROVADA (2026-11-21 23:02)
 
 Medida a partir da última resposta da Ana (o preço, no caso do
 silêncio). Os toques são agendados um de cada vez: o próximo só é
@@ -87,23 +90,23 @@ para quem pediu preço e sumiu).
   fictícios; os rascunhos guardam só a referência opaca do lead, ids e
   o texto-modelo.
 
-## Decisão de implementação (para confirmar)
+## Convenção de contagem do teto — CONFIRMADA (2026-11-21 23:02)
 
 O teto de toques conta os follow-ups marcados `enviado` no CRM — esse
 é o registro oficial do toque. As mensagens outbound registradas no CRM
 são resumos e **não** são contadas, para não contar o mesmo toque duas
 vezes. Consequência: quem enviar o rascunho precisa marcar o follow-up
-como `enviado` logo após enviar (método `CRM.marcar_followup`). Se o
-coordenador preferir outra contagem, é só dizer.
+como `enviado` logo após enviar (método `CRM.marcar_followup`).
 
 ## Cron CRIADO (2026-11-21 ~23:00, pelo coordenador)
 
 Runtime, id `chatwoot-followup-ana`, a cada 2 h, dono
 `goal:crm-pr-prio-e-atendimento-pelo-muse`, entrega neste chat. O
 corpo é a instrução do agente (rodar o runner via ssh e entregar os
-rascunhos novos para aprovação) — não é crontab de sistema. Primeira
-rodada ~23:38. O que falta aprovar são os textos e a cadência acima
-(pré-condição do envio, não do rascunho). O log de cada rodada fica
+rascunhos novos para revisão e envio) — não é crontab de sistema.
+Primeira rodada ~23:38. Textos e cadência aprovados em 2026-11-21
+23:02 — o envio passa a valer, sempre com revisão do rascunho pelo
+Muse, como Ana, antes de enviar. O log de cada rodada fica
 no histórico do cron; rascunhos, em
 `/home/pc/chatwoot/ana-listener/followup-drafts/` (fora do git).
 
@@ -121,12 +124,9 @@ no histórico do cron; rascunhos, em
   `/tmp`: rascunho gerado para conversa aberta cuja última mensagem é
   outgoing da Ana; conversa 8 (Mercado Livre, ignorada) sem rascunho.
 
-## Pendente de decisão do usuário
+## Decisões do usuário — RESOLVIDO (2026-11-21 23:02)
 
-1. Aprovar (ou ajustar) os 4 textos-modelo acima.
-2. Aprovar (ou ajustar) a cadência proposta (12 h / 24 h / 40 h).
-3. Confirmar a convenção de contagem do teto (follow-up `enviado` como
-   registro oficial do toque).
-
-O cron já foi criado pelo coordenador (ver seção acima) — a aprovação
-que falta é dos textos e da cadência, que são pré-condição do envio.
+1. Os 4 textos-modelo acima — **aprovados**.
+2. A cadência proposta (12 h / 24 h / 40 h) — **aprovada**.
+3. A convenção de contagem do teto (follow-up `enviado` como
+   registro oficial do toque) — **confirmada**.

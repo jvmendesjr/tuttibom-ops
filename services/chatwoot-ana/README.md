@@ -25,9 +25,9 @@ RASCUNHOS de toque em followup-drafts/ — nunca envia sozinho.
 
 | Arquivo | O que faz | Não faz |
 |---|---|---|
-| `chatwoot_client.py` | Cliente mínimo da API (ler, etiquetar, atribuir, resolver, nota) | Não envia mensagem ao cliente — não existe função de envio aqui de propósito |
+| `chatwoot_client.py` | Cliente mínimo da API (ler, etiquetar, atribuir, resolver, nota) | Só envia o cumprimento automático (`enviar_cumprimento`, textos fixos) — nada mais |
 | `ignorados.py` + `ignorados.json` | Lista de empresas conhecidas (não clientes) | Não bloqueia/apaga/altera esses contatos |
-| `listener.py` | Recebe o webhook `message_created`, dedupe, enfileira incoming, detecta handoff, expõe `/pending` e `/ack` | Não responde ninguém |
+| `listener.py` | Recebe o webhook `message_created`, dedupe, enfileira incoming, detecta handoff, cumprimento automático (10 s), expõe `/pending` e `/ack` | Não responde ninguém (só o cumprimento fixo) |
 | `handoff.py` | `detectar_handoff(texto)` (puro, testável) + `aplicar_handoff(conversa, motivo)` (etiqueta + atribuição + nota) | Não envia mensagem ao cliente; nunca para ignorados |
 | `followup.py` | Runner: lê CRM + conversas abertas, escreve rascunhos de toque | Nunca envia; nunca para ignorados, leads fechados ou sem follow-up vencido |
 | `templates_followup.json` | Textos-modelo de follow-up (só entram em vigor após aprovação do usuário — ver `docs/followup-textos-modelo.md`) | — |
@@ -45,11 +45,22 @@ RASCUNHOS de toque em followup-drafts/ — nunca envia sozinho.
 - **Fila (`listener.db`, tabela `events`):** `message_id` UNIQUE,
   `conversation_id`, `inbox_id`, `contato_ref`, `handoff` (motivo ou
   NULL), `recebido_em`, `estado` (`pendente`/`entregue`/`ignorado`).
-  `GET /pending` devolve os `pendente` (limite 20); `POST /ack`
+  `GET /pending` devolve os `pendente` (limite 20), cada item com o
+  campo `cumprimento` (texto + `enviado_em`, ou `null`); `POST /ack`
   `{"message_id": n}` (ou `{"message_ids": [...]}`) marca `entregue`.
   Quem marca `entregue` é o agente acordado pelo hook, depois de
   verificar e entregar o aviso. A vigília de 5 min continua como
   rede de segurança.
+- **Cumprimento automático (tabela `cumprimentos`):** na abertura da
+  conversa o ouvinte agenda para 10 s depois um cumprimento fixo
+  (saudação pelo horário + pedido de espera), timer fixo, reavalia
+  a rajada inteira aos 10 s (basta um pedido na janela para o pool
+  com "verificar"), máx. 1x a cada 10 min por conversa, nunca para
+  ignorados, suprime se a Ana já respondeu. Dois pools (saudação
+  fechada sem "verificar", com pedido com "verificar"), rotação sem
+  repetir a variante. `GET /stats` conta os cumprimentos enviados.
+  Único envio do serviço: `chatwoot_client.enviar_cumprimento` (só
+  textos fixos, nunca texto livre).
 - **Humano do handoff:** agente id 2 (`tutibom`, administrador,
   tutibom10@gmail.com) — único agente da conta, verificado 2026-11-21.
 - **Etiqueta de handoff:** `handoff-humano` (criada se não existir;
@@ -79,7 +90,8 @@ RASCUNHOS de toque em followup-drafts/ — nunca envia sozinho.
 - Nenhum dado de comprador no repo: sem texto de mensagem de cliente
   em código, teste, log ou documento — só ids e contagens. Nos testes,
   usar textos fictícios.
-- O ouvinte e o runner NUNCA enviam mensagem ao cliente.
+- O ouvinte e o runner NUNCA enviam mensagem ao cliente — exceto o
+  cumprimento automático do ouvinte (textos fixos, 10 s, ver acima).
 
 ## Testes
 

@@ -1,7 +1,9 @@
 # Configuração da Ana no Chatwoot — ouvinte, follow-up e handoff
 
 **Vertente:** nova (D-012/D-013) · **Data:** 2026-11-21 · **Status:**
-implementado e verificado; teste vivo com mensagem real pendente.
+implementado e verificado; teste vivo do hook PROVADO 2026-11-21
+23:31 ("Olá" 23:02 → resposta da Ana 23:07, recebimento confirmado
+no telefone; 4 min 23 s, acima da meta de 1–2 min).
 **Código:** `services/chatwoot-ana/` (branch `exp/crm-proprio`).
 **Docs relacionados:** `skills/chatwoot-operacao/SKILL.md` (mecânica),
 `skills/ana-atendimento/SKILL.md` (comportamento — outro branch,
@@ -54,6 +56,48 @@ Follow-up: runner a cada 2 h escreve RASCUNHOS — nunca envia sozinho.
   `sudo systemctl restart ana-listener` (o ouvinte importa o módulo
   uma vez e guarda em cache).
 
+### Cumprimento automático (ack de 10 s, aprovado 2026-11-21 23:45)
+
+Preliminar antes da resposta da Ana: na abertura da conversa o
+ouvinte agenda um cumprimento fixo para **10 s depois** da primeira
+mensagem (timer fixo, não deslizante — uma segunda mensagem na
+janela não adia). Os 10 s dão tempo de a pessoa terminar a rajada e
+parecem humanos; instantâneo demais pareceria robô. O envio NÃO
+atrasa o 200 ao Chatwoot nem o enfileiramento.
+
+- **Quando dispara:** incoming, contato não ignorado, e nenhum
+  cumprimento para a conversa nos últimos 10 min (máx. 1x a cada
+  10 min). Aos 10 s, antes de enviar, o ouvinte reavalia: se a Ana
+  já respondeu (outgoing recente, 30 min) ou outro cumprimento foi
+  enviado, SUPRIME. Dispara mesmo quando há handoff.
+- **Textos (dois pools, detecção determinística, sem LLM):**
+  saudação pelo horário real (America/Fortaleza: 06–12 "Bom dia",
+  12–18 "Boa tarde", 18–06 "Boa noite") + pedido cordial de espera.
+  Saudação fechada (só saudação, sem pedido) usa o pool SEM
+  "verificar" ("Só um instante que já te atendo." / "Ok, só um
+  instante." / "Já te atendo."); com pedido/pergunta usa o pool COM
+  "verificar" ("Vou verificar aqui e já te respondo." / "Só um
+  instante que já te respondo." / "Ok, vou verificar e já te
+  chamo."). Correção do usuário (23:46): "verificar" só cabe quando
+  a pessoa já pediu alguma informação.
+- **Rajada:** aos 10 s o ouvinte classifica a rajada INTEIRA da
+  janela, não só a última mensagem: basta UM pedido na janela para
+  usar o pool de pedido ("oi" + "quanto custa" + "oi?" → pedido).
+  Só usa o pool sem "verificar" se TODAS as mensagens da janela
+  forem saudação fechada.
+- **Rotação:** nunca repete a mesma variante duas vezes em sequência
+  por conversa (última variante guardada em `listener.db`).
+- **O agente sabe:** o cumprimento aparece na conversa como mensagem
+  da Ana, é registrado em `listener.db` (tabela `cumprimentos`) e
+  vem no item do `GET /pending` (campo `cumprimento`: texto +
+  `enviado_em`); `/stats` conta os cumprimentos.
+- **Falha nunca bloqueia:** se a leitura da API falhar, decide só
+  pelo estado local e pelo texto que disparou o timer; se o envio
+  falhar, só loga e a mensagem segue enfileirada para o Muse.
+- **Único envio do serviço:** `chatwoot_client.enviar_cumprimento`
+  (só textos fixos, nunca texto livre). O resto do serviço continua
+  sem enviar nada.
+
 ## 2. Hook (acordar na hora)
 
 - `chatwoot-ana-watch`, poll a cada 60 s: consulta `/pending` via
@@ -80,8 +124,11 @@ Follow-up: runner a cada 2 h escreve RASCUNHOS — nunca envia sozinho.
 - Cancelar-ao-responder: inbound após o agendamento cancela o
   follow-up e o rascunho não é gerado.
 - Textos-modelo e cadência (12 h / 24 h / 40 h) em
-  `docs/followup-textos-modelo.md` — **aguardam aprovação do usuário**;
-  a aprovação é pré-condição do envio, não do rascunho.
+  `docs/followup-textos-modelo.md` — **APROVADOS pelo usuário em
+  2026-11-21 23:02** (commit `54f2703`), junto com a convenção de
+  contagem do teto (`enviado` como registro oficial). O envio passa
+  a valer, sempre com revisão do rascunho pelo Muse, como Ana,
+  antes de enviar.
 - CRM vivo: `/home/pc/chatwoot/crm.sqlite3` (ainda não existe — criado
   no primeiro uso via classe CRM). Convenção: o `contato_ref` do lead
   precisa conter o identifier exato ou os dígitos do telefone, senão
@@ -124,10 +171,17 @@ vista e segue em silêncio).
 ## Verificação feita (2026-11-21)
 
 - Testes: `python3 -m unittest discover -s services/chatwoot-ana` →
-  **35/35 OK** (10 ouvinte + 15 handoff + 10 follow-up).
+  **51/51 OK** (26 ouvinte — inclui 16 do cumprimento automático
+  com atraso de 10 s e rajada — + 15 handoff + 10 follow-up).
 - Ouvinte ao vivo: `/health` 200; incoming falso enfileirado;
   duplicado descartado; ignorado fora do `/pending`; `/ack` marca
   entregue; `zernio-bridge` segue `active`.
+- Cumprimento ao vivo (2026-11-21 ~23:54, evento falso): enfileirado
+  com `cumprimento: null`, ack imediato, timer disparou 11 s depois
+  e o envio para a conversa inexistente falhou com log
+  (`cumprimento nao enviado`), sem derrubar o enfileiramento;
+  `/stats` com `cumprimentos: 0`, fila vazia, serviço `active`.
+  Teste vivo com o usuário (cumprimento real no telefone) pendente.
 - Handoff ao vivo: etiqueta criada, atribuição confirmada por GET e
   desfeita, nota privada criada; nada enviado ao cliente; conversa 8
   não tocada.
@@ -137,12 +191,15 @@ vista e segue em silêncio).
 
 ## Pendente
 
-1. **Teste vivo com mensagem real** (usuário envia "Olá" no WhatsApp):
-   o hook deve acordar em ~60 s e a resposta da Ana deve chegar no
-   canal. Sem ele, a latência de 1–2 min é projetada, não provada.
-2. **Aprovação do usuário:** os 4 textos-modelo de follow-up, a
-   cadência (12 h / 24 h / 40 h) e a convenção de contagem do teto
-   (`enviado` como registro oficial). Sem isso, nada é enviado.
+1. **Teste vivo do cumprimento com o usuário** (manda "Olá" no
+   WhatsApp): o cumprimento deve chegar em ~10 s e a resposta da
+   Ana depois. Sem ele, o envio real do cumprimento é projetado,
+   não provado.
+2. **Teste vivo do hook — PROVADO 2026-11-21 23:31:** o usuário
+   mandou "Olá" 23:02:39, o hook acordou, a Ana respondeu 23:07:02
+   e o recebimento foi confirmado no telefone às 23:31. Latência
+   4 min 23 s — acima da meta de 1–2 min; o gargalo foi o acordar,
+   não a resposta.
 3. **Skill da Ana:** registrar a regra de ignorados em
    `skills/ana-atendimento/SKILL.md` (branch `exp/atendimento-ana`) —
    aqui só a mecânica foi atualizada (`chatwoot-operacao`).

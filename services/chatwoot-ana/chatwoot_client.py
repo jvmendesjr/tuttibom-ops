@@ -4,9 +4,11 @@ Uso pelos componentes da Ana no Chatwoot (ouvinte, follow-up, handoff).
 Regras:
 - O PAT fica SÓ no PC (`/home/pc/chatwoot/.pat-clean.txt`, chmod 600);
   ele é lido dentro do processo, nunca impresso, nunca vai para log.
-- Este cliente NÃO envia mensagem ao cliente: não existe função de
-  envio aqui de propósito. O ouvinte e o runner nunca respondem; quem
-  responde é o Muse, como Ana, pela API — fora deste módulo.
+- Este cliente quase não envia mensagem ao cliente: a única função
+  de envio é `enviar_cumprimento`, só para os textos fixos do
+  cumprimento automático do ouvinte (nunca texto livre). O ouvinte e
+  o runner nunca respondem; quem responde é o Muse, como Ana, pela
+  API — fora deste módulo.
 - Nunca logar texto de mensagem de cliente: só ids e contagens.
 """
 
@@ -172,6 +174,23 @@ def reabrir_conversa(conversation_id):
         f"/conversations/{conversation_id}/toggle_status",
         method="POST",
         payload={"status": "open"},
+    )
+    return status in (200, 201)
+
+
+# --------------------------------------------------------- cumprimento
+def enviar_cumprimento(conversation_id, texto):
+    """ÚNICO envio permitido neste serviço: o cumprimento automático.
+
+    Só os textos fixos do cumprimento do ouvinte (`listener.py`) —
+    nunca texto livre, nunca resposta. O cumprimento é uma mensagem
+    outgoing normal (não privada) e chega ao contato pelo canal.
+    Devolve True se o Chatwoot aceitou (200/201).
+    """
+    status, _ = api(
+        f"/conversations/{conversation_id}/messages",
+        method="POST",
+        payload={"content": texto, "message_type": "outgoing"},
     )
     return status in (200, 201)
 

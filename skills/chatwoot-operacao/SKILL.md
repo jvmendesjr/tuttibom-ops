@@ -83,6 +83,11 @@ Depois de responder, registre no CRM próprio (setor 2): etapa, resumo
 do que foi perguntado e combinado, próxima ação com data. O Chatwoot
 guarda a conversa; o CRM guarda o funil.
 
+**Regra da rajada (resposta da Ana):** antes de responder, releia a
+conversa inteira; se chegaram mensagens novas enquanto você escrevia,
+junte TUDO (a rajada inteira) numa resposta só e só então envie —
+nunca responda mensagem por mensagem separadamente.
+
 ## WhatsApp (inbox 1, via WAHA)
 
 - WAHA standalone na :3005, sessões `tutibom` (número da loja) e
@@ -149,8 +154,28 @@ Código em `services/chatwoot-ana/` (detalhe em
   evento `message_created`. Recebe, dedupe por id da mensagem, só
   processa `incoming`, enfileira em `listener.db`. `GET /pending`,
   `POST /ack`, `GET /health`, `GET /stats`. Nunca responde ninguém,
+  exceto o cumprimento automático (textos fixos, ver abaixo), e
   nunca loga texto de cliente. Se o `handoff.py` mudar no disco,
   reiniciar: `sudo systemctl restart ana-listener`.
+- **Cumprimento automático (ack de 10 s, aprovado 2026-11-21):**
+  na abertura da conversa o ouvinte agenda para 10 s depois um
+  cumprimento fixo (saudação pelo horário + pedido cordial de
+  espera), antes da resposta da Ana. Timer fixo (não deslizante);
+  aos 10 s o ouvinte reavalia: classifica a rajada INTEIRA da janela
+  (basta um pedido na janela para usar o pool com "verificar") e
+  suprime se a Ana já respondeu ou outro cumprimento foi enviado.
+  Máx. 1x a cada 10 min por conversa; nunca para ignorados. O
+  cumprimento aparece na conversa como mensagem da Ana e vem no item
+  do `GET /pending` (campo `cumprimento`: texto + `enviado_em`) —
+  quando você acordar, leia-o: ele diz o que o cliente já recebeu e,
+  se o cliente respondeu ao cumprimento, a reação dele está no fio.
+  Textos (dois pools, saudação por horário em America/Fortaleza):
+  saudação fechada sem "verificar" ("Só um instante que já te
+  atendo." / "Ok, só um instante." / "Já te atendo."); com pedido
+  com "verificar" ("Vou verificar aqui e já te respondo." / "Só um
+  instante que já te respondo." / "Ok, vou verificar e já te
+  chamo."). O único envio do serviço é
+  `chatwoot_client.enviar_cumprimento` (só textos fixos).
 - **Hook `chatwoot-ana-watch`:** runtime, poll a cada 60 s, consulta
   `/pending` via `ssh` (a VM não alcança a tailnet por HTTP direto)
   e acorda o agente quando há mensagem nova. O worker acordado
@@ -232,6 +257,7 @@ mudança no `.env`, recrie os contêineres com
 - `curl http://127.0.0.1:3020/health` → `{"ok": true, ...}` (ponte).
 - `curl http://127.0.0.1:3021/health` → `{"ok": true, "service": "ana-listener", ...}` (ouvinte).
 - `curl http://127.0.0.1:3021/pending` → `{"pending": []}` (fila vazia).
+- `curl http://127.0.0.1:3021/stats` → inclui `"cumprimentos": <n>` (cumprimentos enviados).
 - `sudo systemctl is-active ana-listener` → `active`.
 - `GET /api/v1/accounts/2/inboxes` → inboxes 1 e 2.
 - `sudo systemctl is-active zernio-bridge` → `active`.

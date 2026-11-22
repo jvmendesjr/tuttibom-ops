@@ -9,9 +9,12 @@ import os
 import sys
 import tempfile
 import threading
+import time
 import unittest
 import urllib.error
 import urllib.request
+from contextlib import ExitStack
+from datetime import datetime, timedelta, timezone
 from http.server import ThreadingHTTPServer
 from unittest import mock
 
@@ -87,9 +90,13 @@ class ListenerTest(unittest.TestCase):
         cls.server.server_close()
 
     def setUp(self):
+        for timer in list(listener._TIMERS.values()):
+            timer.cancel()
+        listener._TIMERS.clear()
         conn = listener.db()
         try:
             conn.execute("DELETE FROM events")
+            conn.execute("DELETE FROM cumprimentos")
             conn.commit()
         finally:
             conn.close()
@@ -98,7 +105,7 @@ class ListenerTest(unittest.TestCase):
         status, body = _get(self.base, "/health")
         self.assertEqual(status, 200)
         self.assertEqual(body, {"ok": True, "service": "ana-listener",
-                                "version": "0.1.0"})
+                                "version": "0.3.0"})
 
     def test_incoming_enfileira(self):
         status, body = _post(self.base, "/webhooks/chatwoot",
@@ -115,7 +122,8 @@ class ListenerTest(unittest.TestCase):
         self.assertIsNone(item["handoff"])
         _, stats = _get(self.base, "/stats")
         self.assertEqual(stats, {"pendente": 1, "entregue": 0,
-                                 "ignorado": 0, "total": 1})
+                                 "ignorado": 0, "total": 1,
+                                 "cumprimentos": 0})
 
     def test_formato_inbox_topo_tambem_enfileira(self):
         # Webhook de inbox: campos da mensagem no topo, sem "message".
@@ -147,6 +155,7 @@ class ListenerTest(unittest.TestCase):
         self.assertEqual(body["pending"], [])
         _, stats = _get(self.base, "/stats")
         self.assertEqual(stats["total"], 0)
+        self.assertEqual(stats["cumprimentos"], 0)
 
     def test_duplicado_nao_duplica(self):
         payload = _payload_incoming(5201)
@@ -178,7 +187,8 @@ class ListenerTest(unittest.TestCase):
         self.assertEqual(body["pending"], [])
         _, stats = _get(self.base, "/stats")
         self.assertEqual(stats, {"pendente": 0, "entregue": 0,
-                                 "ignorado": 3, "total": 3})
+                                 "ignorado": 3, "total": 3,
+                                 "cumprimentos": 0})
 
     def test_ack_marca_entregue(self):
         _post(self.base, "/webhooks/chatwoot", _payload_incoming(5401))
@@ -193,7 +203,8 @@ class ListenerTest(unittest.TestCase):
         self.assertEqual(body["pending"], [])
         _, stats = _get(self.base, "/stats")
         self.assertEqual(stats, {"pendente": 0, "entregue": 2,
-                                 "ignorado": 0, "total": 2})
+                                 "ignorado": 0, "total": 2,
+                                 "cumprimentos": 0})
 
     def test_handoff_via_mock(self):
         # O módulo real detecta/aplica de verdade; o mock prova a
@@ -254,6 +265,290 @@ class ListenerTest(unittest.TestCase):
         _, body = _get(self.base, "/pending")
         self.assertEqual(len(body["pending"]), 1)
         self.assertEqual(body["pending"][0]["contato_ref"], "contact:9001")
+
+    # ------------------------------------------------------ cumprimento
+    def _mocks_cumprimento(self, mensagens=(True, []), enviado=True,
+                           hora=10):
+        """Mocks: leitura da conversa, envio e relógio (10h = Bom dia)."""
+        pilha = ExitStack()
+        pilha.enter_context(mock.patch.object(
+            listener, "_mensagens_da_conversa", return_value=mensagens))
+        pilha.enter_context(mock.patch.object(
+            listener, "_enviar_cumprimento_api", return_value=enviado))
+        pilha.enter_context(mock.patch.object(
+            listener, "_agora_fortaleza",
+            return_value=datetime(2026, 11, 21, hora, 0,
+                                  tzinfo=timezone.utc)))
+        return pilha
+
+    def _n_cumprimentos(self):
+        _, stats = _get(self.base, "/stats")
+        return stats["cumprimentos"]
+
+    def _disparar(self, conversation_id):
+        """Dispara na hora o timer agendado (sem esperar 10 s reais)."""
+        timer = listener._TIMERS.get(conversation_id)
+        self.assertIsNotNone(timer, "sem timer agendado")
+        timer.cancel()
+        listener._disparar_cumprimento(timer.args[0])
+
+    def _envelhecer_cumprimento(self, conversation_id, minutos):
+        conn = listener.db()
+        try:
+            conn.execute(
+                "UPDATE cumprimentos SET enviado_em=?"
+                " WHERE conversation_id=?",
+                ((datetime.now(timezone.utc)
+                  - timedelta(minutes=minutos)).isoformat(),
+                 conversation_id))
+            conn.commit()
+        finally:
+            conn.close()
+
+    def _incoming(self, message_id, conversation_id, texto):
+        """Mensagem incoming com created_at (para a janela da rajada)."""
+        payload = _payload_incoming(message_id,
+                                    conversation_id=conversation_id,
+                                    texto=texto)
+        payload["message"]["created_at"] = int(time.time())
+        return payload
+
+    def test_deteccao_saudacao_fechada(self):
+        casos = [
+            ("oi", True), ("Bom dia", True), ("Olá tudo bom", True),
+            ("tudo bem?", True), ("boa tarde", True), ("como vai", True),
+            ("oi, quanto custa", False),
+            ("Boa noite, queria saber o preço", False),
+            ("oi, queria uma fita", False), ("", False),
+            ("quero falar com humano", False),
+        ]
+        for texto, esperado in casos:
+            with self.subTest(texto=texto):
+                self.assertEqual(
+                    listener.eh_saudacao_fechada(texto), esperado)
+
+    def test_saudacao_por_horario(self):
+        casos = [
+            (2, "Boa noite"), (5, "Boa noite"), (6, "Bom dia"),
+            (11, "Bom dia"), (12, "Boa tarde"), (17, "Boa tarde"),
+            (18, "Boa noite"), (23, "Boa noite"),
+        ]
+        for hora, esperado in casos:
+            with self.subTest(hora=hora):
+                agora = datetime(2026, 11, 21, hora, 0,
+                                 tzinfo=timezone.utc)
+                self.assertEqual(
+                    listener.saudacao_por_horario(agora), esperado)
+
+    def test_pools_verificar(self):
+        # Saudação fechada: nenhuma variante fala em verificar.
+        for variante in range(3):
+            texto = listener.texto_cumprimento(
+                "saudacao", variante,
+                datetime(2026, 11, 21, 10, 0, tzinfo=timezone.utc))
+            self.assertNotIn("verificar", texto.lower())
+        # Com pedido: o pool é o de verificar (variantes 0 e 2).
+        self.assertIn("verificar", listener.texto_cumprimento(
+            "pedido", 0,
+            datetime(2026, 11, 21, 10, 0, tzinfo=timezone.utc)).lower())
+        self.assertIn("verificar", listener.texto_cumprimento(
+            "pedido", 2,
+            datetime(2026, 11, 21, 10, 0, tzinfo=timezone.utc)).lower())
+
+    def test_cumprimento_primeira_mensagem_saudacao(self):
+        # Nada é enviado no ato: o cumprimento sai no disparo do timer.
+        with self._mocks_cumprimento():
+            _, body = _post(
+                self.base, "/webhooks/chatwoot",
+                self._incoming(6001, 201, "Bom dia"))
+            self.assertEqual(body["detail"], "ok")
+            self.assertEqual(self._n_cumprimentos(), 0)
+            self.assertIn(201, listener._TIMERS)
+            self._disparar(201)
+        _, body = _get(self.base, "/pending")
+        self.assertEqual(len(body["pending"]), 1)
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+        self.assertIn("enviado_em", cump)
+        self.assertEqual(self._n_cumprimentos(), 1)
+
+    def test_cumprimento_pedido_usa_pool_com_verificar(self):
+        with self._mocks_cumprimento():
+            _, body = _post(
+                self.base, "/webhooks/chatwoot",
+                self._incoming(
+                    6002, 202, "oi, quanto custa a fita de teste"))
+            self.assertEqual(body["detail"], "ok")
+            self.assertEqual(self._n_cumprimentos(), 0)
+            self._disparar(202)
+        _, body = _get(self.base, "/pending")
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"],
+            "Bom dia! Vou verificar aqui e já te respondo.")
+
+    def test_timer_fixo_nao_desliza(self):
+        # Segunda mensagem na janela não agenda outro timer.
+        with self._mocks_cumprimento():
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6051, 209, "oi"))
+            primeiro = listener._TIMERS.get(209)
+            self.assertIsNotNone(primeiro)
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6052, 209, "quanto custa?"))
+            self.assertIs(listener._TIMERS.get(209), primeiro)
+            self._disparar(209)
+        self.assertEqual(self._n_cumprimentos(), 1)
+
+    def test_rajada_mista_usa_pool_pedido(self):
+        # "oi" + "quanto custa" + "oi?" na janela: basta um pedido.
+        agora = int(time.time())
+        rajada = [
+            {"message_type": 0, "content": "oi", "created_at": agora},
+            {"message_type": 0, "content": "quanto custa",
+             "created_at": agora},
+            {"message_type": 0, "content": "oi?", "created_at": agora},
+        ]
+        with self._mocks_cumprimento(mensagens=(True, rajada)):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6061, 210, "oi"))
+            self._disparar(210)
+        _, body = _get(self.base, "/pending")
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"],
+            "Bom dia! Vou verificar aqui e já te respondo.")
+
+    def test_rajada_so_saudacoes_usa_pool_sem_verificar(self):
+        agora = int(time.time())
+        rajada = [
+            {"message_type": 0, "content": "oi", "created_at": agora},
+            {"message_type": 0, "content": "bom dia",
+             "created_at": agora},
+        ]
+        with self._mocks_cumprimento(mensagens=(True, rajada)):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6062, 211, "oi"))
+            self._disparar(211)
+        _, body = _get(self.base, "/pending")
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+
+    def test_rotacao_nao_repete_variante(self):
+        with self._mocks_cumprimento():
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6101, 203, "oi"))
+            self._disparar(203)
+        _, body = _get(self.base, "/pending")
+        primeiro = body["pending"][0]["cumprimento"]["texto"]
+        self.assertEqual(primeiro, "Bom dia! Só um instante que já te atendo.")
+        self._envelhecer_cumprimento(203, 31)
+        with self._mocks_cumprimento():
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6102, 203, "oi"))
+            self._disparar(203)
+        _, body = _get(self.base, "/pending")
+        self.assertEqual(len(body["pending"]), 2)
+        segundo = body["pending"][1]["cumprimento"]["texto"]
+        self.assertEqual(segundo, "Bom dia! Ok, só um instante.")
+        self.assertNotEqual(primeiro, segundo)
+        self.assertEqual(self._n_cumprimentos(), 2)
+
+    def test_segunda_dentro_de_10_min_nao_dispara(self):
+        with self._mocks_cumprimento():
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6201, 204, "oi"))
+            self._disparar(204)
+        self.assertEqual(self._n_cumprimentos(), 1)
+        _post(self.base, "/webhooks/chatwoot",
+              self._incoming(6202, 204, "quanto custa?"))
+        self.assertNotIn(204, listener._TIMERS)
+        self.assertEqual(self._n_cumprimentos(), 1)
+        _, body = _get(self.base, "/pending")
+        self.assertEqual(len(body["pending"]), 2)
+        self.assertIsNotNone(body["pending"][0]["cumprimento"])
+        self.assertIsNone(body["pending"][1]["cumprimento"])
+
+    def test_outgoing_recente_inibe_cumprimento(self):
+        outgoing = [{"id": 1, "message_type": 1,
+                     "created_at": int(time.time()),
+                     "content": "resposta fictícia da Ana"}]
+        with self._mocks_cumprimento(mensagens=(True, outgoing)):
+            _, body = _post(
+                self.base, "/webhooks/chatwoot",
+                self._incoming(6301, 205, "oi"))
+            self.assertEqual(body["detail"], "ok")
+            self._disparar(205)
+        _, body = _get(self.base, "/pending")
+        self.assertIsNone(body["pending"][0]["cumprimento"])
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_falha_api_e_falha_envio_nao_bloqueiam(self):
+        with self._mocks_cumprimento(mensagens=(False, []), enviado=False):
+            _, body = _post(
+                self.base, "/webhooks/chatwoot",
+                self._incoming(6401, 206, "oi"))
+            self.assertEqual(body["detail"], "ok")
+            self._disparar(206)
+        _, body = _get(self.base, "/pending")
+        self.assertEqual(len(body["pending"]), 1)
+        self.assertIsNone(body["pending"][0]["cumprimento"])
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_falha_api_usa_texto_do_disparo(self):
+        # Sem a API, classifica só pelo texto que disparou o timer.
+        with self._mocks_cumprimento(mensagens=(False, []), enviado=True):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(6402, 212, "oi"))
+            self._disparar(212)
+        _, body = _get(self.base, "/pending")
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+
+    def test_ignorado_nunca_cumprimenta(self):
+        _, body = _post(self.base, "/webhooks/chatwoot",
+                        _payload_incoming(6501, telefone=TEL_IGNORADO,
+                                          identifier=ID_IGNORADO))
+        self.assertEqual(body["detail"], "ignorado")
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_cumprimento_dispara_mesmo_com_handoff(self):
+        def fake_aplicar(conversation_id, motivo):
+            return {"ignorado": False, "aplicado": True,
+                    "etiqueta": "handoff-humano", "assignee_id": 2,
+                    "etiquetada": True, "atribuida": True, "nota": True}
+
+        with self._mocks_cumprimento(), \
+                mock.patch.object(
+                    handoff, "detectar_handoff",
+                    return_value={"motivo": "pedido-humano-teste",
+                                  "regra": "teste"}), \
+                mock.patch.object(handoff, "aplicar_handoff",
+                                  side_effect=fake_aplicar):
+            listener._handoff_tentado = False
+            listener._handoff = None
+            _, body = _post(
+                self.base, "/webhooks/chatwoot",
+                self._incoming(
+                    6601, 207, "quero falar com um humano"))
+            self.assertEqual(body["detail"], "handoff")
+            self._disparar(207)
+        self.assertEqual(self._n_cumprimentos(), 1)
+        _, body = _get(self.base, "/pending")
+        self.assertIsNotNone(body["pending"][0]["cumprimento"])
+
+    def test_duplicado_nao_reenvia_cumprimento(self):
+        payload = self._incoming(6701, 208, "oi")
+        with self._mocks_cumprimento():
+            _, first = _post(self.base, "/webhooks/chatwoot", payload)
+            self.assertEqual(first["detail"], "ok")
+            _, second = _post(self.base, "/webhooks/chatwoot", payload)
+            self.assertEqual(second["detail"], "duplicada")
+            self._disparar(208)
+        self.assertEqual(self._n_cumprimentos(), 1)
 
 
 if __name__ == "__main__":

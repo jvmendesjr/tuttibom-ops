@@ -105,7 +105,7 @@ class ListenerTest(unittest.TestCase):
         status, body = _get(self.base, "/health")
         self.assertEqual(status, 200)
         self.assertEqual(body, {"ok": True, "service": "ana-listener",
-                                "version": "0.4.0"})
+                                "version": "0.5.0"})
 
     def test_incoming_enfileira(self):
         status, body = _post(self.base, "/webhooks/chatwoot",
@@ -472,8 +472,10 @@ class ListenerTest(unittest.TestCase):
         self.assertIsNone(body["pending"][1]["cumprimento"])
 
     def test_outgoing_recente_inibe_cumprimento(self):
+        # Outgoing 5 min antes da rajada: dentro da pausa de 2h.
+        agora = int(time.time())
         outgoing = [{"id": 1, "message_type": 1,
-                     "created_at": int(time.time()),
+                     "created_at": agora - 5 * 60,
                      "content": "resposta fictícia da Ana"}]
         with self._mocks_cumprimento(mensagens=(True, outgoing)):
             _, body = _post(
@@ -484,6 +486,96 @@ class ListenerTest(unittest.TestCase):
         _, body = _get(self.base, "/pending")
         self.assertIsNone(body["pending"][0]["cumprimento"])
         self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_incoming_30_min_antes_suprime(self):
+        # Pausa de 2h: incoming 30 min antes da rajada suprime.
+        agora = int(time.time())
+        anterior = [{"message_type": 0, "content": "oi",
+                     "created_at": agora - 30 * 60}]
+        with self._mocks_cumprimento(mensagens=(True, anterior)):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(7001, 220, "oi"))
+            self._disparar(220)
+        _, body = _get(self.base, "/pending")
+        self.assertIsNone(body["pending"][0]["cumprimento"])
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_outgoing_30_min_antes_suprime(self):
+        # Pausa de 2h: outgoing 30 min antes da rajada suprime.
+        agora = int(time.time())
+        anterior = [{"id": 1, "message_type": 1,
+                     "content": "resposta fictícia da Ana",
+                     "created_at": agora - 30 * 60}]
+        with self._mocks_cumprimento(mensagens=(True, anterior)):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(7002, 221, "oi"))
+            self._disparar(221)
+        _, body = _get(self.base, "/pending")
+        self.assertIsNone(body["pending"][0]["cumprimento"])
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_atividade_3h_antes_dispara(self):
+        # Última atividade há 3h: é abertura nova, dispara.
+        agora = int(time.time())
+        anterior = [{"id": 1, "message_type": 1,
+                     "content": "resposta fictícia da Ana",
+                     "created_at": agora - 3 * 60 * 60}]
+        with self._mocks_cumprimento(mensagens=(True, anterior)):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(7003, 222, "oi"))
+            self._disparar(222)
+        _, body = _get(self.base, "/pending")
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+        self.assertEqual(self._n_cumprimentos(), 1)
+
+    def test_primeira_mensagem_sem_atividade_dispara(self):
+        # Conversa sem nenhuma atividade anterior: é abertura, dispara.
+        with self._mocks_cumprimento(mensagens=(True, [])):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(
+                      7004, 223, "oi, quanto custa a fita de teste"))
+            self._disparar(223)
+        _, body = _get(self.base, "/pending")
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"],
+            "Bom dia! Vou verificar aqui e já te respondo.")
+        self.assertEqual(self._n_cumprimentos(), 1)
+
+    def test_falha_api_com_cumprimento_anterior_suprime(self):
+        # Sem a API não dá para provar 2h de silêncio: conversa que
+        # já recebeu cumprimento não recebe outro.
+        with self._mocks_cumprimento():
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(7005, 224, "oi"))
+            self._disparar(224)
+        self.assertEqual(self._n_cumprimentos(), 1)
+        self._envelhecer_cumprimento(224, 15)
+        with self._mocks_cumprimento(mensagens=(False, []),
+                                      enviado=True):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(7006, 224, "quanto custa?"))
+            self._disparar(224)
+        self.assertEqual(self._n_cumprimentos(), 1)
+        _, body = _get(self.base, "/pending")
+        self.assertEqual(len(body["pending"]), 2)
+        self.assertIsNotNone(body["pending"][0]["cumprimento"])
+        self.assertIsNone(body["pending"][1]["cumprimento"])
+
+    def test_falha_api_sem_cumprimento_anterior_dispara(self):
+        # Sem a API e sem cumprimento anterior no estado local: envia.
+        with self._mocks_cumprimento(mensagens=(False, []),
+                                      enviado=True):
+            _post(self.base, "/webhooks/chatwoot",
+                  self._incoming(7007, 225, "oi"))
+            self._disparar(225)
+        _, body = _get(self.base, "/pending")
+        cump = body["pending"][0]["cumprimento"]
+        self.assertEqual(
+            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+        self.assertEqual(self._n_cumprimentos(), 1)
 
     def test_falha_api_e_falha_envio_nao_bloqueiam(self):
         with self._mocks_cumprimento(mensagens=(False, []), enviado=False):
@@ -559,6 +651,24 @@ class ListenerTest(unittest.TestCase):
                             texto="Bom dia"))
         self.assertEqual(body["detail"], "ok")
         self.assertNotIn(214, listener._TIMERS)
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_grupo_primeira_mensagem_continua_suprimido(self):
+        # Trava geral sob a regra nova: primeira mensagem, só
+        # saudação (dispararia numa conversa 1:1), continua sem
+        # cumprimento em grupo.
+        grupo = "559999999999-1234567890@g.us"
+        with self._mocks_cumprimento(mensagens=(True, [])):
+            _, body = _post(self.base, "/webhooks/chatwoot",
+                            _payload_incoming(
+                                7008, conversation_id=226,
+                                telefone=None, identifier=grupo,
+                                texto="Bom dia"))
+            self.assertEqual(body["detail"], "ok")
+            self.assertNotIn(226, listener._TIMERS)
+        _, body = _get(self.base, "/pending")
+        self.assertEqual(len(body["pending"]), 1)
+        self.assertIsNone(body["pending"][0]["cumprimento"])
         self.assertEqual(self._n_cumprimentos(), 0)
 
     def test_cumprimento_dispara_mesmo_com_handoff(self):

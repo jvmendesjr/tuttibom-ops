@@ -163,8 +163,12 @@ Código em `services/chatwoot-ana/` (detalhe em
   espera), antes da resposta da Ana. Timer fixo (não deslizante);
   aos 10 s o ouvinte reavalia: classifica a rajada INTEIRA da janela
   (basta um pedido na janela para usar o pool com "verificar") e
-  suprime se a Ana já respondeu ou outro cumprimento foi enviado.
-  Máx. 1x a cada 10 min por conversa; nunca para ignorados. O
+  suprime se houve qualquer mensagem (incoming ou outgoing) nas 2h
+  antes da rajada — pausa de 2h (decisão 2026-11-22): depois da
+  primeira vez, só dispara de novo numa abertura nova (primeira
+  mensagem ou última atividade há mais de 2h). Sem a API, só envia
+  se a conversa nunca recebeu cumprimento. Máx. 1x a cada 10 min
+  por conversa (guarda rápida); nunca para ignorados. O
   cumprimento aparece na conversa como mensagem da Ana e vem no item
   do `GET /pending` (campo `cumprimento`: texto + `enviado_em`) —
   quando você acordar, leia-o: ele diz o que o cliente já recebeu e,

@@ -14,12 +14,19 @@ da Ana. O atraso de 10 s dá tempo de a pessoa terminar a rajada e
 parece humano; o timer é FIXO a partir da primeira mensagem (não
 deslizante). Aos 10 s o ouvinte reavalia: lê as mensagens recentes e
 classifica a rajada INTEIRA da janela (basta um pedido na janela para
-usar o pool com "verificar"); se a Ana já respondeu ou outro
-cumprimento foi enviado, suprime. Textos fixos, dois pools (saudação
-fechada sem "verificar", com pedido com "verificar"), rotação sem
-repetir a variante. O cumprimento é registrado em `listener.db`
-(tabela `cumprimentos`) e aparece no item do GET /pending, para o
-agente saber que ele foi enviado e como o cliente reagiu.
+usar o pool com "verificar"); suprime se houve qualquer mensagem
+real (incoming ou outgoing) nas 2h antes do início da rajada — é a
+pausa de 2h (decisão do usuário 2026-11-22): depois que o
+cumprimento dispara a primeira vez, ele só dispara de novo numa
+abertura nova (primeira mensagem da conversa ou última atividade há
+mais de 2h). Sem a API, só envia se a conversa nunca recebeu
+cumprimento (estado local — não dá para provar 2h de silêncio sem
+ela). Se outro cumprimento foi enviado há menos de 10 min, suprime.
+Textos fixos, dois pools (saudação fechada sem "verificar", com
+pedido com "verificar"), rotação sem repetir a variante. O
+cumprimento é registrado em `listener.db` (tabela `cumprimentos`) e
+aparece no item do GET /pending, para o agente saber que ele foi
+enviado e como o cliente reagiu.
 
 Trava geral (decisão do usuário 2026-11-22): em grupo de WhatsApp
 o cumprimento NUNCA dispara — identifier ou contato_ref terminando
@@ -32,7 +39,7 @@ Somente stdlib, sem dependências.
 Regras de log: nunca logar texto de mensagem de cliente — só ids,
 tamanhos e contagens.
 
-Version: 0.4.0
+Version: 0.5.0
 """
 
 import json
@@ -46,7 +53,7 @@ from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from zoneinfo import ZoneInfo
 
-VERSION = "0.4.0"
+VERSION = "0.5.0"
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOST = os.environ.get("LISTENER_HOST", "0.0.0.0")
 PORT = int(os.environ.get("LISTENER_PORT", "3021"))
@@ -62,7 +69,7 @@ ESTADOS = ("pendente", "entregue", "ignorado")
 # rápido o bastante para o cumprimento cumprir seu papel.
 CUMPRIMENTO_ATRASO_SEG = 10
 # Janelas do cumprimento automático (minutos).
-CUMPRIMENTO_JANELA_OUTGOING_MIN = 30  # sem outgoing da Ana: é abertura
+CUMPRIMENTO_PAUSA_MIN = 120  # sem atividade real na conversa: é abertura
 CUMPRIMENTO_JANELA_MIN = 10  # sem outro cumprimento na conversa
 FUSO_FORTALEZA = "America/Fortaleza"
 
@@ -349,16 +356,29 @@ def _quando_mensagem(msg):
     return quando
 
 
-def _tem_outgoing_recente(mensagens, minutos, agora):
-    """True se há outgoing (message_type 1) nos últimos `minutos`."""
-    limite = agora - timedelta(minutes=minutos)
+def _tem_atividade_recente(mensagens, janela_inicio, minutos):
+    """True se há mensagem real (incoming 0 ou outgoing 1) com
+    created_at em [janela_inicio - minutos, janela_inicio).
+
+    Activity (tipo 2) e notas de sistema não contam. A janela
+    termina no início da rajada (exclusivo): as mensagens da
+    própria rajada não contam como atividade anterior. É a pausa
+    de 2h (decisão do usuário 2026-11-22): depois que o
+    cumprimento dispara, ele só dispara de novo numa abertura
+    nova — primeira mensagem da conversa ou última atividade há
+    mais de 2h. Sem início da rajada, não dá para provar
+    atividade: devolve False.
+    """
+    if janela_inicio is None:
+        return False
+    inicio = janela_inicio - timedelta(minutes=minutos)
     for msg in mensagens:
         if not isinstance(msg, dict):
             continue
-        if msg.get("message_type") not in (1, "outgoing"):
+        if msg.get("message_type") not in (0, 1, "incoming", "outgoing"):
             continue
         quando = _quando_mensagem(msg)
-        if quando is not None and quando >= limite:
+        if quando is not None and inicio <= quando < janela_inicio:
             return True
     return False
 
@@ -436,9 +456,9 @@ def agendar_cumprimento(info, atraso=None):
 
     Timer FIXO (não deslizante): se já há um timer para a conversa,
     não agenda outro. Só o estado local é consultado aqui (nenhum
-    cumprimento nos últimos 10 min); a reavaliação (outgoing da Ana,
-    rajada) acontece no disparo. Devolve True se agendou.
-    Nunca levanta exceção.
+    cumprimento nos últimos 10 min); a reavaliação (atividade
+    recente na conversa, rajada) acontece no disparo. Devolve True
+    se agendou. Nunca levanta exceção.
     """
     conversation_id = info.get("conversation_id")
     if not conversation_id:
@@ -474,9 +494,12 @@ def agendar_cumprimento(info, atraso=None):
 def _disparar_cumprimento(info):
     """Callback do timer (10 s depois). Reavalia e envia ou suprime.
 
-    Suprime se outro cumprimento foi enviado (<10 min) ou se a Ana
-    já respondeu (outgoing recente). Classifica a rajada inteira da
-    janela. Nunca levanta exceção; falha de envio só loga.
+    Suprime se outro cumprimento foi enviado (<10 min) ou se houve
+    atividade real na conversa nas 2h antes do início da rajada
+    (pausa de 2h: só dispara numa abertura nova). Sem a API, só
+    envia se a conversa nunca recebeu cumprimento (estado local).
+    Classifica a rajada inteira da janela. Nunca levanta exceção;
+    falha de envio só loga.
     """
     conversation_id = info.get("conversation_id")
     try:
@@ -495,18 +518,23 @@ def _disparar_cumprimento(info):
                          conversation_id)
                 return None
         ok, mensagens = _mensagens_da_conversa(conversation_id)
+        janela = _janela_inicio(info)
         if ok:
-            if _tem_outgoing_recente(
-                    mensagens, CUMPRIMENTO_JANELA_OUTGOING_MIN, agora):
-                log.info("cumprimento suprimido (Ana ja respondeu):"
-                         " conv=%s", conversation_id)
+            if _tem_atividade_recente(
+                    mensagens, janela, CUMPRIMENTO_PAUSA_MIN):
+                log.info("cumprimento suprimido (atividade recente,"
+                         " pausa de 2h): conv=%s", conversation_id)
                 return None
             tipo = _classificar_rajada(
-                mensagens, info.get("content") or "",
-                _janela_inicio(info))
+                mensagens, info.get("content") or "", janela)
         else:
-            # Sem a API: decide só pelo estado local e pelo texto que
-            # disparou o timer.
+            # Sem a API não dá para provar 2h de silêncio: só envia
+            # se esta conversa nunca recebeu cumprimento (estado
+            # local); se já houve cumprimento, suprime.
+            if ultimo is not None:
+                log.info("cumprimento suprimido (sem API e ja"
+                         " cumprimentado): conv=%s", conversation_id)
+                return None
             tipo = "saudacao" if eh_saudacao_fechada(
                 info.get("content") or "") else "pedido"
         variante = (ultimo["variante"] + 1) % 3 if ultimo else 0

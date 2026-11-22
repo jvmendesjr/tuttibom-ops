@@ -56,7 +56,7 @@ Follow-up: runner a cada 2 h escreve RASCUNHOS — nunca envia sozinho.
   `sudo systemctl restart ana-listener` (o ouvinte importa o módulo
   uma vez e guarda em cache).
 
-### Cumprimento automático (ack de 10 s, aprovado 2026-11-21 23:45)
+### Cumprimento automático (ack de 10 s, aprovado 2026-11-21 23:45; pausa de 2h, decisão 2026-11-22)
 
 Preliminar antes da resposta da Ana: na abertura da conversa o
 ouvinte agenda um cumprimento fixo para **10 s depois** da primeira
@@ -67,9 +67,13 @@ atrasa o 200 ao Chatwoot nem o enfileiramento.
 
 - **Quando dispara:** incoming, contato não ignorado, e nenhum
   cumprimento para a conversa nos últimos 10 min (máx. 1x a cada
-  10 min). Aos 10 s, antes de enviar, o ouvinte reavalia: se a Ana
-  já respondeu (outgoing recente, 30 min) ou outro cumprimento foi
-  enviado, SUPRIME. Dispara mesmo quando há handoff.
+  10 min — guarda rápida contra timers duplicados). Aos 10 s, antes
+  de enviar, o ouvinte reavalia: se houve qualquer mensagem real
+  (incoming ou outgoing) nas 2h antes do início da rajada,
+  SUPRIME — é a pausa de 2h (decisão do usuário 2026-11-22):
+  depois da primeira vez, o cumprimento só dispara de novo numa
+  abertura nova (primeira mensagem da conversa ou última atividade
+  há mais de 2h). Dispara mesmo quando há handoff.
 - **Nunca em grupo (trava geral, decisão do usuário 2026-11-22):**
   identifier ou contato_ref terminando em `@g.us` pula o
   agendamento antes do timer — cliente é sempre conversa
@@ -101,9 +105,12 @@ atrasa o 200 ao Chatwoot nem o enfileiramento.
   da Ana, é registrado em `listener.db` (tabela `cumprimentos`) e
   vem no item do `GET /pending` (campo `cumprimento`: texto +
   `enviado_em`); `/stats` conta os cumprimentos.
-- **Falha nunca bloqueia:** se a leitura da API falhar, decide só
-  pelo estado local e pelo texto que disparou o timer; se o envio
-  falhar, só loga e a mensagem segue enfileirada para o Muse.
+- **Falha nunca bloqueia:** se a leitura da API falhar, só envia
+  se a conversa nunca recebeu cumprimento (estado local — não dá
+  para provar 2h de silêncio sem a API); se já houve cumprimento,
+  suprime. O texto, sem a API, vem só do que disparou o timer.
+  Se o envio falhar, só loga e a mensagem segue enfileirada para
+  o Muse.
 - **Único envio do serviço:** `chatwoot_client.enviar_cumprimento`
   (só textos fixos, nunca texto livre). O resto do serviço continua
   sem enviar nada.
@@ -181,8 +188,9 @@ vista e segue em silêncio).
 ## Verificação feita (2026-11-21)
 
 - Testes: `python3 -m unittest discover -s services/chatwoot-ana` →
-  **51/51 OK** (26 ouvinte — inclui 16 do cumprimento automático
-  com atraso de 10 s e rajada — + 15 handoff + 10 follow-up).
+  **61/61 OK** (36 ouvinte — inclui 26 do cumprimento automático
+  com atraso de 10 s, rajada e pausa de 2h — + 15 handoff + 10
+  follow-up). Versão 0.5.0 (pausa de 2h, 2026-11-22).
 - Ouvinte ao vivo: `/health` 200; incoming falso enfileirado;
   duplicado descartado; ignorado fora do `/pending`; `/ack` marca
   entregue; `zernio-bridge` segue `active`.

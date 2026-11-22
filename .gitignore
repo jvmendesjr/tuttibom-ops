@@ -4,6 +4,7 @@
 !.env.example
 *.pem
 *.key
+*.sqlite3
 **/secrets/
 **/credentials/
 **/storage-state.json

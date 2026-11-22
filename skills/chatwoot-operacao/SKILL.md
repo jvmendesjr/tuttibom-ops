@@ -17,11 +17,17 @@ no Chatwoot, importar contatos, ou mexer na ponte Zernio e no app WAHA.
 ## O que é o Chatwoot aqui
 
 Inbox único da nova vertente, no PC, fora do Deskcomm. Conta
-"TuttiBom" (id 2), versão 4.20.1-ce, em `http://100.73.22.64:3001`
-(serviço em `/home/pc/chatwoot/`, 4 contêineres: rails, sidekiq,
-postgres, redis). O Deskcomm continua existindo, mas NÃO atende mais:
-a IA dele está pausada no WhatsApp e no Messenger — nada do Deskcomm
-deve voltar a responder sozinho.
+"TuttiBom" (id 2), versão 4.20.1-ce, em
+`https://chatwoot.petemcasa.com` (URL pública, HTTPS terminado no
+túnel `cloudflared-ponte`; por dentro, `http://100.73.22.64:3001`
+na tailnet). Serviço em `/home/pc/chatwoot/`, 4 contêineres: rails,
+sidekiq, postgres, redis. SMTP via Gmail (`tutibom10@gmail.com`)
+configurado e provado (e-mail de teste recebido 2026-11-21 22:06).
+Atendimento ligado desde 2026-11-21 22:12: o Muse atende como Ana
+nos inboxes 1 e 2, com vigília `chatwoot-watch-ana` a cada 5 min
+(só leitura — a vigília nunca responde sozinha). O Deskcomm continua
+existindo, mas NÃO atende mais: a IA dele está pausada no WhatsApp
+e no Messenger — nada do Deskcomm deve voltar a responder sozinho.
 
 Inboxes (conta 2):
 
@@ -108,19 +114,26 @@ passa pela ponte `zernio-bridge`.
   `message_updated` em `/webhooks/chatwoot` com `X-Chatwoot-Signature`
   (HMAC-SHA256 de `"<timestamp>.<corpo>"` com o secret do canal API).
   A ponte dedupe pelo id da mensagem e envia pela API do Zernio.
-- **Volta DESATIVADA por enquanto:** a ponte não tem a chave da API
-  do Zernio (`ZERNIO_API_KEY` vazia no `.env`). Sem ela, a resposta
-  do agente fica registrada no log como "outbound DESATIVADO" e NÃO
-  chega ao Messenger. Para ativar, o usuário provê a chave (do painel
-  do Zernio) e ela vai para o `.env` da ponte — nunca para o repo.
+- **Volta ATIVA desde 2026-11-21 21:37:** a chave da API do Zernio
+  (`ZERNIO_API_KEY`, 67 caracteres) foi colocada pelo usuário no
+  `.env` da ponte e a ponte foi reiniciada (21:37:13). A volta foi
+  provada: o envio usa `POST
+  /v1/inbox/conversations/{conversationId}/messages` com
+  `{"accountId": "6aed2e33335a3fa3818d86cf", "message": "<texto>"}` —
+  o formato anterior (`{"text": ...}`) devolvia 400; corrigido
+  21:48–21:50 e confirmado com `outbound ok` às 21:49:31 e
+  recebimento confirmado pelo usuário no Messenger às 21:53.
+  `ZERNIO_ACCOUNT_ID` também está no `.env` da ponte.
 - O endpoint do Zernio no Deskcomm continua registrado como reserva
   até a migração completar; não o remova.
-- **URL pública pendente:** o Zernio precisa alcançar a ponte pela
-  internet. Hoje a ponte só é alcançável na tailnet/local. Registrar
-  o endpoint no Zernio exige um hostname público novo no túnel
-  `cloudflared-ponte` (DNS + regra de ingress + reinício do túnel) —
-  decisão do usuário, ainda não tomada. Sem ela, o teste real do
-  Messenger continua pelo Deskcomm (V4).
+- **URL pública no ar desde 2026-11-21 21:13:**
+  `https://zernio-chatwoot.petemcasa.com` (CNAME proxied + regra no
+  túnel `cloudflared-ponte`, config remota v3, sem reinício;
+  `/health` 200). Endpoint registrado no Zernio — id
+  `6b0235ced3563c3d930109f5`, "Chatwoot Messenger - TuttiBom",
+  eventos `message.received`, ativo; teste `POST /v1/webhooks/test`
+  recebido pela ponte às 21:22:42. Ida e volta do Messenger provadas
+  ponta a ponta 21:44–21:53.
 
 ## Webhooks do Chatwoot e rede privada
 
@@ -149,6 +162,8 @@ mudança no `.env`, recrie os contêineres com
 
 ## Verificação rápida (antes de dizer que está pronto)
 
+- `curl https://chatwoot.petemcasa.com/` → 200, e
+  `/app/login` → 200 (URL pública, HTTPS).
 - `curl http://127.0.0.1:3001/` → 200 (Chatwoot no ar).
 - `curl http://127.0.0.1:3020/health` → `{"ok": true, ...}` (ponte).
 - `GET /api/v1/accounts/2/inboxes` → inboxes 1 e 2.

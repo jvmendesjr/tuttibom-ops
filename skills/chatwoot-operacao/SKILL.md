@@ -24,10 +24,13 @@ na tailnet). Serviço em `/home/pc/chatwoot/`, 4 contêineres: rails,
 sidekiq, postgres, redis. SMTP via Gmail (`tutibom10@gmail.com`)
 configurado e provado (e-mail de teste recebido 2026-11-21 22:06).
 Atendimento ligado desde 2026-11-21 22:12: o Muse atende como Ana
-nos inboxes 1 e 2, com vigília `chatwoot-watch-ana` a cada 5 min
-(só leitura — a vigília nunca responde sozinha). O Deskcomm continua
-existindo, mas NÃO atende mais: a IA dele está pausada no WhatsApp
-e no Messenger — nada do Deskcomm deve voltar a responder sozinho.
+nos inboxes 1 e 2. Desde 2026-11-21 ~23:00 a detecção é por webhook:
+o `ana-listener` recebe `message_created` e o hook
+`chatwoot-ana-watch` acorda o atendimento em ~60 s (antes, só a
+vigília de 5 min). A vigília `chatwoot-watch-ana` continua como rede
+de segurança. O Deskcomm continua existindo, mas NÃO atende mais: a
+IA dele está pausada no WhatsApp e no Messenger — nada do Deskcomm
+deve voltar a responder sozinho.
 
 Inboxes (conta 2):
 
@@ -135,6 +138,67 @@ passa pela ponte `zernio-bridge`.
   recebido pela ponte às 21:22:42. Ida e volta do Messenger provadas
   ponta a ponta 21:44–21:53.
 
+## Ouvinte de webhook e hook (detecção imediata)
+
+Código em `services/chatwoot-ana/` (detalhe em
+`docs/ana-chatwoot-configuracao.md`).
+
+- **Ouvinte `ana-listener`:** systemd no PC
+  (`/home/pc/chatwoot/ana-listener/`, porta 3021). Webhook de conta
+  id 1 no Chatwoot: `http://100.73.22.64:3021/webhooks/chatwoot`,
+  evento `message_created`. Recebe, dedupe por id da mensagem, só
+  processa `incoming`, enfileira em `listener.db`. `GET /pending`,
+  `POST /ack`, `GET /health`, `GET /stats`. Nunca responde ninguém,
+  nunca loga texto de cliente. Se o `handoff.py` mudar no disco,
+  reiniciar: `sudo systemctl restart ana-listener`.
+- **Hook `chatwoot-ana-watch`:** runtime, poll a cada 60 s, consulta
+  `/pending` via `ssh` (a VM não alcança a tailnet por HTTP direto)
+  e acorda o agente quando há mensagem nova. O worker acordado
+  verifica o evento na API, reporta no chat (conversa, inbox,
+  contato, texto, hora), dá `/ack` e o Muse responde como Ana.
+- **Empresas conhecidas — IGNORAR (regra do usuário, 2026-11-21):**
+  contatos de empresas conhecidas (Mercado Livre +5511978832287 e
+  outras) são canais de comunicação e alerta, NÃO clientes. A Ana
+  nunca responde, não cria lead, não faz follow-up nem handoff para
+  eles. A lista vive em `services/chatwoot-ana/ignorados.json` e é
+  consultada pelo ouvinte, pelo runner e pelo handoff — e pela
+  vigília (que marca como vista e segue em silêncio). Nunca bloquear,
+  apagar ou alterar esses contatos: o do Mercado Livre também é usado
+  por outra operação do usuário. Caso concreto: conversa 8, 4ª
+  mensagem idêntica de "Alerta de segurança" (22:33) — sem resposta,
+  sem lead (resolve na prática a P8).
+
+## Follow-up automático (só rascunhos)
+
+- Runner `services/chatwoot-ana/followup.py`, cron
+  `chatwoot-followup-ana` a cada 2 h. Lê o CRM vivo
+  (`/home/pc/chatwoot/crm.sqlite3`) + conversas abertas e escreve
+  rascunhos em `/home/pc/chatwoot/ana-listener/followup-drafts/`.
+  **Nunca envia sozinho.** Quem envia é o Muse, como Ana, depois de
+  revisar o rascunho — e marca o follow-up como `enviado` no CRM
+  (`CRM.marcar_followup`).
+- Teto: máx. 3 toques em 2 dias por lead; pagamento tem 1 toque só.
+  Cancelar-ao-responder: inbound após o agendamento cancela.
+- Textos-modelo e cadência (12 h / 24 h / 40 h) em
+  `docs/followup-textos-modelo.md` — aguardam aprovação do usuário;
+  a aprovação é pré-condição do envio, não do rascunho.
+- O `contato_ref` do lead precisa conter o identifier exato ou os
+  dígitos do telefone, senão o runner não acha a conversa.
+
+## Handoff humano
+
+- Humano: agente id 2 (`tutibom`, administrador) — único agente da
+  conta. Código em `services/chatwoot-ana/handoff.py`.
+- Detecção determinística: humano-explicito, amostra-física,
+  suspeita-golpe, pós-venda. Sentimento negativo, "não sei responder",
+  fora de escopo genérico e assunto sensível ficam para o julgamento
+  do agente.
+- Ação: etiqueta `handoff-humano` + atribuição ao `tutibom` + nota
+  privada com motivo e hora. **Nota privada é `POST /messages` com
+  `private: true`** — o endpoint `/notes` dá 404 no 4.20.1-ce.
+- A Ana nunca diz que vai transferir para um humano nem que é
+  robô/virtual.
+
 ## Webhooks do Chatwoot e rede privada
 
 O Chatwoot rejeita webhook para IP privado por padrão (SSRF). Para os
@@ -166,6 +230,9 @@ mudança no `.env`, recrie os contêineres com
   `/app/login` → 200 (URL pública, HTTPS).
 - `curl http://127.0.0.1:3001/` → 200 (Chatwoot no ar).
 - `curl http://127.0.0.1:3020/health` → `{"ok": true, ...}` (ponte).
+- `curl http://127.0.0.1:3021/health` → `{"ok": true, "service": "ana-listener", ...}` (ouvinte).
+- `curl http://127.0.0.1:3021/pending` → `{"pending": []}` (fila vazia).
+- `sudo systemctl is-active ana-listener` → `active`.
 - `GET /api/v1/accounts/2/inboxes` → inboxes 1 e 2.
 - `sudo systemctl is-active zernio-bridge` → `active`.
 - `sudo journalctl -u zernio-bridge --since '10 minutes ago'` →

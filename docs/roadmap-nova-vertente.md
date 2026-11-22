@@ -146,6 +146,17 @@ Muse revisa, junta e dá push.
   provadas (21:34–21:53). Atendimento ligado 22:12: o Muse atende
   como Ana nos inboxes 1 e 2, com vigília `chatwoot-watch-ana` a
   cada 5 min (só leitura; a vigília nunca responde sozinha).
+- **Configuração da Ana no Chatwoot (2026-11-21 ~23:00, detalhe em
+  `docs/ana-chatwoot-configuracao.md`):** ouvinte `ana-listener`
+  (porta 3021, webhook de conta id 1) + hook `chatwoot-ana-watch`
+  (poll 60 s, acorda o atendimento na hora) + runner de follow-up
+  (cron `chatwoot-followup-ana` a cada 2 h, só rascunhos) + handoff
+  humano (etiqueta `handoff-humano`, agente `tutibom`). Código em
+  `services/chatwoot-ana/`, 35/35 testes. Teste vivo com mensagem
+  real ainda pendente; textos-modelo de follow-up aguardam aprovação
+  do usuário. Regra nova: empresas conhecidas são ignoradas (lista
+  em `services/chatwoot-ana/ignorados.json` — ex.: Mercado Livre;
+  conversa 8 sem resposta, sem lead; resolve na prática a P8).
 - A vertente só vira o caminho principal quando os setores 1, 2, 3 e
   7 estiverem promovidos. Os demais setores promovem no seu ritmo.
 - Critérios gerais de promoção da vertente: V3 e V4 passadas; nenhum
@@ -163,7 +174,7 @@ Muse revisa, junta e dá push.
 - [x] V2 — CRM próprio mínimo (`54f271c`)
 - [x] V3 — Laboratório: conversa simulada ponta a ponta (`5b345d1`, 45/45)
 - [x] V4 — Teste real supervisionado (`ac8b851`, veredito: PASSA)
-- [ ] V5 — Promoção por setor (1, 2, 3 e 7 primeiro) — em andamento: inbox Chatwoot no ar e atendimento ligado
+- [ ] V5 — Promoção por setor (1, 2, 3 e 7 primeiro) — em andamento: inbox Chatwoot no ar, atendimento ligado e pacote ouvinte/follow-up/handoff implementado (teste vivo e aprovação dos textos pendentes)
 
 ## Decisões relacionadas
 

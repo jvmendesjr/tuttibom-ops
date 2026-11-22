@@ -257,6 +257,37 @@ class CRM:
             ).fetchall()
         return [dict(r) for r in rows]
 
+    def marcar_followup(self, followup_id: int, estado: str) -> dict:
+        """Marca um follow-up como 'enviado' ou 'cancelado'.
+
+        Quem envia o toque (o Muse, a partir do rascunho do runner)
+        marca 'enviado' logo após enviar; o runner de follow-up marca
+        'cancelado' quando vê inbound depois do agendamento
+        (cancelar-ao-responder). 'pendente' volta o follow-up à fila.
+        """
+        if estado not in ("pendente", "enviado", "cancelado"):
+            raise ValueError(f"estado de follow-up inválido: {estado}")
+        cur = self.conn.execute(
+            "UPDATE followups SET estado = ? WHERE id = ?",
+            (estado, followup_id),
+        )
+        if cur.rowcount == 0:
+            raise ValueError(f"follow-up inexistente: {followup_id}")
+        self.conn.commit()
+        row = self.conn.execute(
+            "SELECT * FROM followups WHERE id = ?", (followup_id,)
+        ).fetchone()
+        return dict(row)
+
+    def followups_enviados(self, lead_id: int, tipo: str) -> list[dict]:
+        """Toques já enviados de um lead e tipo (para o teto de 3)."""
+        rows = self.conn.execute(
+            "SELECT * FROM followups WHERE lead_id = ? AND tipo = ?"
+            " AND estado = 'enviado' ORDER BY id",
+            (lead_id, tipo),
+        ).fetchall()
+        return [dict(r) for r in rows]
+
     # -- memória por contato ------------------------------------------
 
     def registrar_interesse(

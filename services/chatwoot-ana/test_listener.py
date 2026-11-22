@@ -105,7 +105,7 @@ class ListenerTest(unittest.TestCase):
         status, body = _get(self.base, "/health")
         self.assertEqual(status, 200)
         self.assertEqual(body, {"ok": True, "service": "ana-listener",
-                                "version": "0.3.0"})
+                                "version": "0.4.0"})
 
     def test_incoming_enfileira(self):
         status, body = _post(self.base, "/webhooks/chatwoot",
@@ -513,6 +513,52 @@ class ListenerTest(unittest.TestCase):
                         _payload_incoming(6501, telefone=TEL_IGNORADO,
                                           identifier=ID_IGNORADO))
         self.assertEqual(body["detail"], "ignorado")
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_eh_grupo_whatsapp(self):
+        self.assertTrue(listener.eh_grupo_whatsapp(
+            "559999999999-1234567890@g.us"))
+        self.assertTrue(listener.eh_grupo_whatsapp(
+            None, "553195896796-1624883545@g.us"))
+        self.assertTrue(listener.eh_grupo_whatsapp(
+            "559999999999-1234567890@G.US"))
+        self.assertFalse(listener.eh_grupo_whatsapp(
+            "+5551999990001", "+5551999990001"))
+        self.assertFalse(listener.eh_grupo_whatsapp(None, None))
+        self.assertFalse(listener.eh_grupo_whatsapp(
+            "eab057e8-88ce-4893-89f1-41429722efaa"))
+
+    def test_grupo_whatsapp_nunca_cumprimenta(self):
+        # Trava geral (decisão do usuário 2026-11-22): grupo de
+        # WhatsApp NÃO listado em ignorados.json também não recebe
+        # cumprimento — nem com pedido na mensagem. A mensagem segue
+        # enfileirada (o Muse decide o que fazer com ela).
+        grupo = "559999999999-1234567890@g.us"
+        with self._mocks_cumprimento():
+            _, body = _post(self.base, "/webhooks/chatwoot",
+                            _payload_incoming(
+                                6801, conversation_id=213,
+                                telefone=None, identifier=grupo,
+                                texto="oi, quanto custa a fita"))
+            self.assertEqual(body["detail"], "ok")
+            self.assertNotIn(213, listener._TIMERS)
+        _, body = _get(self.base, "/pending")
+        self.assertEqual(len(body["pending"]), 1)
+        self.assertEqual(body["pending"][0]["contato_ref"], grupo)
+        self.assertIsNone(body["pending"][0]["cumprimento"])
+        self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_grupo_whatsapp_pelo_contato_ref(self):
+        # Sem identifier: o JID chega como telefone/contato_ref e a
+        # trava vale do mesmo jeito.
+        grupo = "559999999999-1234567890@g.us"
+        _, body = _post(self.base, "/webhooks/chatwoot",
+                        _payload_incoming(
+                            6802, conversation_id=214,
+                            telefone=grupo, identifier=None,
+                            texto="Bom dia"))
+        self.assertEqual(body["detail"], "ok")
+        self.assertNotIn(214, listener._TIMERS)
         self.assertEqual(self._n_cumprimentos(), 0)
 
     def test_cumprimento_dispara_mesmo_com_handoff(self):

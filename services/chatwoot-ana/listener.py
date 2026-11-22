@@ -21,12 +21,18 @@ repetir a variante. O cumprimento é registrado em `listener.db`
 (tabela `cumprimentos`) e aparece no item do GET /pending, para o
 agente saber que ele foi enviado e como o cliente reagiu.
 
+Trava geral (decisão do usuário 2026-11-22): em grupo de WhatsApp
+o cumprimento NUNCA dispara — identifier ou contato_ref terminando
+em `@g.us` pula o agendamento antes do timer. Cliente da loja é
+sempre conversa individual; a lista de ignorados continua como
+segunda camada (o enfileiramento da mensagem segue normal).
+
 Somente stdlib, sem dependências.
 
 Regras de log: nunca logar texto de mensagem de cliente — só ids,
 tamanhos e contagens.
 
-Version: 0.3.0
+Version: 0.4.0
 """
 
 import json
@@ -40,7 +46,7 @@ from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from zoneinfo import ZoneInfo
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOST = os.environ.get("LISTENER_HOST", "0.0.0.0")
 PORT = int(os.environ.get("LISTENER_PORT", "3021"))
@@ -411,6 +417,20 @@ def _enviar_cumprimento_api(conversation_id, texto):
         return False
 
 
+def eh_grupo_whatsapp(identifier=None, contato_ref=None):
+    """Grupo de WhatsApp: identifier ou contato_ref termina em @g.us.
+
+    Trava geral (decisão do usuário 2026-11-22): o cumprimento nunca
+    dispara em grupo — cliente da loja é sempre conversa individual.
+    A lista de ignorados continua como segunda camada; o
+    enfileiramento da mensagem não muda.
+    """
+    for valor in (identifier, contato_ref):
+        if valor and str(valor).strip().lower().endswith("@g.us"):
+            return True
+    return False
+
+
 def agendar_cumprimento(info, atraso=None):
     """Agenda o cumprimento 10 s depois da primeira mensagem da abertura.
 
@@ -701,12 +721,18 @@ def handle_webhook(payload):
         log.info("ignorado (%s): msg=%s conv=%s",
                  rotulo, message_id, info["conversation_id"])
         return True, "ignorado"
-    # Cumprimento automático: agenda a saudação para 10 s depois (o
-    # envio e a reavaliação acontecem no disparo do timer, sem atrasar
-    # o 200 nem o enfileiramento). Dispara mesmo quando há handoff (a
+    # Trava geral (decisão do usuário 2026-11-22): o cumprimento
+    # nunca dispara em grupo de WhatsApp — o agendamento é pulado
+    # ANTES do timer. O enfileiramento segue normal: a mensagem
+    # chega ao Muse, que decide; a lista de ignorados continua
+    # como segunda camada. Dispara mesmo quando há handoff (a
     # pessoa espera um humano; "só um instante" continua adequado).
     # Nunca bloqueia o enfileiramento: falha só loga.
-    agendar_cumprimento(info)
+    if eh_grupo_whatsapp(identifier, contato_ref):
+        log.info("cumprimento suprimido (grupo de WhatsApp): conv=%s",
+                 info["conversation_id"])
+    else:
+        agendar_cumprimento(info)
     # Handoff (se o módulo existir e detectar).
     texto = info["content"] or ""
     modulo = _carregar_handoff()

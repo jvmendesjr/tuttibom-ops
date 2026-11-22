@@ -70,6 +70,16 @@ atrasa o 200 ao Chatwoot nem o enfileiramento.
   10 min). Aos 10 s, antes de enviar, o ouvinte reavalia: se a Ana
   já respondeu (outgoing recente, 30 min) ou outro cumprimento foi
   enviado, SUPRIME. Dispara mesmo quando há handoff.
+- **Nunca em grupo (trava geral, decisão do usuário 2026-11-22):**
+  identifier ou contato_ref terminando em `@g.us` pula o
+  agendamento antes do timer — cliente é sempre conversa
+  individual. A mensagem segue enfileirada; a lista de ignorados
+  continua como segunda camada. Motivo: o cumprimento disparou
+  para o grupo SantostecPromo #09 às 00:03:20 de 2026-11-22
+  porque o grupo ainda não estava na lista (o cheque de ignorados
+  já acontecia antes do timer — confirmado no código e no log; a
+  msg 33 é o próprio cumprimento enviado, não uma segunda
+  violação).
 - **Textos (dois pools, detecção determinística, sem LLM):**
   saudação pelo horário real (America/Fortaleza: 06–12 "Bom dia",
   12–18 "Boa tarde", 18–06 "Boa noite") + pedido cordial de espera.

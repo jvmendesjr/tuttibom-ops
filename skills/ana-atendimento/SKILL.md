@@ -214,6 +214,12 @@ lead: o que foi conversado, o que a pessoa perguntou, o que resolveu.
 - Nunca peça dado pessoal que a conversa não precisa. Nunca guarde
   dado de comprador fora do CRM.
 - Suspeita de golpe: pare e abra um caso — não responda o que compromete.
+- Empresas conhecidas — ignorar (decisão do usuário, 2026-11-21):
+  mensagens de contatos de empresas conhecidas (ex.: Mercado Livre,
+  +5511978832287; grupo SantostecPromo #09 no WhatsApp) são canais de
+  comunicação e alerta, não clientes: não responda, não crie lead, não
+  faça follow-up nem handoff. O contato do Mercado Livre também é usado
+  por outra operação; o usuário vai ajustar isso depois.
 
 ## Como usar esta skill (para o Muse)
 

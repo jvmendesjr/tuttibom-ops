@@ -105,7 +105,7 @@ class ListenerTest(unittest.TestCase):
         status, body = _get(self.base, "/health")
         self.assertEqual(status, 200)
         self.assertEqual(body, {"ok": True, "service": "ana-listener",
-                                "version": "0.6.0"})
+                                "version": "0.6.1"})
 
     def test_incoming_enfileira(self):
         status, body = _post(self.base, "/webhooks/chatwoot",
@@ -534,6 +534,28 @@ class ListenerTest(unittest.TestCase):
         self.assertIsNone(body["pending"][0]["cumprimento"])
         self.assertEqual(self._n_cumprimentos(), 0)
 
+    def test_resposta_publica_durante_timer_suprime_cumprimento(self):
+        payload = self._incoming(7011, 231, "oi")
+        resposta = {"message_type": 1, "private": False,
+                    "created_at": payload["message"]["created_at"] + 3}
+        with self._mocks_cumprimento(mensagens=(True, [resposta])):
+            _post(self.base, "/webhooks/chatwoot", payload)
+            self._disparar(231)
+            listener._enviar_cumprimento_api.assert_not_called()
+        _, body = _get(self.base, "/pending")
+        self.assertIsNone(body["pending"][0]["cumprimento"])
+
+    def test_nota_privada_nao_suprime_cumprimento(self):
+        payload = self._incoming(7012, 232, "oi")
+        criado = payload["message"]["created_at"]
+        notas = [{"message_type": 1, "private": True,
+                  "created_at": criado + diferenca}
+                 for diferenca in (-60, 3)]
+        with self._mocks_cumprimento(mensagens=(True, notas)):
+            _post(self.base, "/webhooks/chatwoot", payload)
+            self._disparar(232)
+            listener._enviar_cumprimento_api.assert_called_once()
+
     def test_outgoing_30_min_antes_suprime(self):
         # Pausa de 2h: outgoing 30 min antes da rajada suprime.
         agora = int(time.time())
@@ -622,6 +644,22 @@ class ListenerTest(unittest.TestCase):
         self.assertEqual(len(body["pending"]), 1)
         self.assertIsNone(body["pending"][0]["cumprimento"])
         self.assertEqual(self._n_cumprimentos(), 0)
+
+    def test_midia_sem_legenda_usa_generico_mesmo_se_leitura_falhar(self):
+        for i, (tipo, legenda, leitura_ok) in enumerate((
+            ("audio", None, False),
+            ("image", "", False),
+            ("image", "   ", True),
+        )):
+            with self.subTest(tipo=tipo, legenda=legenda, leitura_ok=leitura_ok):
+                conversa = 233 + i
+                payload = self._incoming(7013 + i, conversa, legenda)
+                payload["message"]["attachments"] = [{"file_type": tipo}]
+                with self._mocks_cumprimento(mensagens=(leitura_ok, [])):
+                    _post(self.base, "/webhooks/chatwoot", payload)
+                    self._disparar(conversa)
+                    listener._enviar_cumprimento_api.assert_called_once_with(
+                        conversa, "Bom dia! Aguarde um instante, por favor.")
 
     def test_falha_api_usa_texto_do_disparo(self):
         # Sem a API, classifica só pelo texto que disparou o timer.

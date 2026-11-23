@@ -94,9 +94,11 @@ class CRM:
         for sku, preco in PRECOS_SKU.items():
             largura, metragem, cor = _parse_sku(sku)
             self.conn.execute(
-                "INSERT OR IGNORE INTO produtos"
+                "INSERT INTO produtos"
                 " (sku, tipo, largura_mm, metragem_m, cor_impressao, preco_centavos)"
-                " VALUES (?, 'fita_cetim', ?, ?, ?, ?)",
+                " VALUES (?, 'fita_cetim', ?, ?, ?, ?)"
+                " ON CONFLICT(sku) DO UPDATE SET preco_centavos = excluded.preco_centavos"
+                " WHERE produtos.preco_centavos <> excluded.preco_centavos",
                 (sku, largura, metragem, cor, int(preco * 100)),
             )
 

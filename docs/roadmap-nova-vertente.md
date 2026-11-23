@@ -111,7 +111,7 @@ Muse revisa, junta e dá push.
 
 - Uma conversa real, com o usuário acompanhando, no canal onde a
   pessoa escreveu (Messenger, via Zernio → Deskcomm, IA pausada).
-  Cliente de teste: Gleiciane, que pediu o preço da fita de 10 m com
+  O contato de teste pediu o preço da fita de 10 m com
   impressão dourada e não respondeu após o preço.
 - Relatório completo: `docs/v4-teste-real-relatorio.md`, commit
   `ac8b851`. Mecânica provada ponta a ponta (transporte, leitura via
@@ -125,7 +125,7 @@ Muse revisa, junta e dá push.
   dois canais, HTTPS, SMTP).
 - Desfecho: lead fechado no CRM próprio como "Não comprou /
   sem_resposta" (cliente de teste, não perda comercial); vigília
-  `v4-watch-gleiciane` e follow-up de 2026-11-22 removidos.
+  da V4 e follow-up de 2026-11-22 removidos.
 - Critério de saída: o turno real completa sem intervenção de
   emergência, com o lead registrado corretamente e a aprovação da
   imagem/texto exatos respeitada. Se falhar, volta para a V3 — não se

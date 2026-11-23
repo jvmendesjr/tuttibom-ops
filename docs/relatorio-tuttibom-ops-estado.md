@@ -389,9 +389,9 @@ nada executado, nada agendado.**
 8. **Menores, para observar no próximo teste:** refinamento do
    tempo do ack (27–33 s, aceito); `reason` tentado 1× no turno
    de áudio; Ana não ofereceu a prévia como pergunta nesse
-   áudio; intervalo silencioso de ~5 min sem log no turno da
-   Gleiciane; teste de imagem; testes de ADB desbloqueados pelo
-   u2; teste fim-a-fim da recuperação do S10.
+   áudio; intervalo silencioso de ~5 min sem log no turno do
+   contato de teste da V4; teste de imagem; testes de ADB
+   desbloqueados pelo u2; teste fim-a-fim da recuperação do S10.
 
 ## 10. Regras que governam tudo isto
 

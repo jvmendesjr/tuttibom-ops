@@ -3,7 +3,7 @@
 **Data:** 2026-11-21. **Status:** rascunho — desenho aprovado para
 escrita pelo usuário em 2026-11-21; **não é decisão de construção**.
 **Trabalho de plataforma (setor 08), para depois da V4** — não se
-constrói no meio do teste com a Gleiciane.
+constrói no meio do teste ao vivo da V4.
 
 **Decisão-mãe:** D-012 (2026-11-21) — CRM próprio + atendimento pelo
 Muse, produção Deskcomm/Ana v12-B intocada até a promoção por setor.

@@ -42,7 +42,7 @@ preço sem aprovação do usuário ao texto exato.
 - O Messenger: a IA já está pausada lá desde 2026-11-16 — nada muda.
 - A rotina do gestor (3 varreduras/dia via MCP, 08:00/14:00/20:00)
   — o gestor trabalha sobre o Deskcomm, não depende da Ana.
-- A V4 (Gleiciane, Messenger): continua até a conversa terminar;
+- A V4 (Messenger): continua até a conversa terminar;
   o relatório e a remoção da vigília acontecem no fechamento dela
   (§4, passo 1).
 
@@ -66,20 +66,19 @@ quando o teste do WhatsApp no Chatwoot passar.
 
 **Leads abertos no momento da pausa:**
 
-- Junior (WhatsApp, em risco, 26 h de silêncio em 2026-11-20):
+- Contato de teste (WhatsApp, em risco, 26 h de silêncio em 2026-11-20):
   segue no Deskcomm; se voltar a escrever, cai na cobertura da
   fase vigente.
 - P8 (golpe do Mercado Livre, decisão pendente): a decisão continua
   pendente do usuário; a pausa não muda nada nele.
-- Gleiciane (Messenger, V4): não é afetada — outro canal, outra
+- O contato de teste da V4 (Messenger) não é afetado — outro canal, outra
   vigília.
 
 ## 4. Sequência (ordem — não pular passo)
 
-1. **Fechar a V4** (relatório + remover a vigília
-   `v4-watch-gleiciane` + fechar o lead no CRM próprio), quando a
-   conversa da Gleiciane terminar. A V4 é no Messenger; a migração
-   não a cancela, só a sucede.
+1. **Fechar a V4** (relatório + remover a vigília + fechar o lead
+   no CRM próprio), quando a conversa de teste terminar. A V4 é no
+   Messenger; a migração não a cancela, só a sucede.
 2. **Aprovar este plano (D-013)** — é o passo atual.
 3. **Subir o Chatwoot** (decidir hospedagem: PC ou Railway,
    ~US$ 15–25/mês; 4 contêineres, mínimo 4 GB RAM / 2 CPU) +

@@ -19,7 +19,8 @@ real (incoming ou outgoing) nas 2h antes do início da rajada — é a
 pausa de 2h (decisão do usuário 2026-11-22): depois que o
 cumprimento dispara a primeira vez, ele só dispara de novo numa
 abertura nova (primeira mensagem da conversa ou última atividade há
-mais de 2h). Sem a API, só envia se a conversa nunca recebeu
+mais de 2h). Uma resposta pública durante o timer também suprime o
+cumprimento. Sem a API, só envia se a conversa nunca recebeu
 cumprimento (estado local — não dá para provar 2h de silêncio sem
 ela). Se outro cumprimento foi enviado há menos de 10 min, suprime.
 Textos fixos, dois pools (saudação fechada sem "verificar", com
@@ -39,7 +40,7 @@ Somente stdlib, sem dependências.
 Regras de log: nunca logar texto de mensagem de cliente — só ids,
 tamanhos e contagens.
 
-Version: 0.6.0
+Version: 0.6.1
 """
 
 import json
@@ -53,7 +54,7 @@ from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from zoneinfo import ZoneInfo
 
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOST = os.environ.get("LISTENER_HOST", "0.0.0.0")
 PORT = int(os.environ.get("LISTENER_PORT", "3021"))
@@ -358,29 +359,24 @@ def _quando_mensagem(msg):
     return quando
 
 
-def _tem_atividade_recente(mensagens, janela_inicio, minutos):
-    """True se há mensagem real (incoming 0 ou outgoing 1) com
-    created_at em [janela_inicio - minutos, janela_inicio).
-
-    Activity (tipo 2) e notas de sistema não contam. A janela
-    termina no início da rajada (exclusivo): as mensagens da
-    própria rajada não contam como atividade anterior. É a pausa
-    de 2h (decisão do usuário 2026-11-22): depois que o
-    cumprimento dispara, ele só dispara de novo numa abertura
-    nova — primeira mensagem da conversa ou última atividade há
-    mais de 2h. Sem início da rajada, não dá para provar
-    atividade: devolve False.
+def _atividade_impede_cumprimento(mensagens, janela_inicio):
+    """Suprime se houve atividade pública nas 2h anteriores ou resposta
+    pública desde o início da rajada. A própria rajada e notas privadas
+    não contam como atividade anterior.
     """
     if janela_inicio is None:
         return False
-    inicio = janela_inicio - timedelta(minutes=minutos)
+    inicio = janela_inicio - timedelta(minutes=CUMPRIMENTO_PAUSA_MIN)
     for msg in mensagens:
-        if not isinstance(msg, dict):
+        if not isinstance(msg, dict) or msg.get("private"):
             continue
-        if msg.get("message_type") not in (0, 1, "incoming", "outgoing"):
+        tipo = msg.get("message_type")
+        if tipo not in (0, 1, "incoming", "outgoing"):
             continue
         quando = _quando_mensagem(msg)
-        if quando is not None and inicio <= quando < janela_inicio:
+        if quando is None or quando < inicio:
+            continue
+        if quando < janela_inicio or tipo in (1, "outgoing"):
             return True
     return False
 
@@ -397,7 +393,7 @@ def _classificar_rajada(mensagens, texto_inicial, janela_inicio):
     conhecido: usa o pool SEM "verificar".
     """
     textos = []
-    if texto_inicial:
+    if isinstance(texto_inicial, str) and texto_inicial.strip():
         textos.append(texto_inicial)
     for msg in mensagens:
         if not isinstance(msg, dict):
@@ -409,7 +405,7 @@ def _classificar_rajada(mensagens, texto_inicial, janela_inicio):
                 and quando < janela_inicio:
             continue
         conteudo = msg.get("content")
-        if isinstance(conteudo, str) and conteudo:
+        if isinstance(conteudo, str) and conteudo.strip():
             textos.append(conteudo)
     if not textos or all(eh_saudacao_fechada(t) for t in textos):
         return "saudacao"
@@ -500,8 +496,8 @@ def _disparar_cumprimento(info):
     """Callback do timer (10 s depois). Reavalia e envia ou suprime.
 
     Suprime se outro cumprimento foi enviado (<10 min) ou se houve
-    atividade real na conversa nas 2h antes do início da rajada
-    (pausa de 2h: só dispara numa abertura nova). Sem a API, só
+    atividade real nas 2h anteriores ou resposta pública durante
+    a rajada. Sem a API, só
     envia se a conversa nunca recebeu cumprimento (estado local).
     Classifica a rajada inteira da janela. Nunca levanta exceção;
     falha de envio só loga.
@@ -524,24 +520,15 @@ def _disparar_cumprimento(info):
                 return None
         ok, mensagens = _mensagens_da_conversa(conversation_id)
         janela = _janela_inicio(info)
-        if ok:
-            if _tem_atividade_recente(
-                    mensagens, janela, CUMPRIMENTO_PAUSA_MIN):
-                log.info("cumprimento suprimido (atividade recente,"
-                         " pausa de 2h): conv=%s", conversation_id)
-                return None
-            tipo = _classificar_rajada(
-                mensagens, info.get("content") or "", janela)
-        else:
-            # Sem a API não dá para provar 2h de silêncio: só envia
-            # se esta conversa nunca recebeu cumprimento (estado
-            # local); se já houve cumprimento, suprime.
-            if ultimo is not None:
-                log.info("cumprimento suprimido (sem API e ja"
-                         " cumprimentado): conv=%s", conversation_id)
-                return None
-            tipo = "saudacao" if eh_saudacao_fechada(
-                info.get("content") or "") else "pedido"
+        if ok and _atividade_impede_cumprimento(mensagens, janela):
+            log.info("cumprimento suprimido (atividade ou resposta"
+                     " recente): conv=%s", conversation_id)
+            return None
+        if not ok and ultimo is not None:
+            log.info("cumprimento suprimido (sem API e ja"
+                     " cumprimentado): conv=%s", conversation_id)
+            return None
+        tipo = _classificar_rajada(mensagens, info.get("content"), janela)
         variante = (ultimo["variante"] + 1) % 3 if ultimo else 0
         texto = texto_cumprimento(tipo, variante)
         if not _enviar_cumprimento_api(conversation_id, texto):

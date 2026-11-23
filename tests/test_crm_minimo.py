@@ -20,11 +20,13 @@ import tempfile
 import unittest
 from decimal import Decimal
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from tuttibom.crm.store import CRM
+from tuttibom.contratos.precos import PRECOS_SKU
 
 
 class TestCRMMinimo(unittest.TestCase):
@@ -57,6 +59,19 @@ class TestCRMMinimo(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             self.crm.produto_preco("FITA-99-99-ROSA")
+
+    def test_reabrir_banco_atualiza_preco_sem_perder_lead(self):
+        lead = self._lead()
+        sku = lead["produto_sku"]
+        preco_novo = self.crm.produto_preco(sku) + Decimal("1.00")
+        with patch.dict(PRECOS_SKU, {sku: preco_novo}):
+            reaberto = CRM(self.crm.db_path)
+            try:
+                self.assertEqual(reaberto.produto_preco(sku), preco_novo)
+                self.assertEqual(reaberto.obter_lead(lead["id"]), lead)
+                self.assertEqual(reaberto.contar_produtos(), 18)
+            finally:
+                reaberto.close()
 
     def test_lead_vai_a_pedido_pago_sem_pular_etapa(self):
         lead = self._lead()

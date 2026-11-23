@@ -145,7 +145,7 @@ exato aprovado para prévia, endereço só após pago e fechado).
 ## Decisões pendentes do usuário (sem elas o V4 não começa)
 
 1. **Canal: DECIDIDO 2026-11-21 — Messenger.**
-2. **Quem é o cliente do teste: Gleiciane (decidido 2026-11-21).**
+2. **Contato de teste confirmado em 2026-11-21.**
 3. **Janela:** a combinar (teste começou a ser ligado 2026-11-21 ~16:51).
 4. **Jeito de receber/responder: Zernio (decidido 2026-11-21)** — as
    mensagens chegam na caixa de entrada do painel e o Muse responde

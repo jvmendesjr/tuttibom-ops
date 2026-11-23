@@ -15,23 +15,18 @@ CRM próprio — sem tocar na Ana viva de produção (que estava pausada).
 - **Canal:** Messenger, via Zernio → inbox do Deskcomm. A IA do canal
   estava pausada desde 2026-11-16, então as mensagens chegavam para
   atendimento humano; o Muse lia via MCP e respondia pelo painel.
-- **Cliente do teste:** Gleiciane Oliveira Pereira (ela se escreve
-  "Gleiciene"), contato combinado para o teste. Não é compradora real.
-- **Conversa no Deskcomm:** `187fd73e-ac23-4ec2-9cf7-b4c4429cf179`,
-  lead `f3aa8890-dc5e-4458-8dc8-7cfc1fd3d359`.
-- **Lead no CRM próprio:** id 1, `lead-v4-gleiciane`, DB
-  `/tmp/crm-v4.sqlite3` no PC (fora do repo, deliberadamente).
-- **Vigília:** cron `v4-watch-gleiciane`, a cada 5 min, só leitura via
-  MCP; o Muse respondia quando a vigília reportava mensagem nova.
+- **Contato:** participante convidado para o teste, sem intenção de compra.
+- **CRM próprio:** banco de teste local, fora do repositório.
+- **Vigília:** a cada 5 min, só leitura via MCP. O Muse respondia ao aviso.
 - **Janela:** 2026-11-21, 17:09–21:49 (-03). Check final às ~22:08.
 
 ## Cronologia (horários em -03)
 
 | Hora | Direção | Mensagem |
 |---|---|---|
-| 17:09:20 | inbound | "Oi sou Gleiciene" |
-| 17:20:29 | outbound (Ana) | "Oi, Gleiciene! Me conta o que você está buscando que eu te ajudo." |
-| 17:36:27 | inbound | "Qual impressão de 10 m de fita dourada? Operação dourada." (texto confuso; interpretado como preço de fita 10 m com impressão dourada) |
+| 17:09:20 | inbound | Saudação inicial. |
+| 17:20:29 | outbound (Ana) | Saudação com pergunta para entender o pedido. |
+| 17:36:27 | inbound | Pedido de preço para fita de 10 m com impressão dourada. |
 | 17:52:12 | outbound (Ana) | "A fita de 10 m com impressão dourada fica R$ 19,00 na de 15 mm e R$ 21,90 na de 22 mm. Qual largura você quer?" |
 | 21:44:28 | inbound | "Olá" — **teste do próprio usuário, não da cliente** |
 | 21:49:31 | outbound | "Tentativa 3: agora com o formato certo da API (message em vez de text). Recebeu esta?" — **teste do Chatwoot, não da Ana** (ver nota) |
@@ -39,7 +34,7 @@ CRM próprio — sem tocar na Ana viva de produção (que estava pausada).
 
 **Check final (~22:08, via `crm_get_conversation_history`):** nenhuma
 mensagem nova depois de 21:49:54. A última mensagem da conversa é o
-"Recebi a 3" (inbound, 21:49:54). A Gleiciane não respondeu à resposta
+"Recebi a 3" (inbound, 21:49:54). O contato de teste não respondeu à resposta
 de preço desde 17:52 — 4h16 de silêncio até o fechamento.
 
 ## Tempos de resposta
@@ -58,7 +53,7 @@ na V4 o atraso é estrutural da vigília por polling.
 ## Desvios e incidentes
 
 1. **Lista do Inbox veio vazia.** Na primeira resposta (17:20), a lista
-   de conversas do painel não mostrava a conversa da Gleiciane; a
+   de conversas do painel não mostrava a conversa do contato de teste da V4; a
    conversa foi aberta pela URL direta
    (`/app/inbox?id=<conversation-id>`). Desvio de operação, sem
    impacto no conteúdo — mas é um ponto de fragilidade do painel que
@@ -67,7 +62,7 @@ na V4 o atraso é estrutural da vigília por polling.
    O usuário enviou "Olá" e "Recebi a 3" do lado da cliente para
    testar o Chatwoot. Como os dois webhooks do Zernio estavam ativos
    (Deskcomm e Chatwoot), as mensagens caíram nos dois inboxes. Não
-   são retomada da conversa de venda — a Gleiciane não voltou a falar
+   são retomada da conversa de venda — o contato de teste não voltou a falar
    depois das 17:52. Detalhe: a mensagem de teste do Chatwoot
    ("Tentativa 3", 21:49:31) aparece também na conversa do Deskcomm,
    como outbound com `sent_via: external_device` — artefato da
@@ -83,10 +78,10 @@ na V4 o atraso é estrutural da vigília por polling.
   de volta). Resumos finais registrados: as duas mensagens de teste
   do usuário e o fechamento.
 - **Motivo:** sem resposta ao preço desde 17:52. **A "perda" não é
-  perda comercial:** a Gleiciane era cliente de teste, combinada
-  para o teste — ela não estava comprando. O funil registra o
+  perda comercial:** o contato foi convidado
+  para testar, sem intenção de compra. O funil registra o
   desfecho observado, não um fracasso de venda.
-- **Memória por contato:** interesse `fita` (contato-v4-gleiciane).
+- **Memória por contato:** interesse `fita`.
 - **Tempo por turno (observado):** 11 min e 16 min (ver acima).
 - **Follow-up marcado para 2026-11-22:** cancelado com o fechamento
   — o lead foi encerrado e o cron de follow-up da V4 foi removido

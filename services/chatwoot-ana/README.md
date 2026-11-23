@@ -55,8 +55,11 @@ RASCUNHOS de toque em followup-drafts/ — nunca envia sozinho.
   conversa o ouvinte agenda para 10 s depois um cumprimento fixo
   (saudação pelo horário + pedido de espera), timer fixo, reavalia
   a rajada inteira aos 10 s (basta um pedido na janela para o pool
-  com "verificar"), máx. 1x a cada 10 min por conversa, nunca para
-  ignorados, suprime se a Ana já respondeu. Dois pools (saudação
+  com "verificar"). Mídia sem legenda usa o genérico, inclusive se
+  a leitura do histórico falhar. O envio respeita o limite de
+  1x a cada 10 min por conversa, ignora os contatos da lista de
+  ignorados e é suprimido se já houve resposta pública enquanto
+  o timer aguardava. Dois pools (saudação
   fechada sem "verificar", com pedido com "verificar"), rotação sem
   repetir a variante. `GET /stats` conta os cumprimentos enviados.
   Único envio do serviço: `chatwoot_client.enviar_cumprimento` (só

@@ -1180,7 +1180,7 @@ atualização (2026-11-13):
    tempo do ack (27–33 s aceito, refinamento adiado); `reason`
    tentado 1× no turno de áudio + Ana não ofereceu a prévia como
    pergunta nesse áudio; intervalo silencioso de ~5 min sem log
-   no turno da Gleiciane (sem explicação); teste de imagem
+   no turno do contato de teste da V4 (sem explicação); teste de imagem
    pendente; testes de ADB desbloqueados pelo u2 pendentes;
    teste fim-a-fim da recuperação do S10 adiado.
 8. **Saúde do sistema — fora do Deskcomm, a discutir depois**

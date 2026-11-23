@@ -60,6 +60,13 @@ de quem o agente é nem de onde veio.
 - **O Muse implementa tudo ele mesmo** até o usuário pedir para
   delegar (regra de delegação, 2026-11-13) — inclusive este servidor,
   quando a construção for aprovada.
+- **Mídia é padrão para todo agente que atende (decisão 2026-11-22
+  ~23:58).** Todo agente — o Muse ou outro — baixa e vê as imagens
+  e baixa e transcreve os áudios que o lead envia, antes de
+  responder. O ouvinte do Chatwoot hoje só entrega o texto; a mídia
+  vem pela API (`data_url` do anexo; áudio transcrito com ElevenLabs
+  Scribe). Quando este MCP for construído, a capacidade de mídia é
+  requisito — não opcional.
 
 ## 3. Arquitetura
 

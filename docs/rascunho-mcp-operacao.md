@@ -44,7 +44,7 @@ de quem o agente é nem de onde veio.
   não pelo bom comportamento do agente.
 - **Um agente ativo por área gravável.** Leitura pode ser
   compartilhada; escrita numa área tem um único dono por vez
-  (lease com expiração — ver §5). Nunca dois agentes na mesma
+  (lease sem prazo fixo — ver §5). Nunca dois agentes na mesma
   conversa ao mesmo tempo.
 - **Nada publica, envia ou combina preço** sem aprovação do usuário
   ao texto exato — e à imagem exata, quando houver. Ferramentas que
@@ -123,7 +123,8 @@ Backends (o MCP não guarda dado de cliente)
 
 - **Transporte:** stdio para agentes no PC (mesmo padrão do
   `tuttibom-mcp`); HTTP com token para agentes remotos — só atrás
-  de túnel, nunca porta aberta (a decidir: 9Router/tailscale).
+  de túnel, nunca porta aberta (decisão 2026-11-23 ~00:40:
+  Tailscale, igual ao Muse).
 - **Nomes (decisão 2026-11-23 ~00:34):** o MCP da operação é o
   **mcp ops** (`tuttibom-ops-mcp`); o MCP de desenvolvimento, com
   acesso total ao código, ao estado e ao core, é o **mcp core**.
@@ -162,7 +163,9 @@ Backends (o MCP não guarda dado de cliente)
   atribuições (ex.: a Ana e todas as suas funções para um bot, a
   mídia social para outro, a gestão do CRM para outro). Um agente
   nunca vê as ferramentas das áreas que não lhe foram entregues —
-  o teto de 27 vale por agente, sobre as SUAS áreas.
+  o teto de 27 vale por agente, sobre as SUAS áreas. Os agentes
+  são de uso geral, parecidos com o Muse (ex.: Grokbot, Hermes,
+  Cue da Manus) — o MCP serve a qualquer um deles.
 - **Trocar de agente = trocar token + agendamento.** O novo agente
   recebe as mesmas áreas, repete o aperto de mão (§5) e continua de
   onde o anterior parou — o estado vive no CRM e nos documentos, não
@@ -192,7 +195,7 @@ reconecta e segue o handshake (passo 1).
         → o servidor devolve o MANIFESTO:
           agente, áreas, ferramentas por área (com risco),
           limites (leitura / escrita reversível / com aprovação),
-          hash da atribuição, validade do lease
+          hash da atribuição, validade do lease (sem prazo fixo)
 2. o agente LÊ o manifesto e confirma:
         → ops_confirmar_atribuicoes(hash, resumo)
           (o resumo é o agente dizendo, nas próprias palavras,
@@ -201,14 +204,18 @@ reconecta e segue o handshake (passo 1).
         → antes disso, só leitura — e só nas áreas atribuídas
 4. durante a operação, cada chamada é checada no servidor:
         ferramenta fora da atribuição → recusada (erro, não silêncio)
-5. fim: token revogado, lease vencido ou agente desconectado
+5. fim: token revogado, agente trocado ou agente desconectado
         → escritas bloqueiam; reconectar repete o handshake do zero
 ```
 
 - **O lease é o dono da área gravável:** ao confirmar, o agente
-  segura o lease da área (ex.: atendimento) por um período (a
-  decidir — proposta inicial: 8 h, renovável). Outro agente que
-  pedir a mesma área em escrita recebe "área ocupada" e só lê.
+  segura o lease da área (ex.: atendimento) **sem prazo fixo — o
+  agente permanece atuando no seu escopo enquanto não for trocado**
+  (decisão 2026-11-23 ~00:40; a proposta inicial de 8 h, renovável,
+  foi descartada). Outro agente que pedir a mesma área em escrita
+  recebe "área ocupada" e só lê. O lease termina quando o token é
+  revogado ou o agente é trocado — o novo agente repete o handshake
+  e assume.
 - **A confirmação é uma chamada de ferramenta, não um "ok" no
   chat.** Ela fica na auditoria com o hash do manifesto — dá para
   provar depois o que o agente aceitou.
@@ -262,7 +269,7 @@ nunca por pacote).
 - Token bearer + hash SHA256; revogação imediata pelo usuário.
 - Enforcement no servidor, por ferramenta, em cada chamada
   (não só na conexão).
-- Lease por área gravável, com expiração; área ocupada recusa
+- Lease por área gravável, sem prazo fixo; área ocupada recusa
   escrita de outro agente.
 - Rate limit por agente (a calibrar no v1).
 - Jev como decisor tipado onde houver julgamento atômico (nunca
@@ -300,13 +307,13 @@ nunca por pacote).
 
 ## 11. Decisões em aberto (para o usuário, antes de construir)
 
-- Hospedagem do servidor: no PC (junto com o resto) ou noutro lugar?
-- Transporte HTTP: sim ou só stdio? Se sim, qual túnel?
+- Hospedagem do servidor: **RESOLVIDO 2026-11-23 ~00:40 — o mesmo servidor que hospeda o tuttibom-ops (o PC).**
+- Transporte: **RESOLVIDO 2026-11-23 ~00:40 — o agente acessa o PC via Tailscale, igual ao Muse (stdio no PC; HTTP com token só atrás da tailnet, nunca porta aberta).**
 - O inbox vira Chatwoot? (Chatwoot é pesado: 4 contêineres, mínimo
   4 GB RAM / 2 CPU, ~US$ 15–25/mês hospedado — oversized para o
   volume atual; o peso se paga se o objetivo for trocar o inbox, não
   se for só responder mais rápido.)
-- Duração do lease por área (proposta inicial: 8 h).
+- Duração do lease por área: **RESOLVIDO 2026-11-23 ~00:40 — sem prazo fixo; o agente permanece atuando no seu escopo enquanto não for trocado (a proposta de 8 h foi descartada).**
 - Quem emite/revoga tokens (proposta: só o usuário).
 - Nome do servidor (`tuttibom-ops-mcp` é o nome de trabalho).
 

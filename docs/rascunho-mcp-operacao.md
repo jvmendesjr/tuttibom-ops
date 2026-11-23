@@ -60,6 +60,14 @@ de quem o agente é nem de onde veio.
 - **O Muse implementa tudo ele mesmo** até o usuário pedir para
   delegar (regra de delegação, 2026-11-13) — inclusive este servidor,
   quando a construção for aprovada.
+- **Isolado do MCP de desenvolvimento (decisão 2026-11-23 ~00:18).**
+  Este é um servidor NOVO, só para a operação — não é o MCP de
+  desenvolvimento, onde o agente lê o estado e tem acesso ao código
+  e a tudo do ambiente. O MCP da operação expõe SÓ ferramentas da
+  operação (atendimento, CRM, produto, criativos, social, anúncios,
+  operação, plataforma); ele não dá acesso a código, repositório,
+  estado do ambiente, credenciais nem a ferramentas de
+  desenvolvimento. Um agente da operação nunca vê o código.
 - **Mídia é padrão para todo agente que atende (decisão 2026-11-22
   ~23:58).** Todo agente — o Muse ou outro — baixa e vê as imagens
   e baixa e transcreve os áudios que o lead envia, antes de
@@ -121,6 +129,12 @@ Backends (o MCP não guarda dado de cliente)
 | 7 | Operação, Produção e Pagamento | `07-operacao-producao.md` |
 | 8 | Plataforma e Manutenção | `08-plataforma-manutencao.md` |
 
+- **Vários agentes ao mesmo tempo (decisão 2026-11-23 ~00:18).** A
+  operação pode usar mais de um agente: cada um recebe só as suas
+  atribuições (ex.: a Ana e todas as suas funções para um bot, a
+  mídia social para outro, a gestão do CRM para outro). Um agente
+  nunca vê as ferramentas das áreas que não lhe foram entregues —
+  o teto de 27 vale por agente, sobre as SUAS áreas.
 - **Trocar de agente = trocar token + agendamento.** O novo agente
   recebe as mesmas áreas, repete o aperto de mão (§5) e continua de
   onde o anterior parou — o estado vive no CRM e nos documentos, não
@@ -134,6 +148,16 @@ Backends (o MCP não guarda dado de cliente)
 O agente, ao se conectar, já recebe as suas atribuições — e confirma
 as atividades liberadas **antes de iniciar**. Sem a confirmação,
 nenhuma escrita libera.
+
+**0. Antes do token — solicitar as atribuições (decisão 2026-11-23
+~00:18).** O agente novo chega sem token: recebe o comando inicial
+padrão (Apêndice), conecta ao MCP e chama o método de catálogo
+(`ops_listar_atribuicoes`), que devolve a lista ENUMERADA de
+atribuições (áreas + funções). O agente apresenta a lista numerada
+à usuária e AGUARDA o OK — sem executar nada antes. A usuária
+indica os números que lhe cabem; só então o servidor emite o token
+com acesso APENAS às ferramentas dessas atribuições, e o agente
+reconecta e segue o handshake (passo 1).
 
 ```
 1. connect (initialize) com o token
@@ -174,7 +198,7 @@ nunca por pacote).
 
 | Área | Ferramentas (partida) | Risco | Status |
 |---|---|---|---|
-| núcleo | `ops_minhas_atribuicoes`, `ops_confirmar_atribuicoes`, `ops_estado`, `ops_auditoria` (só as próprias chamadas) | seguro | a construir |
+| núcleo | `ops_listar_atribuicoes` (catálogo enumerado, sem token — só para pedir atribuição), `ops_minhas_atribuicoes`, `ops_confirmar_atribuicoes`, `ops_estado`, `ops_auditoria` (só as próprias chamadas) | seguro | a construir |
 | 01 Atendimento | `ops_atendimento_ler_conversa`, `ops_atendimento_responder` | seguro / **critico** | a construir (canal por API/webhook primeiro) |
 | 02 CRM e Vendas | `ops_crm_registrar_lead`, `ops_crm_mover_etapa`, `ops_crm_registrar_mensagem` (resumo, sem texto bruto), `ops_crm_followup`, `ops_crm_memoria_contato` (só rótulo) | seguro / atencao | **base existe** (`src/tuttibom/crm/` — V2) |
 | 03 Produto | `ops_produto_consultar` (SKU, preço exato, disponibilidade) | seguro | a construir (dados existem: `PRECOS_SKU`, 18 SKUs) |
@@ -268,3 +292,31 @@ nunca por pacote).
 | Skill da Ana | Comportamento; o MCP é só o contrato de acesso. |
 | Setores (`docs/setores/`) | As áreas do manifesto — a fronteira já está escrita. |
 | Chatwoot / WAHA / Zernio | Transporte, não parte do MCP (§9). |
+
+## Apêndice — Comando inicial padrão (bootstrap)
+
+A usuária entrega este comando a qualquer agente novo, antes de
+qualquer atribuição. O agente não executa nada antes do OK dela.
+
+> Você vai operar no TuttiBom OPS pelo MCP da operação
+> (`tuttibom-ops-mcp`) — um servidor SÓ da operação, isolado do MCP
+> de desenvolvimento: você não tem acesso a código, repositório,
+> estado do ambiente nem credenciais.
+>
+> 1. Conecte ao MCP da operação e chame `ops_listar_atribuicoes` —
+>    o catálogo ENUMERADO de atribuições (áreas + funções).
+> 2. Apresente a lista numerada à usuária e AGUARDE o OK dela, sem
+>    executar nada antes.
+> 3. Quando ela indicar os números que lhe cabem, o servidor emite
+>    o seu token — com acesso APENAS às ferramentas dessas
+>    atribuições. Reconecte com o token, leia o manifesto e confirme
+>    com `ops_confirmar_atribuicoes`, dizendo nas suas palavras o que
+>    entendeu que pode e que não pode fazer.
+> 4. Opere SÓ dentro das suas atribuições. Mídia é padrão: baixe e
+>    veja as imagens e baixe e transcreva os áudios que o lead envia,
+>    antes de responder.
+> 5. Nada publica, envia ou combina preço sem a aprovação da usuária
+>    ao texto exato — e à imagem exata, quando houver. Conversas
+>    sempre em PT-BR; com clientes, "produtor" (José), nunca
+>    "gestor". Sem segredo no git, nos logs ou no Hindsight; sem
+>    dado de comprador no repo, no painel ou no Hindsight.

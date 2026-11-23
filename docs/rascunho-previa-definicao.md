@@ -29,19 +29,40 @@
 2. Lead aceita → Muse gera a imagem → vai para `Pendentes/`.
 3. Usuária aprova a imagem exata (ou pede outra).
 4. Ana envia a prévia aprovada no canal onde a pessoa escreveu.
-5. **Registro da entrega — A DECIDIR (pergunta 1).**
+5. **Registro da entrega — DECIDIDO (ver Decisão abaixo).**
 6. Depois da entrega: a Ana acompanha (o cliente aprovou? quer
    ajustes?) — texto A DECIDIR (pergunta 2).
 
+## Decisão — pergunta 1: AMBOS (2026-11-22 ~23:17)
+
+A usuária propôs o híbrido e é a melhor prática aqui: cada lado
+guarda o que ele faz bem — a planilha/biblioteca guarda o ARQUIVO e
+a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
+
+- **Drive / planilha `Biblioteca TuttiBom — Assets`:** novas colunas
+  para a prévia — imagem (link), lead/ocasião, solicitada em,
+  entregue em. A imagem entregue vai para a biblioteca (pasta da
+  ocasião + bucket) com um identificador único (ex.:
+  `PREV-<lead>-<ocasião>-<data>`), o mesmo usado na planilha e no
+  CRM — um ID amarra os três lugares e permite o reuso em outros
+  usos.
+- **CRM (lead):** nova coluna de estágio `previa_status`
+  (`pendente` → `entregue`) + `previa_entregue_em` (data/hora) +
+  `previa_imagem_ref` (o identificador da biblioteca). Quando o lead
+  solicita → `pendente`; quando a Ana entrega → `entregue` + data.
+  Na entrega, um resumo vai para as mensagens da conversa. O painel
+  do CRM mostra o estágio. Uma coluna guarda a prévia atual do lead;
+  se um lead pedir uma segunda prévia, vira tabela.
+- **Por que os dois:** a planilha responde "qual imagem, onde está,
+  pode reusar?"; o CRM responde "esse lead já recebeu a prévia?".
+  Nenhum dos dois sozinho responde as duas perguntas — e a planilha
+  continua sendo o lugar que a usuária vê e edita direto.
+
 ## Perguntas abertas
 
-1. **Onde fica o registro da entrega?**
-   - (a) Tabela própria `previas` no CRM (lead, data/hora da
-     entrega, imagem, quem aprovou) — o mais estruturado: o agente
-     consulta "a prévia foi entregue? quando? qual imagem?".
-   - (b) Resumo na conversa + campo na lead — o mais leve.
-   - (c) Coluna na planilha da Biblioteca + resumo no CRM — a
-     aprovação já vive na planilha.
+1. **Onde fica o registro da entrega? — DECIDIDO 2026-11-22 ~23:17:
+   AMBOS** (ver seção Decisão). Alternativas consideradas: tabela
+   própria `previas` no CRM; resumo na conversa; só planilha.
 2. **O que a Ana diz ao enviar a prévia?** (texto exato a aprovar.)
    **O que ela diz depois que o cliente vê?** (aprovação/ajustes.)
 3. **Registro retroativo:** a entrega do Junior em 2026-11-17 08:05

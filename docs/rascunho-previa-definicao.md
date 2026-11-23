@@ -33,8 +33,9 @@
 4. A usuária envia a prévia aprovada ao interessado, no canal onde
    a pessoa escreveu (inicialmente a entrega é humana).
 5. **Registro da entrega — DECIDIDO (ver Decisão abaixo).**
-6. Depois da entrega: a Ana acompanha (o cliente aprovou? quer
-   ajustes?) — texto A DECIDIR (pergunta 2).
+6. Depois da entrega: a humana acompanha o interessado
+   (aprovação, ajustes, pagamento) até devolver a chamada para a
+   Ana (ver Decisão — humano no loop).
 
 ## Decisão — pergunta 1: AMBOS (2026-11-22 ~23:17)
 
@@ -110,6 +111,30 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
     solicitação em horário comercial — você consegue aguardar até
     amanhã? Assim que estiver pronta, eu te chamo aqui."
 
+## Decisão — humano no loop na prévia (2026-11-22 ~23:47)
+
+- **Quando o lead solicita a prévia:** o Muse transfere a chamada
+  para a humana no loop (handoff no Chatwoot + aviso neste chat) e a
+  humana mantém o contato com o interessado, interagindo com ele
+  diretamente no Chatwoot, até devolver a chamada para a Ana.
+- **A humana pode continuar até o pagamento** — a venda inteira fica
+  com ela enquanto durar o atendimento humano; o pagamento segue a
+  regra de sempre (só confirmado pela usuária/produtor; a Ana nunca
+  afirma pagamento recebido sem confirmação).
+- **Devolver a chamada para a Ana:** a usuária avisa o Muse neste
+  chat (ou tira a etiqueta `handoff-humano` / desatribui no Chatwoot)
+  e a Ana retoma o atendimento normalmente, de onde a conversa parou.
+- **O Muse acompanha e registra:** tudo que for conversado com o
+  humano serve para as próximas interações e para a sequência do
+  funil — o Muse lê o fio da conversa e atualiza a etapa do lead e
+  os resumos no CRM conforme o progresso da venda com o humano.
+- **A imagem da prévia** chega ao Muse por um destes caminhos (a
+  usuária escolhe na hora):
+  - ela envia a imagem aqui neste chat antes;
+  - o Muse captura do WhatsApp (anexo da mensagem enviada no
+    Chatwoot) — caminho a verificar no primeiro caso real;
+  - ela adiciona a imagem na biblioteca e avisa o Muse.
+
 ## Perguntas abertas
 
 1. **Onde fica o registro da entrega? — DECIDIDO 2026-11-22 ~23:17:
@@ -118,8 +143,9 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
    no CRM; resumo na conversa; só planilha.
 2. **O que a Ana diz quando a prévia é solicitada? — TEXTOS
    APROVADOS 2026-11-22 ~23:41** (ver Decisão — entrega humana).
-   **O que ela diz depois que o cliente vê?** (aprovação/ajustes)
-   — ainda aberto.
+   **O que ela diz depois que o cliente vê? — RESOLVIDO pelo fluxo
+   humano no loop (2026-11-22 ~23:47):** a humana cobre o
+   pós-prévia; a Ana retoma quando a chamada é devolvida.
 3. **Registro retroativo — DECIDIDO 2026-11-22 ~23:39: NÃO.** O
    Junior não ganha registro: o contato é de teste, da dona; a
    entrega de 17/11 não entra no CRM.

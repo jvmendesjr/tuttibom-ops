@@ -230,6 +230,15 @@ entrega vive nos dois lados (decisão AMBOS):
   avisa que normalmente atendemos em horário comercial e pergunta se
   pode aguardar (textos exatos aprovados 2026-11-22 ~23:41, na skill
   da Ana e no rascunho).
+- **Humano no loop (2026-11-22):** a humana mantém o contato com o
+  interessado no Chatwoot e pode continuar até o pagamento; o Muse lê
+  o fio e atualiza a etapa do lead e os resumos no CRM conforme o
+  progresso da venda. Para devolver a chamada para a Ana, a usuária
+  avisa neste chat (ou tira a etiqueta `handoff-humano` / desatribui
+  no Chatwoot) e a Ana retoma. A imagem da prévia chega por um destes
+  caminhos: a usuária envia aqui neste chat; o Muse captura do anexo
+  da mensagem no Chatwoot (a verificar no primeiro caso real); ou a
+  usuária adiciona na biblioteca e avisa.
 - **Planilha/biblioteca:** a imagem entregue vai para a biblioteca
   (pasta da ocasião + bucket) com o identificador único
   `PREV-<lead>-<ocasião>-<data>`; a planilha `Biblioteca TuttiBom —

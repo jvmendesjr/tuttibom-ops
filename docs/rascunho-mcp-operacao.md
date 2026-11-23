@@ -77,6 +77,13 @@ de quem o agente é nem de onde veio.
   e corretamente, como nos testes já feitos — só que com outro
   agente. O teste da Ana com outro agente aguarda a construção do
   MCP.
+- **Tudo da operação passa pelo MCP (decisão 2026-11-23 ~00:31).**
+  Inclusive o que o Muse faz enquanto desenvolve junto com a
+  usuária: quando uma área existe no MCP, o trabalho daquela área
+  vai pelo MCP, não por atalho direto (API, script, painel). Cada
+  área pronta é entregue a outro agente para testar e monitorar — e
+  o desenho tem que funcionar com qualquer agente, não só com um
+  modelo ou provedor.
 - **Mídia é padrão para todo agente que atende (decisão 2026-11-22
   ~23:58).** Todo agente — o Muse ou outro — baixa e vê as imagens
   e baixa e transcreve os áudios que o lead envia, antes de

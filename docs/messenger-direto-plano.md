@@ -1,9 +1,11 @@
 # Messenger direto — plano de migração (V5)
 
 **Decisão:** usuária, 2026-11-22 ~22:38 — adaptador próprio do Messenger
-(V5, independência do Deskcomm). **Status:** em construção — fase A
-(preparo, sem a usuária) pronta; fase B aguarda os cliques dela no
-console da Meta.
+(V5, independência do Deskcomm). **Status:** PARKED 2026-11-22 ~22:55 —
+usuária sem empresa formalizada (sem CNPJ); a revisão da Meta (Business
+Verification) é inviável, então o caminho direto ficaria restrito a
+testers; o Zernio segue como canal do Messenger do público. Fase B
+cancelada; fase A (plano + token) fica como registro.
 
 **Objetivo:** tirar o Zernio do caminho do Messenger e ligar a Página
 "TuttiBom" direto ao Chatwoot, sem passar pelo Deskcomm.

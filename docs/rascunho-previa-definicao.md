@@ -102,7 +102,7 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
   do horário continua sendo só registro interno, regra 2).
 - **Horário comercial adotado:** 7h–22h (a janela de disparo da Ana)
   — a confirmar/corrigir pela usuária.
-- **Textos propostos — AGUARDANDO APROVAÇÃO da usuária:**
+- **Textos — APROVADOS pela usuária 2026-11-22 ~23:41:**
   - Em horário comercial: "Perfeito! Vou solicitar a criação da
     amostra artística e já te chamo com a prévia, tá bom?"
   - Fora do horário comercial: "Perfeito! Vou solicitar a criação
@@ -117,9 +117,9 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
    Implementação). Alternativas consideradas: tabela própria `previas`
    no CRM; resumo na conversa; só planilha.
 2. **O que a Ana diz quando a prévia é solicitada? — TEXTOS
-   PROPOSTOS 2026-11-22 ~23:38, aguardando aprovação** (ver Decisão
-   — entrega humana). **O que ela diz depois que o cliente vê?**
-   (aprovação/ajustes) — ainda aberto.
+   APROVADOS 2026-11-22 ~23:41** (ver Decisão — entrega humana).
+   **O que ela diz depois que o cliente vê?** (aprovação/ajustes)
+   — ainda aberto.
 3. **Registro retroativo — DECIDIDO 2026-11-22 ~23:39: NÃO.** O
    Junior não ganha registro: o contato é de teste, da dona; a
    entrega de 17/11 não entra no CRM.

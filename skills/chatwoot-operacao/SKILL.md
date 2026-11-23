@@ -228,7 +228,8 @@ entrega vive nos dois lados (decisão AMBOS):
   A Ana informa que vai solicitar a criação da amostra artística e
   que atenderemos em breve; fora do horário comercial (7h–22h),
   avisa que normalmente atendemos em horário comercial e pergunta se
-  pode aguardar (textos exatos no rascunho, aguardando aprovação).
+  pode aguardar (textos exatos aprovados 2026-11-22 ~23:41, na skill
+  da Ana e no rascunho).
 - **Planilha/biblioteca:** a imagem entregue vai para a biblioteca
   (pasta da ocasião + bucket) com o identificador único
   `PREV-<lead>-<ocasião>-<data>`; a planilha `Biblioteca TuttiBom —
@@ -259,8 +260,8 @@ entrega vive nos dois lados (decisão AMBOS):
 - **Não criar** o registro retroativo da entrega do Junior de
   2026-11-17 — DECIDIDO 2026-11-22 ~23:39: o contato é de teste, da
   dona; o Junior não ganha registro. Os textos da Ana quando a prévia
-  é solicitada estão propostos no rascunho (pergunta 2), aguardando
-  aprovação.
+  é solicitada estão aprovados (pergunta 2, 2026-11-22 ~23:41) e na
+  skill da Ana.
 
 ## Handoff humano
 

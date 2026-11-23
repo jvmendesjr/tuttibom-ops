@@ -84,6 +84,14 @@ de quem o agente é nem de onde veio.
   área pronta é entregue a outro agente para testar e monitorar — e
   o desenho tem que funcionar com qualquer agente, não só com um
   modelo ou provedor.
+- **O Muse mantém acesso total pelo MCP de desenvolvimento (decisão
+  2026-11-23 ~00:33).** A isolação é do lado da operação: o Muse
+  desenvolve com acesso a tudo — código, estado, o próprio MCP ops
+  — e pode se corrigir quanto ao MCP ops, que pode precisar de
+  ajuste. No desenvolvimento valem correções, fixes, correção de
+  bugs, atualização de pools e tudo do core da aplicação. O que
+  passa pelo MCP ops é o trabalho da operação; o que mexe no código
+  e no core é desenvolvimento.
 - **Mídia é padrão para todo agente que atende (decisão 2026-11-22
   ~23:58).** Todo agente — o Muse ou outro — baixa e vê as imagens
   e baixa e transcreve os áudios que o lead envia, antes de

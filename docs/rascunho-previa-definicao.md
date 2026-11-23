@@ -151,10 +151,14 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
   conversa 7 (HTTP 200, campo `attachments` presente): cada anexo tem
   `file_type` (audio/image) e `data_url` para baixar. Autenticação
   pelo header `api_access_token` (o header `access-token` dá 401).
-- **Prova viva pendente:** não há nenhuma mensagem de mídia no
-  Chatwoot hoje para baixar — a prova (baixar, transcrever o áudio
-  com ElevenLabs Scribe, ver a imagem) precisa de um áudio e uma
-  imagem de teste do lead.
+- **Áudio PROVADO 2026-11-23 ~00:06 (conversa 6, msg 155):** baixar
+  o `data_url` exige `curl -L` (o link é um redirect); transcrito
+  com ElevenLabs Scribe (`scribe_v1`, `pt`): "Áudio de teste para
+  ver se a Ana compreende e transcreve este áudio" (por, 1.0, 6,3 s);
+  a Ana respondeu (msg 158). O ouvinte segue sem ler anexos — o
+  agente busca a conversa na API quando a fila traz texto vazio.
+- **Imagem: prova viva pendente** — falta uma imagem de teste do
+  lead para provar baixar + ver + responder.
 
 ## Perguntas abertas
 

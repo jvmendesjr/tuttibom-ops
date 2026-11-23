@@ -284,8 +284,10 @@ entrega vive nos dois lados (decisão AMBOS):
   (`GET /api/v1/accounts/2/conversations/{id}`, header
   `api_access_token` — o header `access-token` dá 401) e baixar o
   `data_url` do anexo (`file_type` audio/image).
-- Áudio: transcrever com ElevenLabs Scribe (mesmo caminho usado no
-  Deskcomm) e responder o conteúdo transcrito. Imagem: ver a imagem
+- Áudio: transcrever com ElevenLabs Scribe (a mesma transcrição dos
+  áudios da usuária no aplicativo; só muda como o áudio chega — aqui
+  ele vem direto, no Chatwoot é preciso baixar o anexo) e responder
+  o conteúdo transcrito. Imagem: ver a imagem
   baixada antes de responder (logo, referência, foto do produto).
 - A prova viva (baixar + transcrever + responder) ainda não foi
   feita no Chatwoot — precisa de um áudio e uma imagem de teste.

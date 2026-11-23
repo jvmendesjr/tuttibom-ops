@@ -124,6 +124,10 @@ Backends (o MCP não guarda dado de cliente)
 - **Transporte:** stdio para agentes no PC (mesmo padrão do
   `tuttibom-mcp`); HTTP com token para agentes remotos — só atrás
   de túnel, nunca porta aberta (a decidir: 9Router/tailscale).
+- **Nomes (decisão 2026-11-23 ~00:34):** o MCP da operação é o
+  **mcp ops** (`tuttibom-ops-mcp`); o MCP de desenvolvimento, com
+  acesso total ao código, ao estado e ao core, é o **mcp core**.
+  Quando o texto disser só "o MCP", é o mcp ops — o da operação.
 - **O servidor não toca no Deskcomm de produção.** O MCP do
   Deskcomm (gestor) continua como está; este é outro servidor, para
   a nova vertente.

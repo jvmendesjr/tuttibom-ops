@@ -58,11 +58,35 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
   Nenhum dos dois sozinho responde as duas perguntas — e a planilha
   continua sendo o lugar que a usuária vê e edita direto.
 
+## Implementação da pergunta 1 — AMBOS (2026-11-22 ~23:20)
+
+- **CRM vivo:** migração aditiva aplicada (`previa_status`,
+  `previa_entregue_em`, `previa_imagem_ref` em `leads`; leads
+  existentes ficam com NULL). Esquema versionado em `db/crm.sql`;
+  métodos `CRM.marcar_previa_solicitada` (→ `pendente`, limpa
+  entrega anterior) e `CRM.marcar_previa_entregue` (→ `entregue` +
+  data + ref, e resumo outbound na conversa); migração idempotente
+  no `__init__` do store para bancos antigos. Testes:
+  `tests/test_crm_minimo.py` 12/12 (5 novos da prévia).
+- **Painel:** `services/crm-dashboard/` 0.2.0 — mostra por lead o
+  estágio da prévia (`pendente` / `entregue em <data> · <ref>` / `—`
+  sem pedido). Testes 8/8. Deploy no PC verificado (md5 repo =
+  deployado, `/health` 0.2.0, 401 sem token).
+- **Planilha `Biblioteca TuttiBom — Assets` (aba `Assets`):** colunas
+  novas P:S — `Imagem (link)`, `Lead/Ocasião`, `Solicitada em`,
+  `Entregue em` — confirmadas por leitura de volta; nenhum dado
+  existente tocado.
+- **Identificador único da imagem:** `PREV-<lead>-<ocasião>-<data>`
+  — o mesmo na planilha, no arquivo da biblioteca e no
+  `previa_imagem_ref` do CRM. Uma coluna guarda a prévia atual do
+  lead; se um lead pedir uma segunda prévia, vira tabela.
+
 ## Perguntas abertas
 
 1. **Onde fica o registro da entrega? — DECIDIDO 2026-11-22 ~23:17:
-   AMBOS** (ver seção Decisão). Alternativas consideradas: tabela
-   própria `previas` no CRM; resumo na conversa; só planilha.
+   AMBOS — IMPLEMENTADO 2026-11-22 ~23:20** (ver seção Decisão e
+   Implementação). Alternativas consideradas: tabela própria `previas`
+   no CRM; resumo na conversa; só planilha.
 2. **O que a Ana diz ao enviar a prévia?** (texto exato a aprovar.)
    **O que ela diz depois que o cliente vê?** (aprovação/ajustes.)
 3. **Registro retroativo:** a entrega do Junior em 2026-11-17 08:05

@@ -33,6 +33,7 @@ from .funil import (
     ETAPA_PERDEU,
     INTERESSES,
     MOTIVOS_PERDA,
+    STATUS_PREVIA,
     TIPOS_FOLLOWUP,
     transicao_permitida,
 )
@@ -60,8 +61,29 @@ class CRM:
         self.conn.execute("PRAGMA foreign_keys = ON")
         schema = Path(__file__).resolve().parents[3] / "db" / "crm.sql"
         self.conn.executescript(schema.read_text(encoding="utf-8"))
+        self._migrar_previa()
         self._semear_produtos()
         self.conn.commit()
+
+    def _migrar_previa(self) -> None:
+        """Migração aditiva idempotente: bancos criados antes da prévia
+        (decisão AMBOS 2026-11-22) ganham as colunas na primeira abertura
+        pelo store. Nunca remove nem renomeia nada."""
+        existentes = {
+            r[1] for r in self.conn.execute("PRAGMA table_info(leads)")
+        }
+        for coluna, ddl in (
+            (
+                "previa_status",
+                "TEXT CHECK (previa_status IN ('pendente', 'entregue'))",
+            ),
+            ("previa_entregue_em", "TEXT"),
+            ("previa_imagem_ref", "TEXT"),
+        ):
+            if coluna not in existentes:
+                self.conn.execute(
+                    f"ALTER TABLE leads ADD COLUMN {coluna} {ddl}"
+                )
 
     def close(self) -> None:
         self.conn.close()
@@ -194,6 +216,50 @@ class CRM:
             ETAPA_GANHOU if ganho else ETAPA_PERDEU,
             motivo_perda=motivo_perda,
         )
+
+    # -- prévia (Modo A) ---------------------------------------------
+
+    def marcar_previa_solicitada(self, lead_id: int) -> dict:
+        """O lead pediu a prévia (aceitou o Modo A): estágio 'pendente'.
+
+        Se havia uma prévia entregue antes, uma nova solicitação limpa
+        a entrega anterior (a coluna guarda a prévia atual do lead).
+        """
+        self.obter_lead(lead_id)
+        self.conn.execute(
+            "UPDATE leads SET previa_status = 'pendente',"
+            " previa_entregue_em = NULL, previa_imagem_ref = NULL,"
+            " atualizado_em = ? WHERE id = ?",
+            (_agora(), lead_id),
+        )
+        self.conn.commit()
+        return self.obter_lead(lead_id)
+
+    def marcar_previa_entregue(self, lead_id: int, imagem_ref: str) -> dict:
+        """A Ana entregou a prévia aprovada: 'entregue' + data + ref.
+
+        `imagem_ref` é o identificador da biblioteca
+        (`PREV-<lead>-<ocasião>-<data>`), o mesmo da planilha e do
+        arquivo. Registra também um resumo outbound na conversa, para
+        o fio guardar a entrega.
+        """
+        self.obter_lead(lead_id)
+        ref = imagem_ref.strip()
+        if not (3 <= len(ref) <= 80):
+            raise ValueError("imagem_ref inválida (3–80 caracteres)")
+        afirmar_sem_pii(ref, "previa_imagem_ref")
+        agora = _agora()
+        self.conn.execute(
+            "UPDATE leads SET previa_status = 'entregue',"
+            " previa_entregue_em = ?, previa_imagem_ref = ?,"
+            " atualizado_em = ? WHERE id = ?",
+            (agora, ref, agora, lead_id),
+        )
+        self.conn.commit()
+        self.registrar_mensagem(
+            lead_id, "outbound", f"Prévia entregue — imagem {ref}"
+        )
+        return self.obter_lead(lead_id)
 
     # -- mensagens ---------------------------------------------------
 

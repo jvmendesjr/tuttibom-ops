@@ -50,6 +50,13 @@ CREATE TABLE IF NOT EXISTS leads (
   )),
   proxima_acao TEXT NOT NULL,
   data_followup TEXT,
+  -- Prévia (Modo A, decisão AMBOS 2026-11-22): estágio do pedido da
+  -- prévia. NULL = o lead nunca pediu prévia. 'pendente' = pediu e
+  -- aguarda; 'entregue' = a Ana enviou a imagem aprovada, com a data
+  -- e a referência da imagem na biblioteca (`PREV-<lead>-<ocasião>-<data>`).
+  previa_status TEXT CHECK (previa_status IN ('pendente', 'entregue')),
+  previa_entregue_em TEXT,
+  previa_imagem_ref TEXT,
   endereco_coletado INTEGER NOT NULL DEFAULT 0,
   criado_em TEXT NOT NULL,
   atualizado_em TEXT NOT NULL,

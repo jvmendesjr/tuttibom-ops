@@ -43,7 +43,9 @@ def _criar_db_teste(path):
           contato_ref TEXT NOT NULL, canal TEXT NOT NULL,
           etapa TEXT NOT NULL, produto_sku TEXT REFERENCES produtos(sku),
           interesse TEXT, motivo_perda TEXT, proxima_acao TEXT NOT NULL,
-          data_followup TEXT, endereco_coletado INTEGER NOT NULL DEFAULT 0,
+          data_followup TEXT, previa_status TEXT,
+          previa_entregue_em TEXT, previa_imagem_ref TEXT,
+          endereco_coletado INTEGER NOT NULL DEFAULT 0,
           criado_em TEXT NOT NULL, atualizado_em TEXT NOT NULL);
         CREATE TABLE mensagens (
           id INTEGER PRIMARY KEY, lead_id INTEGER NOT NULL,
@@ -67,21 +69,30 @@ def _criar_db_teste(path):
         ],
     )
     conn.executemany(
-        "INSERT INTO leads VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO leads VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         [
             (
                 1, "cliente-teste-a-whatsapp-20261122", "contato-5551999990001",
                 "whatsapp", "Já respondi", "FITA-15-10-DOURADO", "fita",
                 None, "Aguardar resposta do cliente fictício",
-                "2026-11-23T12:00:00-03:00", 0,
+                "2026-11-23T12:00:00-03:00", "entregue",
+                "2026-11-22T15:00:00-03:00",
+                "PREV-contato-5551999990001-aniversario-2026-11-22", 0,
                 "2026-11-22T10:00:00-03:00", "2026-11-22T10:00:00-03:00",
             ),
             (
                 2, "cliente-teste-b-messenger-20261122", "contato-5551999990002",
                 "messenger", "Novo contato", None, "preco",
                 None, "Responder com o preço do catálogo <b>teste</b>",
-                None, 0,
+                None, "pendente", None, None, 0,
                 "2026-11-22T11:00:00-03:00", "2026-11-22T11:00:00-03:00",
+            ),
+            (
+                3, "cliente-teste-c-whatsapp-20261122", "contato-5551999990003",
+                "whatsapp", "Novo contato", None, "fita",
+                None, "Responder saudação fictícia",
+                None, None, None, None, 0,
+                "2026-11-22T12:00:00-03:00", "2026-11-22T12:00:00-03:00",
             ),
         ],
     )
@@ -160,6 +171,20 @@ class DashboardTest(unittest.TestCase):
         self.assertIn("Catálogo", body)
         self.assertIn("FITA-22-50-PRETO", body)
         self.assertIn("R$ 71,90", body)
+
+    def test_previa_mostra_estagio_data_e_referencia(self):
+        status, body = _request(self.base, "/?token=" + TOKEN)
+        self.assertEqual(status, 200)
+        # Lead 1: entregue, com data e referência da imagem.
+        self.assertIn("entregue em 2026-11-22T15:00:00-03:00", body)
+        self.assertIn(
+            "PREV-contato-5551999990001-aniversario-2026-11-22", body
+        )
+        # Lead 2: pendente.
+        self.assertIn("<strong>Prévia:</strong> pendente", body)
+        # Lead 3: nunca pediu prévia → "—".
+        self.assertIn("contato-5551999990003", body)
+        self.assertIn("<strong>Prévia:</strong> —", body)
 
     def test_html_escapa_valores_do_banco(self):
         status, body = _request(self.base, "/?token=" + TOKEN)

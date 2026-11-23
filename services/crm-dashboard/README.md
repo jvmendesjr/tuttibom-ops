@@ -2,9 +2,10 @@
 
 Página do CRM próprio para embutir no Chatwoot (dashboard app, iframe).
 Mostra os leads do CRM vivo agrupados pelas 7 etapas do funil, com
-produto/SKU (+ preço), interesse, próxima ação, data de follow-up,
-resumos de mensagens e memória do contato — mais o resumo do catálogo
-(18 produtos) e os follow-ups pendentes.
+produto/SKU (+ preço), interesse, **estágio da prévia** (`pendente` /
+`entregue em <data> · <ref>` / `—` sem pedido, desde 0.2.0), próxima
+ação, data de follow-up, resumos de mensagens e memória do contato —
+mais o resumo do catálogo (18 produtos) e os follow-ups pendentes.
 
 ## O que faz / o que não faz
 

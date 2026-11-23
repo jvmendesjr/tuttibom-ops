@@ -25,6 +25,31 @@ O arquivo do banco (`.sqlite3`) NÃO vai para o git: é dado
 operacional, e o `.gitignore` já cobre `work/` — bancos de teste
 vivem em diretório temporário ou em `work/`, nunca commitados.
 
+## Prévia (Modo A) — registro AMBOS (2026-11-22)
+
+Decisão da usuária: o registro da entrega vive nos dois lados — a
+planilha/biblioteca guarda o arquivo e a identificação (para reuso);
+o CRM guarda o estágio do lead.
+
+- Colunas em `leads` (ver `db/crm.sql`): `previa_status`
+  (`pendente` | `entregue`, NULL = nunca pediu), `previa_entregue_em`
+  (ISO), `previa_imagem_ref` (identificador da biblioteca).
+- Métodos do store: `marcar_previa_solicitada(lead_id)` → `pendente`
+  (limpa entrega anterior); `marcar_previa_entregue(lead_id, ref)` →
+  `entregue` + data + ref, e registra um resumo outbound na conversa
+  ("Prévia entregue — imagem <ref>"). A coluna guarda a prévia atual
+  do lead; se um lead pedir uma segunda prévia, vira tabela.
+- Identificador único da imagem: `PREV-<lead>-<ocasião>-<data>` — o
+  mesmo na planilha (`Biblioteca TuttiBom — Assets`, colunas
+  `Imagem (link)`, `Lead/Ocasião`, `Solicitada em`, `Entregue em`),
+  no arquivo da biblioteca (pasta da ocasião + bucket) e no CRM.
+- Migração: `db/crm.sql` é a fonte; bancos antigos ganham as colunas
+  na abertura pelo store (`_migrar_previa`, idempotente). O CRM vivo
+  foi migrado por script stdlib (`/tmp/mig_previa.py`, 2026-11-22).
+- O painel (`services/crm-dashboard/`, 0.2.0) mostra o estágio por
+  lead. Não criar o registro retroativo da entrega do Junior de
+  2026-11-17 sem decisão da usuária (pergunta 3 do rascunho).
+
 ## Duas divergências honestas (não escondidas)
 
 ### 1. Por que `db/crm.sql` e não `db/schema.sql`

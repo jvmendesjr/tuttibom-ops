@@ -50,6 +50,11 @@ CANAIS = ("whatsapp", "messenger")
 
 TIPOS_FOLLOWUP = ("silencio", "pagamento")
 
+# Estágio da prévia (Modo A, decisão AMBOS 2026-11-22): o lead pede a
+# prévia → 'pendente'; a Ana entrega a imagem aprovada → 'entregue'.
+# NULL (ausente) = o lead nunca pediu prévia.
+STATUS_PREVIA = ("pendente", "entregue")
+
 
 def transicao_permitida(de: str, para: str) -> bool:
     """True se o funil permite ir de `de` para `para`."""

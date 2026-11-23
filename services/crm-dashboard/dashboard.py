@@ -14,7 +14,7 @@ aberto, sem token, para o systemd/monitoramento.
 
 Somente stdlib, sem dependências.
 
-Version: 0.1.0
+Version: 0.2.0
 """
 
 import hmac
@@ -28,7 +28,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import parse_qs, urlparse
 
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOST = os.environ.get("CRM_DASHBOARD_HOST", "0.0.0.0")
 PORT = int(os.environ.get("CRM_DASHBOARD_PORT", "3022"))
@@ -87,7 +87,8 @@ def read_data(db_path=DB_PATH):
             for r in conn.execute(
                 "SELECT id, referencia, contato_ref, canal, etapa,"
                 " produto_sku, interesse, motivo_perda, proxima_acao,"
-                " data_followup, endereco_coletado, criado_em,"
+                " data_followup, previa_status, previa_entregue_em,"
+                " previa_imagem_ref, endereco_coletado, criado_em,"
                 " atualizado_em FROM leads ORDER BY atualizado_em DESC"
             )
         ]
@@ -130,6 +131,22 @@ def read_data(db_path=DB_PATH):
         "memoria": memoria,
         "followups": followups,
     }
+
+
+def _previa_texto(lead):
+    """Estágio da prévia (Modo A): — sem pedido, pendente, ou entregue
+    com data e referência da imagem. NULL do banco vira '—'."""
+    status = lead.get("previa_status")
+    if not status:
+        return "—"
+    if status == "pendente":
+        return "pendente"
+    texto = "entregue"
+    if lead.get("previa_entregue_em"):
+        texto += " em {}".format(lead["previa_entregue_em"])
+    if lead.get("previa_imagem_ref"):
+        texto += " · {}".format(lead["previa_imagem_ref"])
+    return texto
 
 
 def _preco(preco_centavos):
@@ -248,6 +265,7 @@ def render_html(data):
                     _produto_descricao(lead["produto_sku"], produtos),
                 )
                 + _campo("Interesse", _esc(lead["interesse"]))
+                + _campo("Prévia", _esc(_previa_texto(lead)))
                 + _campo("Próxima ação", esc(lead["proxima_acao"]))
                 + _campo("Follow-up em", _esc(lead["data_followup"]))
             )

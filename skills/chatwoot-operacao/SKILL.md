@@ -214,6 +214,44 @@ Código em `services/chatwoot-ana/` (detalhe em
 - O `contato_ref` do lead precisa conter o identifier exato ou os
   dígitos do telefone, senão o runner não acha a conversa.
 
+## Prévia (Modo A) — registro AMBOS (2026-11-22)
+
+A prévia é oferecida como pergunta (Modo A, skill da Ana) e só é
+enviada depois que a usuária aprova a imagem exata. O registro da
+entrega vive nos dois lados (decisão AMBOS):
+
+- **Planilha/biblioteca:** a imagem entregue vai para a biblioteca
+  (pasta da ocasião + bucket) com o identificador único
+  `PREV-<lead>-<ocasião>-<data>`; a planilha `Biblioteca TuttiBom —
+  Assets` (aba `Assets`) registra `Imagem (link)`, `Lead/Ocasião`,
+  `Solicitada em`, `Entregue em`.
+- **CRM (o estágio do lead):** quando o lead aceita a prévia, marcar
+  `pendente`; quando a Ana entrega a imagem aprovada, marcar
+  `entregue` + data + referência. O CRM vivo NÃO é aberto pelo store
+  aqui (ver o quirk de import no PC) — marcar por SQL direto, stdlib,
+  replicando os métodos do store:
+  ```sql
+  -- pedido aceito:
+  UPDATE leads SET previa_status='pendente',
+    previa_entregue_em=NULL, previa_imagem_ref=NULL,
+    atualizado_em='<ISO -03:00>' WHERE id=<lead>;
+  -- entrega (imagem aprovada, já na biblioteca):
+  UPDATE leads SET previa_status='entregue',
+    previa_entregue_em='<ISO -03:00>',
+    previa_imagem_ref='PREV-<lead>-<ocasião>-<data>',
+    atualizado_em='<ISO -03:00>' WHERE id=<lead>;
+  INSERT INTO mensagens (lead_id, direcao, resumo, criado_em)
+    VALUES (<lead>, 'outbound',
+    'Prévia entregue — imagem PREV-<lead>-<ocasião>-<data>',
+    '<ISO -03:00>');
+  ```
+  O painel do CRM mostra o estágio por lead (`pendente` / `entregue
+  em <data> · <ref>` / `—` sem pedido).
+- **Não criar** o registro retroativo da entrega do Junior de
+  2026-11-17 sem decisão da usuária (pergunta 3 do rascunho
+  `docs/rascunho-previa-definicao.md`). Os textos da Ana ao enviar a
+  prévia também aguardam decisão (pergunta 2).
+
 ## Handoff humano
 
 - Humano: agente id 2 (`tutibom`, administrador) — único agente da

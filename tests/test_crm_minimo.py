@@ -9,8 +9,12 @@ de comprador, nenhum telefone, nenhum nome real):
 5. follow-up de silêncio é cancelado quando a pessoa responde;
 6. transição proibida e SKU fora do catálogo falham;
 7. PII é rejeitado em texto livre.
+8. prévia (Modo A): pedido marca 'pendente', entrega marca 'entregue'
+   com data, referência da imagem e resumo na conversa; nova solicitação
+   limpa a entrega anterior; bancos antigos ganham as colunas na abertura.
 """
 
+import sqlite3
 import sys
 import tempfile
 import unittest
@@ -128,6 +132,78 @@ class TestCRMMinimo(unittest.TestCase):
                 canal="messenger",
                 proxima_acao="ligar para 88999999999",
             )
+
+    def test_previa_solicitada_marca_pendente(self):
+        lead = self._lead()
+        self.assertIsNone(lead["previa_status"])
+        self.assertIsNone(lead["previa_entregue_em"])
+        self.assertIsNone(lead["previa_imagem_ref"])
+        lead = self.crm.marcar_previa_solicitada(lead["id"])
+        self.assertEqual(lead["previa_status"], "pendente")
+        self.assertIsNone(lead["previa_entregue_em"])
+        self.assertIsNone(lead["previa_imagem_ref"])
+
+    def test_previa_entregue_marca_entregue_e_registra_resumo(self):
+        lead = self._lead()
+        self.crm.marcar_previa_solicitada(lead["id"])
+        ref = "PREV-contato-teste-01-aniversario-2026-11-22"
+        lead = self.crm.marcar_previa_entregue(lead["id"], ref)
+        self.assertEqual(lead["previa_status"], "entregue")
+        self.assertIsNotNone(lead["previa_entregue_em"])
+        self.assertEqual(lead["previa_imagem_ref"], ref)
+        row = self.crm.conn.execute(
+            "SELECT direcao, resumo FROM mensagens WHERE lead_id = ?",
+            (lead["id"],),
+        ).fetchone()
+        self.assertEqual(row["direcao"], "outbound")
+        self.assertIn(ref, row["resumo"])
+
+    def test_previa_nova_solicitacao_limpa_entrega_anterior(self):
+        lead = self._lead()
+        self.crm.marcar_previa_entregue(
+            lead["id"], "PREV-contato-teste-01-aniversario-2026-11-22"
+        )
+        lead = self.crm.marcar_previa_solicitada(lead["id"])
+        self.assertEqual(lead["previa_status"], "pendente")
+        self.assertIsNone(lead["previa_entregue_em"])
+        self.assertIsNone(lead["previa_imagem_ref"])
+
+    def test_previa_imagem_ref_invalida_falha(self):
+        lead = self._lead()
+        with self.assertRaises(ValueError):
+            self.crm.marcar_previa_entregue(lead["id"], "x")
+        with self.assertRaises(ValueError):
+            self.crm.marcar_previa_entregue(
+                lead["id"], "meu telefone é 88999999999"
+            )
+
+    def test_migracao_adiciona_colunas_em_banco_antigo(self):
+        # Banco criado com o esquema antigo (sem as colunas da prévia).
+        path = Path(self.tmp.name) / "antigo.sqlite3"
+        conn = sqlite3.connect(path)
+        conn.execute(
+            "CREATE TABLE leads (id INTEGER PRIMARY KEY,"
+            " referencia TEXT NOT NULL UNIQUE, contato_ref TEXT NOT NULL,"
+            " canal TEXT NOT NULL, etapa TEXT NOT NULL,"
+            " proxima_acao TEXT NOT NULL, criado_em TEXT NOT NULL,"
+            " atualizado_em TEXT NOT NULL)"
+        )
+        conn.execute(
+            "CREATE TABLE produtos (sku TEXT PRIMARY KEY,"
+            " tipo TEXT NOT NULL, largura_mm INTEGER, metragem_m INTEGER,"
+            " cor_impressao TEXT, preco_centavos INTEGER NOT NULL)"
+        )
+        conn.commit()
+        conn.close()
+        crm_antigo = CRM(path)
+        cols = {
+            r[1]
+            for r in crm_antigo.conn.execute("PRAGMA table_info(leads)")
+        }
+        self.assertIn("previa_status", cols)
+        self.assertIn("previa_entregue_em", cols)
+        self.assertIn("previa_imagem_ref", cols)
+        crm_antigo.close()
 
 
 if __name__ == "__main__":

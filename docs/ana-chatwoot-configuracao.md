@@ -185,6 +185,26 @@ vista e segue em silêncio).
   "Alerta de segurança" (22:33) — sem resposta, sem lead. Isso resolve
   na prática a P8.
 
+## 6. Dashboard do CRM — só leitura (decisão do usuário, 2026-11-22)
+
+Página do CRM próprio para embutir no painel do Chatwoot (dashboard
+app, iframe): leads agrupados pelas 7 etapas do funil, com produto/SKU
+(+ preço), interesse, próxima ação, follow-up, resumos de mensagens e
+memória do contato — mais o catálogo (18 produtos) e os follow-ups
+pendentes. Serviço `services/crm-dashboard/` (só stdlib), porta 3022,
+unit `crm-dashboard.service`, deploy em `/home/pc/chatwoot/crm-dashboard/`.
+
+- **Só leitura:** nenhum botão nem endpoint de escrita; o SQLite é
+  aberto sempre em modo read-only (`mode=ro`).
+- **Auth por token na URL:** `GET /?token=<TOKEN>`; sem token ou token
+  errado → 401. O token vive SÓ no `.env` do deploy (chmod 600, fora
+  do git); o serviço se recusa a subir sem ele. `GET /health` é
+  aberto, sem token. Quem tiver a URL completa vê o CRM — por isso o
+  token é longo/aleatório e a URL só vive no `.env` e no registro do
+  dashboard app no Chatwoot. Para trocar: novo token no `.env` +
+  atualizar a URL no Chatwoot + `sudo systemctl restart crm-dashboard`.
+- Detalhe em `services/crm-dashboard/README.md`.
+
 ## Verificação feita (2026-11-21)
 
 - Testes: `python3 -m unittest discover -s services/chatwoot-ana` →

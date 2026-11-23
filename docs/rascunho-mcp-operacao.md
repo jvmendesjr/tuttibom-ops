@@ -19,7 +19,7 @@ Hoje cada frente inventa o seu próprio acesso:
 - O MCP do Deskcomm só cobre o gestor (token + papel, 27 ferramentas
   no escopo unificado, catálogo de 75 — ver
   `docs/rascunho-mcp-gestor-funcoes.md`).
-- O `tuttibom-mcp` só indica (stdio, só leitura: estado, mapa,
+- O `tuttibom-core-mcp` só indica (stdio, só leitura: estado, mapa,
   checklist, fila, catálogo, roadmap, decisões).
 - O atendimento da nova vertente é vigília de 5 em 5 min + clique no
   painel (V4: 11 e 16 min por resposta).
@@ -106,7 +106,7 @@ de quem o agente é nem de onde veio.
 Agente (qualquer provedor/modelo, cliente MCP)
         │  MCP (JSON-RPC) — stdio local ou HTTP + token
         ▼
-tuttibom-ops-mcp  (Python, src/tuttibom/mcp/)
+tuttibom-ops-mcp  (Python, src/tuttibom/mcp_ops/)
   ├─ auth: token → agente + áreas + limites
   ├─ manifesto: o que este agente pode fazer (por área)
   ├─ handshake: confirmação antes de qualquer escrita
@@ -122,22 +122,21 @@ Backends (o MCP não guarda dado de cliente)
 ```
 
 - **Transporte:** stdio para agentes no PC (mesmo padrão do
-  `tuttibom-mcp`); HTTP com token para agentes remotos — só atrás
+  `tuttibom-core-mcp`); HTTP com token para agentes remotos — só atrás
   de túnel, nunca porta aberta (decisão 2026-11-23 ~00:40:
   Tailscale, igual ao Muse).
-- **Nomes (decisão 2026-11-23 ~00:34):** o MCP da operação é o
-  **mcp ops** (`tuttibom-ops-mcp`); o MCP de desenvolvimento, com
-  acesso total ao código, ao estado e ao core, é o **mcp core** —
-  hoje o `tuttibom-mcp` (v0.1.1, só leitura via stdio: ele só indica
-  o estado; quem grava é o agente). Quando o texto disser só "o
-  MCP", é o mcp ops — o da operação. Os nomes são canônicos e devem
-  ser usados na implementação (servidor, comandos, docs): o servidor
-  da operação se chama `tuttibom-ops-mcp` (mcp ops); o da
-  manutenção, `tuttibom-mcp` (mcp core).
+- **Nomes (decisão 2026-11-23 ~00:34, renomeação 2026-11-23 ~00:51):**
+  **tuttibom-core-mcp** (mcp core) e **tuttibom-ops-mcp** (mcp ops).
+  O da manutenção hoje ainda se chama `tuttibom-mcp` (v0.1.1, só
+  leitura via stdio: ele só indica o estado; quem grava é o agente)
+  e leva o nome `tuttibom-core-mcp` na próxima atualização. O da
+  operação nasce como `tuttibom-ops-mcp`. Quando o texto disser só
+  "o MCP", é o mcp ops — o da operação. Os nomes são canônicos e
+  devem ser usados na implementação (servidor, comandos, docs).
 - **O servidor não toca no Deskcomm de produção.** O MCP do
   Deskcomm (gestor) continua como está; este é outro servidor, para
   a nova vertente.
-- **O `tuttibom-mcp` (só indica) vira o núcleo de leitura** deste
+- **O `tuttibom-core-mcp` (só indica) vira o núcleo de leitura** deste
   servidor — as ferramentas dele passam a ser a área de leitura do
   setor 08, não um servidor separado.
 
@@ -246,7 +245,7 @@ nunca por pacote).
 | 05 Social | `ops_social_rascunho_post`, `ops_social_publicar` | atencao / **critico** | a construir |
 | 06 Anúncios | `ops_anuncio_consultar_concorrencia` | seguro | a construir |
 | 07 Operação | `ops_operacao_registrar_pedido`, `ops_operacao_confirmar_pagamento` (só com confirmação do produtor) | atencao | a construir |
-| 08 Plataforma | `ops_plataforma_saude`, `ops_plataforma_logs`, `ops_plataforma_reindex` | seguro / atencao | a construir (núcleo: `tuttibom-mcp`) |
+| 08 Plataforma | `ops_plataforma_saude`, `ops_plataforma_logs`, `ops_plataforma_reindex` | seguro / atencao | a construir (núcleo: `tuttibom-core-mcp`) |
 
 - **Preço nunca é inventado:** a ferramenta de produto é a única
   fonte de preço; se o SKU não existir, a resposta é "vou
@@ -320,14 +319,14 @@ nunca por pacote).
   se for só responder mais rápido.)
 - Duração do lease por área: **RESOLVIDO 2026-11-23 ~00:40 — sem prazo fixo; o agente permanece atuando no seu escopo enquanto não for trocado (a proposta de 8 h foi descartada).**
 - Quem emite/revoga tokens (proposta: só o usuário).
-- Nome do servidor (`tuttibom-ops-mcp` é o nome de trabalho).
+- Nome do servidor: **RESOLVIDO 2026-11-23 ~00:51 — `tuttibom-ops-mcp` (mcp ops); o da manutenção, `tuttibom-core-mcp` (mcp core).**
 
 ## 12. Relação com o que existe
 
 | Peça | Relação |
 |---|---|
 | MCP do Deskcomm (gestor) | Continua. É o modelo de token + papel + risco que este desenho generaliza. |
-| `tuttibom-mcp` (só indica) | Vira o núcleo de leitura do setor 08 deste servidor. |
+| `tuttibom-core-mcp` (só indica) | Vira o núcleo de leitura do setor 08 deste servidor. |
 | CRM próprio (V2) | Primeiro backend gravável (§10, passo 2). |
 | Skill da Ana | Comportamento; o MCP é só o contrato de acesso. |
 | Setores (`docs/setores/`) | As áreas do manifesto — a fronteira já está escrita. |

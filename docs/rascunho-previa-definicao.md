@@ -141,6 +141,21 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
   CRM. Nenhum caminho dispensa o registro; o identificador único é
   o que amarra os três lugares.
 
+## Verificação — mídia do lead (2026-11-22 ~23:50)
+
+- **O ouvinte hoje só lê o texto** (`content`): áudio e imagem
+  chegam na fila com texto vazio (imagem com legenda: só a legenda).
+  O cumprimento dispara, mas a Ana não tem como responder o conteúdo
+  sem a mídia.
+- **A API do Chatwoot expõe os anexos** — confirmado ao vivo na
+  conversa 7 (HTTP 200, campo `attachments` presente): cada anexo tem
+  `file_type` (audio/image) e `data_url` para baixar. Autenticação
+  pelo header `api_access_token` (o header `access-token` dá 401).
+- **Prova viva pendente:** não há nenhuma mensagem de mídia no
+  Chatwoot hoje para baixar — a prova (baixar, transcrever o áudio
+  com ElevenLabs Scribe, ver a imagem) precisa de um áudio e uma
+  imagem de teste do lead.
+
 ## Perguntas abertas
 
 1. **Onde fica o registro da entrega? — DECIDIDO 2026-11-22 ~23:17:

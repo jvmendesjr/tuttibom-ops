@@ -275,6 +275,21 @@ entrega vive nos dois lados (decisão AMBOS):
   é solicitada estão aprovados (pergunta 2, 2026-11-22 ~23:41) e na
   skill da Ana.
 
+## Mídia recebida do lead (áudio/imagem)
+
+- O ouvinte enfileira só o texto (`content`): áudio chega com texto
+  vazio; imagem sem legenda também. A legenda, quando há, vem como
+  texto. O cumprimento dispara normalmente.
+- Para ouvir/ver a mídia, buscar a conversa na API do Chatwoot
+  (`GET /api/v1/accounts/2/conversations/{id}`, header
+  `api_access_token` — o header `access-token` dá 401) e baixar o
+  `data_url` do anexo (`file_type` audio/image).
+- Áudio: transcrever com ElevenLabs Scribe (mesmo caminho usado no
+  Deskcomm) e responder o conteúdo transcrito. Imagem: ver a imagem
+  baixada antes de responder (logo, referência, foto do produto).
+- A prova viva (baixar + transcrever + responder) ainda não foi
+  feita no Chatwoot — precisa de um áudio e uma imagem de teste.
+
 ## Handoff humano
 
 - Humano: agente id 2 (`tutibom`, administrador) — único agente da

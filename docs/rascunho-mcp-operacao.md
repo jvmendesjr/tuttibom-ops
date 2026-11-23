@@ -130,7 +130,10 @@ Backends (o MCP não guarda dado de cliente)
   acesso total ao código, ao estado e ao core, é o **mcp core** —
   hoje o `tuttibom-mcp` (v0.1.1, só leitura via stdio: ele só indica
   o estado; quem grava é o agente). Quando o texto disser só "o
-  MCP", é o mcp ops — o da operação.
+  MCP", é o mcp ops — o da operação. Os nomes são canônicos e devem
+  ser usados na implementação (servidor, comandos, docs): o servidor
+  da operação se chama `tuttibom-ops-mcp` (mcp ops); o da
+  manutenção, `tuttibom-mcp` (mcp core).
 - **O servidor não toca no Deskcomm de produção.** O MCP do
   Deskcomm (gestor) continua como está; este é outro servidor, para
   a nova vertente.

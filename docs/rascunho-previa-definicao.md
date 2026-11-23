@@ -18,17 +18,20 @@
    É uma simulação que eu preparo para você visualizar antes de
    confirmar..."), sem dizer "é IA" de forma seca; dispara quando os
    dados da personalização já são conhecidos; monta quando a pessoa
-   aceita; envia só após o usuário aprovar a imagem exata.
+   aceita; a imagem exata é aprovada pela usuária antes de enviar.
+   **Inicialmente quem repassa a prévia ao interessado é a humana,
+   não a Ana** (decisão 2026-11-22 ~23:38).
 6. **Biblioteca:** Muse gera → `Pendentes/` → humano aprova a imagem
-   exata → pasta da ocasião + "Aprovado" na planilha + bucket → Ana
-   envia.
+   exata → pasta da ocasião + "Aprovado" na planilha + bucket → a
+   humana envia ao interessado (inicialmente).
 
 ## Fluxo (como está hoje)
 
 1. Lead dá os dados da personalização → Ana oferece a prévia (Modo A).
 2. Lead aceita → Muse gera a imagem → vai para `Pendentes/`.
 3. Usuária aprova a imagem exata (ou pede outra).
-4. Ana envia a prévia aprovada no canal onde a pessoa escreveu.
+4. A usuária envia a prévia aprovada ao interessado, no canal onde
+   a pessoa escreveu (inicialmente a entrega é humana).
 5. **Registro da entrega — DECIDIDO (ver Decisão abaixo).**
 6. Depois da entrega: a Ana acompanha (o cliente aprovou? quer
    ajustes?) — texto A DECIDIR (pergunta 2).
@@ -49,7 +52,7 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
 - **CRM (lead):** nova coluna de estágio `previa_status`
   (`pendente` → `entregue`) + `previa_entregue_em` (data/hora) +
   `previa_imagem_ref` (o identificador da biblioteca). Quando o lead
-  solicita → `pendente`; quando a Ana entrega → `entregue` + data.
+  solicita → `pendente`; quando a humana entrega → `entregue` + data.
   Na entrega, um resumo vai para as mensagens da conversa. O painel
   do CRM mostra o estágio. Uma coluna guarda a prévia atual do lead;
   se um lead pedir uma segunda prévia, vira tabela.
@@ -81,18 +84,45 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
   `previa_imagem_ref` do CRM. Uma coluna guarda a prévia atual do
   lead; se um lead pedir uma segunda prévia, vira tabela.
 
+## Decisão — entrega humana + handoff (2026-11-22 ~23:38)
+
+- **Inicialmente a prévia é repassada ao interessado pela humana,**
+  não pela Ana.
+- **Quando o lead solicita a prévia:** o Muse marca o handoff para
+  humano no Chatwoot (etiqueta `handoff-humano`, atribuição ao
+  agente 2, nota privada "Prévia solicitada — aguardando a usuária
+  criar/enviar") e chama a usuária para atender (aviso neste chat);
+  marca `previa_status='pendente'` no CRM.
+- **A Ana informa ao comprador** que vai solicitar a criação da
+  amostra artística e que atenderemos em breve. Fora do horário
+  comercial, informa que normalmente atendemos essa solicitação em
+  horário comercial e pergunta se pode aguardar. A Ana nunca diz que
+  transfere para humano nem que é robô/virtual. O texto de fora do
+  horário diz a regra normal sem revelar a exceção (a entrega fora
+  do horário continua sendo só registro interno, regra 2).
+- **Horário comercial adotado:** 7h–22h (a janela de disparo da Ana)
+  — a confirmar/corrigir pela usuária.
+- **Textos propostos — AGUARDANDO APROVAÇÃO da usuária:**
+  - Em horário comercial: "Perfeito! Vou solicitar a criação da
+    amostra artística e já te chamo com a prévia, tá bom?"
+  - Fora do horário comercial: "Perfeito! Vou solicitar a criação
+    da amostra artística. Normalmente a gente atende essa
+    solicitação em horário comercial — você consegue aguardar até
+    amanhã? Assim que estiver pronta, eu te chamo aqui."
+
 ## Perguntas abertas
 
 1. **Onde fica o registro da entrega? — DECIDIDO 2026-11-22 ~23:17:
    AMBOS — IMPLEMENTADO 2026-11-22 ~23:20** (ver seção Decisão e
    Implementação). Alternativas consideradas: tabela própria `previas`
    no CRM; resumo na conversa; só planilha.
-2. **O que a Ana diz ao enviar a prévia?** (texto exato a aprovar.)
-   **O que ela diz depois que o cliente vê?** (aprovação/ajustes.)
-3. **Registro retroativo:** a entrega do Junior em 2026-11-17 08:05
-   (imagem, por humano) ganha registro no formato novo? A entrega
-   aconteceu de verdade; as mensagens de hoje (11:27 e PIX 19:10)
-   eram teste e a prévia de segunda foi cancelada — não confundir.
+2. **O que a Ana diz quando a prévia é solicitada? — TEXTOS
+   PROPOSTOS 2026-11-22 ~23:38, aguardando aprovação** (ver Decisão
+   — entrega humana). **O que ela diz depois que o cliente vê?**
+   (aprovação/ajustes) — ainda aberto.
+3. **Registro retroativo — DECIDIDO 2026-11-22 ~23:39: NÃO.** O
+   Junior não ganha registro: o contato é de teste, da dona; a
+   entrega de 17/11 não entra no CRM.
 
 ## O que NÃO muda
 

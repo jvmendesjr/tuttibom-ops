@@ -217,16 +217,25 @@ Código em `services/chatwoot-ana/` (detalhe em
 ## Prévia (Modo A) — registro AMBOS (2026-11-22)
 
 A prévia é oferecida como pergunta (Modo A, skill da Ana) e só é
-enviada depois que a usuária aprova a imagem exata. O registro da
+enviada depois que a usuária aprova a imagem exata. **Inicialmente
+quem envia a prévia ao interessado é a humana.** O registro da
 entrega vive nos dois lados (decisão AMBOS):
 
+- **Quando o lead solicita:** marcar `pendente` no CRM (SQL abaixo),
+  marcar o handoff para humano no Chatwoot (etiqueta `handoff-humano`,
+  atribuição ao agente 2, nota privada "Prévia solicitada —
+  aguardando a usuária criar/enviar") e avisar a usuária neste chat.
+  A Ana informa que vai solicitar a criação da amostra artística e
+  que atenderemos em breve; fora do horário comercial (7h–22h),
+  avisa que normalmente atendemos em horário comercial e pergunta se
+  pode aguardar (textos exatos no rascunho, aguardando aprovação).
 - **Planilha/biblioteca:** a imagem entregue vai para a biblioteca
   (pasta da ocasião + bucket) com o identificador único
   `PREV-<lead>-<ocasião>-<data>`; a planilha `Biblioteca TuttiBom —
   Assets` (aba `Assets`) registra `Imagem (link)`, `Lead/Ocasião`,
   `Solicitada em`, `Entregue em`.
 - **CRM (o estágio do lead):** quando o lead aceita a prévia, marcar
-  `pendente`; quando a Ana entrega a imagem aprovada, marcar
+  `pendente`; quando a humana entrega a imagem aprovada, marcar
   `entregue` + data + referência. O CRM vivo NÃO é aberto pelo store
   aqui (ver o quirk de import no PC) — marcar por SQL direto, stdlib,
   replicando os métodos do store:
@@ -248,9 +257,10 @@ entrega vive nos dois lados (decisão AMBOS):
   O painel do CRM mostra o estágio por lead (`pendente` / `entregue
   em <data> · <ref>` / `—` sem pedido).
 - **Não criar** o registro retroativo da entrega do Junior de
-  2026-11-17 sem decisão da usuária (pergunta 3 do rascunho
-  `docs/rascunho-previa-definicao.md`). Os textos da Ana ao enviar a
-  prévia também aguardam decisão (pergunta 2).
+  2026-11-17 — DECIDIDO 2026-11-22 ~23:39: o contato é de teste, da
+  dona; o Junior não ganha registro. Os textos da Ana quando a prévia
+  é solicitada estão propostos no rascunho (pergunta 2), aguardando
+  aprovação.
 
 ## Handoff humano
 

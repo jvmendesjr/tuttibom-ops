@@ -238,7 +238,10 @@ entrega vive nos dois lados (decisão AMBOS):
   no Chatwoot) e a Ana retoma. A imagem da prévia chega por um destes
   caminhos: a usuária envia aqui neste chat; o Muse captura do anexo
   da mensagem no Chatwoot (a verificar no primeiro caso real); ou a
-  usuária adiciona na biblioteca e avisa.
+  usuária adiciona na biblioteca e avisa. Qualquer um dos três
+  caminhos termina no mesmo registro consolidado (biblioteca +
+  planilha + CRM, amarrados pelo `PREV-...`); nenhum dispensa o
+  registro.
 - **Planilha/biblioteca:** a imagem entregue vai para a biblioteca
   (pasta da ocasião + bucket) com o identificador único
   `PREV-<lead>-<ocasião>-<data>`; a planilha `Biblioteca TuttiBom —

@@ -134,6 +134,12 @@ a identificação (para reuso); o CRM guarda o ESTÁGIO do lead.
   - o Muse captura do WhatsApp (anexo da mensagem enviada no
     Chatwoot) — caminho a verificar no primeiro caso real;
   - ela adiciona a imagem na biblioteca e avisa o Muse.
+- **Consolidação (2026-11-22 ~23:49):** qualquer um dos três caminhos
+  termina no mesmo registro consolidado — arquivo na biblioteca com o
+  identificador `PREV-...`, linha na planilha (imagem, lead/ocasião,
+  solicitada em, entregue em) e `previa_imagem_ref` + `entregue` no
+  CRM. Nenhum caminho dispensa o registro; o identificador único é
+  o que amarra os três lugares.
 
 ## Perguntas abertas
 

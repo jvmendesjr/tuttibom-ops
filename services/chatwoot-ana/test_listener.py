@@ -105,7 +105,7 @@ class ListenerTest(unittest.TestCase):
         status, body = _get(self.base, "/health")
         self.assertEqual(status, 200)
         self.assertEqual(body, {"ok": True, "service": "ana-listener",
-                                "version": "0.5.0"})
+                                "version": "0.6.0"})
 
     def test_incoming_enfileira(self):
         status, body = _post(self.base, "/webhooks/chatwoot",
@@ -355,6 +355,40 @@ class ListenerTest(unittest.TestCase):
             "pedido", 2,
             datetime(2026, 11, 21, 10, 0, tzinfo=timezone.utc)).lower())
 
+    def test_classificar_rajada_midia_vazia(self):
+        # Correção 2026-11-23: sem texto conhecido (só mídia/vazio),
+        # não há pedido — o cumprimento é o genérico, sem "verificar".
+        agora = int(time.time())
+        midia_vazia = [
+            {"message_type": 0, "content": "", "created_at": agora},
+            {"message_type": 0, "content": None, "created_at": agora},
+        ]
+        self.assertEqual(
+            listener._classificar_rajada(midia_vazia, "", None),
+            "saudacao")
+        # Áudio sozinho: texto inicial vazio, nenhuma mensagem com texto.
+        self.assertEqual(
+            listener._classificar_rajada([], "", None), "saudacao")
+        # Saudação pura continua genérica.
+        self.assertEqual(
+            listener._classificar_rajada([], "boa noite", None),
+            "saudacao")
+        self.assertEqual(
+            listener._classificar_rajada(
+                [{"message_type": 0, "content": "bom dia",
+                  "created_at": agora}],
+                "oi", None),
+            "saudacao")
+        # Pedido real continua no pool de verificar.
+        self.assertEqual(
+            listener._classificar_rajada(
+                [], "quanto custa a fita de 10 m", None), "pedido")
+        self.assertEqual(
+            listener._classificar_rajada(
+                [{"message_type": 0, "content": "oi",
+                  "created_at": agora}],
+                "quanto custa", None), "pedido")
+
     def test_cumprimento_primeira_mensagem_saudacao(self):
         # Nada é enviado no ato: o cumprimento sai no disparo do timer.
         with self._mocks_cumprimento():
@@ -369,7 +403,7 @@ class ListenerTest(unittest.TestCase):
         self.assertEqual(len(body["pending"]), 1)
         cump = body["pending"][0]["cumprimento"]
         self.assertEqual(
-            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+            cump["texto"], "Bom dia! Aguarde um instante, por favor.")
         self.assertIn("enviado_em", cump)
         self.assertEqual(self._n_cumprimentos(), 1)
 
@@ -434,7 +468,7 @@ class ListenerTest(unittest.TestCase):
         _, body = _get(self.base, "/pending")
         cump = body["pending"][0]["cumprimento"]
         self.assertEqual(
-            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+            cump["texto"], "Bom dia! Aguarde um instante, por favor.")
 
     def test_rotacao_nao_repete_variante(self):
         with self._mocks_cumprimento():
@@ -443,7 +477,7 @@ class ListenerTest(unittest.TestCase):
             self._disparar(203)
         _, body = _get(self.base, "/pending")
         primeiro = body["pending"][0]["cumprimento"]["texto"]
-        self.assertEqual(primeiro, "Bom dia! Só um instante que já te atendo.")
+        self.assertEqual(primeiro, "Bom dia! Aguarde um instante, por favor.")
         self._envelhecer_cumprimento(203, 31)
         with self._mocks_cumprimento():
             _post(self.base, "/webhooks/chatwoot",
@@ -452,7 +486,7 @@ class ListenerTest(unittest.TestCase):
         _, body = _get(self.base, "/pending")
         self.assertEqual(len(body["pending"]), 2)
         segundo = body["pending"][1]["cumprimento"]["texto"]
-        self.assertEqual(segundo, "Bom dia! Ok, só um instante.")
+        self.assertEqual(segundo, "Bom dia! Aguarde que já lhe atendo.")
         self.assertNotEqual(primeiro, segundo)
         self.assertEqual(self._n_cumprimentos(), 2)
 
@@ -527,7 +561,7 @@ class ListenerTest(unittest.TestCase):
         _, body = _get(self.base, "/pending")
         cump = body["pending"][0]["cumprimento"]
         self.assertEqual(
-            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+            cump["texto"], "Bom dia! Aguarde um instante, por favor.")
         self.assertEqual(self._n_cumprimentos(), 1)
 
     def test_primeira_mensagem_sem_atividade_dispara(self):
@@ -574,7 +608,7 @@ class ListenerTest(unittest.TestCase):
         _, body = _get(self.base, "/pending")
         cump = body["pending"][0]["cumprimento"]
         self.assertEqual(
-            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+            cump["texto"], "Bom dia! Aguarde um instante, por favor.")
         self.assertEqual(self._n_cumprimentos(), 1)
 
     def test_falha_api_e_falha_envio_nao_bloqueiam(self):
@@ -598,7 +632,7 @@ class ListenerTest(unittest.TestCase):
         _, body = _get(self.base, "/pending")
         cump = body["pending"][0]["cumprimento"]
         self.assertEqual(
-            cump["texto"], "Bom dia! Só um instante que já te atendo.")
+            cump["texto"], "Bom dia! Aguarde um instante, por favor.")
 
     def test_ignorado_nunca_cumprimenta(self):
         _, body = _post(self.base, "/webhooks/chatwoot",

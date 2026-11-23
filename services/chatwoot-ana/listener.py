@@ -39,7 +39,7 @@ Somente stdlib, sem dependências.
 Regras de log: nunca logar texto de mensagem de cliente — só ids,
 tamanhos e contagens.
 
-Version: 0.5.0
+Version: 0.6.0
 """
 
 import json
@@ -53,7 +53,7 @@ from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from zoneinfo import ZoneInfo
 
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOST = os.environ.get("LISTENER_HOST", "0.0.0.0")
 PORT = int(os.environ.get("LISTENER_PORT", "3021"))
@@ -82,10 +82,12 @@ _TIMERS_LOCK = threading.Lock()
 # "{S}" vira a saudação pelo horário. Dois pools (correção do usuário
 # 2026-11-21): "verificar" só cabe quando a pessoa já pediu alguma
 # informação; quem entra só com um "bom dia" não ouve falar em verificar.
+# Pool de saudação refeito 2026-11-23 (decisão do usuário): frases
+# genéricas de "aguarde", sem prometer verificação.
 POOL_SAUDACAO = (
-    "{S}! Só um instante que já te atendo.",
-    "{S}! Ok, só um instante.",
-    "{S}! Já te atendo.",
+    "{S}! Aguarde um instante, por favor.",
+    "{S}! Aguarde que já lhe atendo.",
+    "{S}! Por favor, aguarde um instante.",
 )
 POOL_PEDIDO = (
     "{S}! Vou verificar aqui e já te respondo.",
@@ -390,6 +392,9 @@ def _classificar_rajada(mensagens, texto_inicial, janela_inicio):
     forem saudação fechada; basta UM pedido na janela para usar o
     pool COM "verificar". texto_inicial (a mensagem que disparou o
     timer) sempre entra, porque a API pode ainda não listá-la.
+    Correção 2026-11-23: sem NENHUM texto na janela (só mídia —
+    áudio, imagem sem legenda — ou conteúdo vazio), não há pedido
+    conhecido: usa o pool SEM "verificar".
     """
     textos = []
     if texto_inicial:
@@ -406,7 +411,7 @@ def _classificar_rajada(mensagens, texto_inicial, janela_inicio):
         conteudo = msg.get("content")
         if isinstance(conteudo, str) and conteudo:
             textos.append(conteudo)
-    if textos and all(eh_saudacao_fechada(t) for t in textos):
+    if not textos or all(eh_saudacao_fechada(t) for t in textos):
         return "saudacao"
     return "pedido"
 

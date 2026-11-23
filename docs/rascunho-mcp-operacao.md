@@ -68,6 +68,15 @@ de quem o agente é nem de onde veio.
   operação, plataforma); ele não dá acesso a código, repositório,
   estado do ambiente, credenciais nem a ferramentas de
   desenvolvimento. Um agente da operação nunca vê o código.
+- **Atendimento autônomo via Chatwoot (decisão 2026-11-23 ~00:29).**
+  O agente que recebe a Ana atende pelo Chatwoot normal — o mesmo
+  caminho que o Muse usa hoje (fila do ouvinte, API do Chatwoot,
+  skill da Ana) — e o MCP garante que isso aconteça com autonomia,
+  sem interferência do Muse. O objetivo é que o outro agente faça
+  as funções da Ana e a operação corra normalmente, sem interrupções
+  e corretamente, como nos testes já feitos — só que com outro
+  agente. O teste da Ana com outro agente aguarda a construção do
+  MCP.
 - **Mídia é padrão para todo agente que atende (decisão 2026-11-22
   ~23:58).** Todo agente — o Muse ou outro — baixa e vê as imagens
   e baixa e transcreve os áudios que o lead envia, antes de

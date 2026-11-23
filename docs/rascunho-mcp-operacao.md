@@ -127,8 +127,10 @@ Backends (o MCP não guarda dado de cliente)
   Tailscale, igual ao Muse).
 - **Nomes (decisão 2026-11-23 ~00:34):** o MCP da operação é o
   **mcp ops** (`tuttibom-ops-mcp`); o MCP de desenvolvimento, com
-  acesso total ao código, ao estado e ao core, é o **mcp core**.
-  Quando o texto disser só "o MCP", é o mcp ops — o da operação.
+  acesso total ao código, ao estado e ao core, é o **mcp core** —
+  hoje o `tuttibom-mcp` (v0.1.1, só leitura via stdio: ele só indica
+  o estado; quem grava é o agente). Quando o texto disser só "o
+  MCP", é o mcp ops — o da operação.
 - **O servidor não toca no Deskcomm de produção.** O MCP do
   Deskcomm (gestor) continua como está; este é outro servidor, para
   a nova vertente.

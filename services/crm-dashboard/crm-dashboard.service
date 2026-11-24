@@ -1,0 +1,17 @@
+[Unit]
+Description=CRM TuttiBom — dashboard só leitura no Chatwoot
+After=network.target
+
+[Service]
+Type=simple
+User=pc
+WorkingDirectory=/home/pc/chatwoot/crm-dashboard
+ExecStart=/usr/bin/python3 /home/pc/chatwoot/crm-dashboard/dashboard.py
+Environment=CRM_DASHBOARD_PORT=3022
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

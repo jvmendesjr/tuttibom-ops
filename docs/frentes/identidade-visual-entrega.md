@@ -89,7 +89,7 @@ Intro (99/100), sem preço:
 
 > Fita personalizada e impressão 3D no Cariri. Chama no WhatsApp. Algumas imagens são criadas com IA.
 
-Sobre com o WhatsApp comercial já público no repo (`https://wa.me/558881022939`) e o site só como campo, sem URL inventada. Sem rua, sem horário, sem preço.
+Sobre com o WhatsApp comercial já público no repo (`https://wa.me/<NUMERO_LOJA>`) e o site só como campo, sem URL inventada. Sem rua, sem horário, sem preço.
 
 Pangram: pendente. Não é falta de chave (`PANGRAM_API_KEY` não faz parte do acesso; o OAuth do mcporter é o caminho). O `mcporter` não foi chamado porque o shell não rodou.
 

@@ -1,0 +1,64 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Fixtures de controle de concorrência por lease sem prazo fixo e revogação imediata",
+  "cenario_concorrencia_dois_escritores": {
+    "area_gravavel": "01-atendimento",
+    "escritor_atual": {
+      "agente_id": "ana-01",
+      "token_ref": "token-hash-ana01",
+      "lease_status": "ativo",
+      "prazo": "sem_prazo_fixo",
+      "adquirido_em": "2026-11-23T19:00:00Z"
+    },
+    "tentativa_segundo_escritor": {
+      "agente_id": "ana-02",
+      "token_ref": "token-hash-ana02",
+      "acao": "ops_confirmar_atribuicoes_com_escrita_01",
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_AREA_OCCUPIED",
+        "mensagem": "Área gravável 01-atendimento já possui escritor ativo (ana-01). Apenas um escritor por área por vez; escrita bloqueada para ana-02.",
+        "leitura_permitida": true,
+        "escrita_permitida": false
+      }
+    }
+  },
+  "cenario_revogacao_e_sucessao": {
+    "evento_revogacao_admin": {
+      "comando": "tuttibom-ops-admin revogar --agente ana-01",
+      "timestamp": "2026-11-23T19:20:00Z",
+      "motivo": "Troca administrativa de agente de atendimento"
+    },
+    "estado_pos_revogacao": {
+      "agente_ana_01": {
+        "token_revogado": true,
+        "chamada_teste": {
+          "ferramenta": "ops_atendimento_ler_conversa",
+          "resultado_esperado": {
+            "status_code": -32000,
+            "codigo_erro": "ERR_TOKEN_REVOKED",
+            "mensagem": "Token revogado pela usuária. Acesso imediatamente bloqueado."
+          }
+        }
+      },
+      "lease_area_01": {
+        "status": "livre",
+        "titular_anterior": "ana-01",
+        "liberado_em": "2026-11-23T19:20:00Z"
+      }
+    },
+    "sucessao_pelo_segundo_agente": {
+      "agente_id": "ana-02",
+      "handshake_chamada": {
+        "metodo": "ops_confirmar_atribuicoes",
+        "hash": "0f3d482522e3159f7cad097eda19487440ac6a885813101c7ce89345481625c3"
+      },
+      "resultado_esperado": {
+        "status": "confirmado",
+        "lease_status": "ativo",
+        "novo_titular_lease": "ana-02",
+        "escrita_liberada": true
+      }
+    }
+  }
+}

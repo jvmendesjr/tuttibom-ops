@@ -465,6 +465,21 @@ do blueprint no PC.
 
 ## 15. Atualização 2026-11-05 — Paperclip: stack do PQBR2 mapeada, decisões tomadas, roadmap criado
 
+> Integração MCP Ops em desenvolvimento: WhatsApp e Messenger serão
+> compostos por pilhas isoladas por inbox no mesmo host/escritor.
+> [Contrato e rollout](operacao/mcp-ops-multi-inbox.md). Isso não modifica
+> o Deskcomm nem ativa serviços reais. O desenho específico atual usa o
+> canal Chatwoot existente, sem construir outro conector da Ponte.
+
+> Nova vertente, 2026-11-23: a arquitetura atual dos MCPs está no
+> [desenho de operação](rascunho-mcp-operacao.md). O Core é independente e
+> somente leitura. O [inventário atual](operacao/mcp-core-e-ops.md) define
+> as funções do Ops e a entrega de skills no manifesto por atribuição
+> explícita. A integração atual é de laboratório. No HTTP, a credencial
+> individual abre o escopo pré-vinculado, sem referência no prompt.
+> O histórico abaixo não define o acesso
+> dos agentes de operação.
+
 Em 2026-11-05 o usuário pediu para conferir o PQBR2 no mesmo
 servidor (`~/Workspace/PQBR2`) e usar arquitetura similar. Tudo
 abaixo foi verificado por leitura de arquivos e checagem de

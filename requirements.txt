@@ -1,3 +1,5 @@
 # Dependências dos contratos F4. Sem segredos.
 pydantic>=2.14.0
 pytest>=7.0.0
+mcp>=1.30,<2
+uvicorn>=0.30,<1

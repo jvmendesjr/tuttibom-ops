@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# tuttibom-mcp — stdio MCP (só leitura). Uso: apontar o client para este script.
+# Caminho legado do tuttibom-core-mcp (stdio, só leitura).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 export TUTTIBOM_ROOT="$ROOT"
 export PYTHONPATH="$ROOT/src${PYTHONPATH:+:$PYTHONPATH}"
-exec python3 -m tuttibom.mcp.server
+exec python3 -B -m tuttibom.mcp.server

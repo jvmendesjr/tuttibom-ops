@@ -1,0 +1,158 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Fixtures de validação de mídia obrigatória e continuidade da fila de atendimento na troca de agente",
+  "conversa_ficticia": {
+    "conversa_ref": "conv-ficticia-101",
+    "lead_ref": "lead-ficticio-404",
+    "canal": "chatwoot_whatsapp",
+    "iniciada_em": "2026-11-23T19:10:00Z",
+    "saudacao_automatica": {
+      "enviada": true,
+      "timestamp": "2026-11-23T19:10:05Z",
+      "texto": "Olá! Seja bem-vindo(a) à TuttiBom. Em que posso te ajudar hoje?"
+    },
+    "fila_mensagens": [
+      {
+        "id": "msg-in-001",
+        "remetente": "lead",
+        "tipo": "texto",
+        "conteudo": "Boa tarde! Gostaria de saber se vocês fazem fita personalizada com essa arte aqui.",
+        "timestamp": "2026-11-23T19:11:00Z",
+        "status_analise": "concluido"
+      },
+      {
+        "id": "msg-in-002",
+        "remetente": "lead",
+        "tipo": "imagem",
+        "anexo": {
+          "mime_type": "image/png",
+          "tamanho_bytes": 1048576,
+          "data_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+          "hash_sha256": "37f40196e8d0e5124db5f4fd4671424e031c3bf79c28bf16f9fcfab74d7eb805"
+        },
+        "analise_visao": {
+          "status": "processado",
+          "processado_em": "2026-11-23T19:12:00Z",
+          "descricao_visual": "Fita de cetim preta com estampa de logotipo em foil dourado metalizado.",
+          "largura_estimada_mm": 22,
+          "cor_fita": "PRETO",
+          "cor_impressao": "DOURADO"
+        }
+      },
+      {
+        "id": "msg-in-003",
+        "remetente": "lead",
+        "tipo": "audio",
+        "anexo": {
+          "mime_type": "audio/ogg",
+          "duracao_segundos": 6,
+          "data_url": "data:audio/ogg;base64,T2dnUwACAAAAAAAAAAB...",
+          "hash_sha256": "4a5c6d7e8f901a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f901a2b3c4d5e6f7a"
+        },
+        "transcricao_elevenlabs": {
+          "status": "processado",
+          "processado_em": "2026-11-23T19:12:30Z",
+          "texto_transcrito": "Vocês têm essa fita no rolo de 50 metros? Quanto fica e vocês entregam aqui em Fortaleza?"
+        }
+      }
+    ]
+  },
+  "casos": [
+    {
+      "id": "MID-NEG-01-RESPOSTA-SEM-PROCESSAR-MIDIA",
+      "titulo": "Agente tenta enviar resposta antes de baixar/analisar imagem ou transcrever áudio pendente",
+      "estado_fila_simulado": {
+        "conversa_ref": "conv-ficticia-101",
+        "anexos_pendentes": [
+          {
+            "id": "msg-in-002",
+            "tipo": "imagem",
+            "status": "pendente_visao"
+          },
+          {
+            "id": "msg-in-003",
+            "tipo": "audio",
+            "status": "pendente_transcricao"
+          }
+        ]
+      },
+      "chamada_agente": {
+        "ferramenta": "ops_atendimento_responder",
+        "arguments": {
+          "conversa_ref": "conv-ficticia-101",
+          "id_aprovacao": "APROV-20261123-001",
+          "texto": "Olá! Fazemos sim.",
+          "idempotency_key": "c33b4e20-5621-4993-9c8e-324b901a8844"
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_MEDIA_PENDING_ANALYSIS",
+        "mensagem": "Existem mídias pendentes de análise na conversa conv-ficticia-101. Todo agente deve visualizar imagens e transcrever áudios antes de formular ou enviar respostas."
+      }
+    },
+    {
+      "id": "MID-POS-01-FLUXO-MIDIA-COMPLETO",
+      "titulo": "Agente consome anexos, analisa imagem, transcreve áudio e só então formula proposta",
+      "etapas": [
+        {
+          "acao": "ops_atendimento_ler_conversa",
+          "resultado": "Retorna lista de mensagens com data_url e tipo de anexo"
+        },
+        {
+          "acao": "analise_de_visao_local",
+          "resultado": "Identifica fita 22mm cetim preta com estampa dourada"
+        },
+        {
+          "acao": "transcricao_de_audio_local",
+          "resultado": "Identifica solicitação de rolo 50 metros e entrega em Fortaleza"
+        },
+        {
+          "acao": "ops_produto_consultar",
+          "arguments": {"sku": "FITA-22-50-DOURADO"},
+          "resultado": {"preco": "88.90", "disponivel": true}
+        },
+        {
+          "acao": "submeter_proposta_aprovacao_usuaria",
+          "texto_proposto": "Olá! O rolo de 50 metros da fita de cetim 22mm preta com estampa dourada fica por R$ 88,90. Fazemos entregas em Fortaleza sim, com frete informado pelo produtor na finalização. Gostaria que eu separasse para você?",
+          "resultado": "Proposta aguarda aprovação da usuária"
+        }
+      ]
+    },
+    {
+      "id": "MID-POS-02-CONTINUIDADE-FILA-TROCA-AGENTE",
+      "titulo": "Continuidade de atendimento ao trocar de agente (ana-01 para ana-02)",
+      "contexto_troca": {
+        "evento": "Agente ana-01 concluiu a análise das mídias, mas desconectou antes de submeter a proposta",
+        "estado_armazenado_no_crm": {
+          "conversa_ref": "conv-ficticia-101",
+          "mensagens_total": 3,
+          "midias_processadas": true,
+          "saudacao_inicial_enviada": true,
+          "resposta_humana_ou_orcamento_enviada": false,
+          "proxima_acao_esperada": "enviar_orcamento_fita_22_50_dourado"
+        }
+      },
+      "entrada_agente_sucessor": {
+        "agente_id": "ana-02",
+        "acao_1": "handshake concluído com lease ativo na Área 01",
+        "acao_2_chamada": {
+          "ferramenta": "ops_atendimento_ler_conversa",
+          "arguments": {"conversa_ref": "conv-ficticia-101"}
+        },
+        "retorno_servidor": {
+          "conversa_ref": "conv-ficticia-101",
+          "historico": "3 mensagens do lead íntegras com dados visuais e transcrições salvas",
+          "saudacao_pendente": false,
+          "ultima_acao": "midias_analisadas_aguardando_orcamento"
+        },
+        "comportamento_esperado_ana_02": {
+          "suprime_cumprimento_duplicado": true,
+          "retoma_direto_do_orcamento": true,
+          "preserva_dados_midia": true,
+          "nenhuma_perda_de_fila": true
+        }
+      }
+    }
+  ]
+}

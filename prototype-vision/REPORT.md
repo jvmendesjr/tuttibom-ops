@@ -61,8 +61,8 @@ e clicar em campos, sem digitar e sem enviar).
   **Xfce :0 real** (compositor/GPU/janelas reais — o mais próximo de humano;
   o Xvfb virtual fica como reserva); geoip alinhado ao IP; `i_know_what_im_doing=True`
   (a impressão fixa é intencional).
-- **VNC para o usuário ver:** `x11vnc` no :0, só Tailscale (`100.73.22.64:5900`)
-  e LAN (`192.168.0.12:5900`), sem senha, `-allow 100.64.0.0/10,192.168.0.0/24`;
+- **VNC para o usuário ver:** `x11vnc` no :0, só Tailscale (`<TAILSCALE_IP>:5900`)
+  e LAN (`<LAN_IP>:5900`), sem senha, `-allow <TAILSCALE_CIDR>,<LAN_CIDR>`;
   teste de fora da rede não alcançou o servidor (roteador bloqueia a IPv6 pública).
 - **Teste sem login (`fb_test.py`, 2026-11-15 22:06):** facebook.com abriu sem
   checkpoint nem bloqueio; Jev localizou **3/3** (e-mail HIT conf 0,91,

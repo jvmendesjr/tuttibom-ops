@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Alias canônico; mantém o caminho anterior válido para clientes existentes.
+set -euo pipefail
+exec "$(dirname "$0")/tuttibom-mcp" "$@"

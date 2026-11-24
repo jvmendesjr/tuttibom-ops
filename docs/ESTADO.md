@@ -7,6 +7,36 @@
 
 ## Onde estamos
 
+**Código multi-inbox revisado e consolidado (2026-11-24):** composição
+WhatsApp/Messenger com isolamento por inbox, sob o mesmo escritor MCP.
+O [guia multi-inbox](operacao/mcp-ops-multi-inbox.md) separa código e
+rollout. A promoção autorizada é um snapshot saneado na `main`, com pai
+único na base anterior, sem os 44 commits antigos como ancestrais e sem
+fast-forward. Isso não afirma operação real do Messenger, não envia
+mensagem, não faz ACK real e não altera o listener em serviço. Validação
+final desta árvore: `make check` com 424 testes aprovados, 7 ignorados e
+3 subtests; 3 skips adicionais são Ruby local ausente. Suítes legadas:
+chatwoot-ana 65 OK e crm-dashboard 8 OK. O piloto WhatsApp anterior não
+valida esta composição.
+
+**Nova vertente, 2026-11-23 (worktree de integração):** `tuttibom-core-mcp`
+só consulta; `tuttibom-ops-mcp` opera no laboratório por stdio e por
+HTTP pré-configurado, com perfil individual e escopo vinculado no host. O
+[manifesto](operacao/mcp-core-e-ops.md) entrega somente as skills
+versionadas das funções selecionadas, conforme a
+[D-010](decisoes/D-010-2026-11-17-skills-politica-canonica.md).
+O [guia do laboratório](operacao/mcp-ops-laboratorio.md) separa o que
+já é testável dos pré-requisitos da virada. Ainda em 2026-11-23, o lab
+passou a provar, em testes opt-in integrados, a cerca de conversa única
+do piloto (entrada, leitura e envio recusados fora da tupla exata
+conta+inbox+conversa; envio aprovado bloqueia com o escopo desativado),
+a aprovação exata com operador autenticado por credencial local
+(`--digests-operador-lab`/`--credencial-operador`) e a transcrição
+offline de voz sintética (`TranscritorOffline`, faster-whisper local,
+sem rede). Nada disso está ligado a canais, listeners ou escritores
+reais. Muse é a última atribuição registrada. Não houve promoção,
+transferência nem teste ao vivo.
+
 Base do projeto no PC **criada** (estrutura + `tuttibom-mcp` + memórias),
 reutilizando o PQBR2 como modelo e descartando o que não faz sentido aqui
 (Folha de Modelo stickman, Remotion, Flow, NotebookLM, workflow de Shorts).
@@ -1031,7 +1061,7 @@ em node:22 docker.
 - **Identidade visual (D-009):** família de logo no estilo selo (Cormorant Garamond; lacre #3E241C, pergaminho #F6EBD8, ouro #C9A15B, fita #C45C32). Board `4sv1smovt25gtjegmhdhbq` é a referência fixa; o site usa os componentes copiados verbatim (diff idêntico). Regra: imagens aprovadas não mudam, só o logo.
 - **Capa + foto de perfil (Magic Patterns `oa6jym3ubfzkmwqd4lrydc`, artefato `b4f96dc8-…`):** capa = `capa-A3b.png` original (SHA-256 confere) com o wordmark novo no lugar do "TUTTIBOM" antigo; perfil = monograma TB. Usuário: "vamos deixar assim". **Não aplicadas no Facebook** — `profile-fb` ocupado pelo fb_agent.
 - **Página oficial (D-008):** é a página `100089750066330` (ID canônico do Facebook, `profile.php?id=100089750066330`); a D-005 registra o outro ID dela, `143473822920252` (o que o Zernio usa). **Confirmado: é a mesma Página**, dois formatos de número. `scripts/fb_trocar_capa.py` **corrigido 2026-11-17** (aponta para a página oficial; aceita TuttiBom/TutiBom, recusa o perfil pessoal; `--dry-run` verificado pelo coordenador, exit 2: `profile-fb` ocupado pelo `fb_agent`, sem abrir o navegador — aplicar só na janela combinada).
-- **Bio (rascunho 2026-11-17):** `criativos/bio-2026-11-17.md` — intro 99/100, WhatsApp `wa.me/558881022939`, site só como campo (sem URL inventada), sem preço. Pangram pendente.
+- **Bio (rascunho 2026-11-17):** `criativos/bio-2026-11-17.md` — intro 99/100, WhatsApp `wa.me/<NUMERO_LOJA>`, site só como campo (sem URL inventada), sem preço. Pangram pendente.
 - **Posts F1-02 (rascunho 2026-11-17):** `criativos/f1-02-natal.md` — 8 legendas com os JPEGs de Natal já existentes; CTA no Messenger; rótulo de IA em todas; sem preço. Pangram pendente.
 - **Pangram — BLOQUEADO 2026-11-17:** a conta de API conectada está sem créditos (`check_for_ai` devolve "needs more API credits"). Os textos já estão separados e prontos para checar quando houver crédito. Não é falta de chave (o acesso é OAuth no mcporter).
 - **Framer — site construído 2026-11-17:** projeto "TuttiBom" (`BDhe0URLFRQFGavqPZy6`); 3 páginas (home 662 nós, `/3d` 643 nós com os 23 itens do catálogo, `/fitas` 227 nós), sem preço, sem publicar. Falta: revisão visual no editor, conferir mobile, decisão de publicar. Entrega em `/tmp/framer-build-entrega.md`.

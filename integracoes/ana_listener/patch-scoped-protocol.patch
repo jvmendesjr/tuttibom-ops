@@ -1,0 +1,494 @@
+--- a/listener.py
++++ b/listener.py
+@@ -2,7 +2,7 @@
+ """ana-listener — ouvinte de webhook da Ana no Chatwoot (nova vertente, D-013).
+ 
+ Recebe o webhook de conta `message_created` do Chatwoot (conta 2),
+-deduplica por id da mensagem, enfileira as incoming em `listener.db`
++deduplica por inbox e id da mensagem, enfileira as incoming em `listener.db`
+ (tabela `events`) e expõe a fila em GET /pending para o hook que acorda
+ o Muse. Detecta handoff via `handoff.py` (módulo do outro builder) e
+ nunca enfileira contatos ignorados (`ignorados.py`).
+@@ -40,7 +40,7 @@
+ Regras de log: nunca logar texto de mensagem de cliente — só ids,
+ tamanhos e contagens.
+ 
+-Version: 0.6.1
++Version: 0.7.0
+ """
+ 
+ import json
+@@ -50,11 +50,12 @@
+ import sqlite3
+ import threading
+ import unicodedata
++from urllib.parse import parse_qs, urlparse
+ from datetime import datetime, timedelta, timezone
+ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+ from zoneinfo import ZoneInfo
+ 
+-VERSION = "0.6.1"
++VERSION = "0.7.0"
+ HERE = os.path.dirname(os.path.abspath(__file__))
+ HOST = os.environ.get("LISTENER_HOST", "0.0.0.0")
+ PORT = int(os.environ.get("LISTENER_PORT", "3021"))
+@@ -106,26 +107,125 @@
+ 
+ log = logging.getLogger("ana-listener")
+ _DB_LOCK = threading.Lock()
++_SCHEMA_LOCK = threading.Lock()
+ 
+ 
+ # ---------------------------------------------------------------- db
++def _tabela_existe(conn, nome):
++    return conn.execute(
++        "SELECT 1 FROM sqlite_master WHERE type='table' AND name=?",
++        (nome,),
++    ).fetchone() is not None
++
++
++def _colunas(conn, nome):
++    return {row[1] for row in conn.execute(f"PRAGMA table_info({nome})")}
++
++
++def _tem_unicidade_por_inbox(conn, nome):
++    for indice in conn.execute(f"PRAGMA index_list({nome})").fetchall():
++        if not indice[2]:
++            continue
++        seguro = str(indice[1]).replace('"', '""')
++        colunas = [
++            row[2] for row in conn.execute(f'PRAGMA index_info("{seguro}")')
++        ]
++        if colunas in (["inbox_id", "message_id"], ["message_id", "inbox_id"]):
++            return True
++    return False
++
++
++def _inbox_unico_do_evento(conn, message_id):
++    correspondencias = conn.execute(
++        "SELECT inbox_id FROM events WHERE message_id=? LIMIT 2",
++        (message_id,),
++    ).fetchall()
++    if len(correspondencias) != 1 or correspondencias[0][0] is None:
++        raise RuntimeError("cumprimento_inbox_indeterminado")
++    return correspondencias[0][0]
++
++
++def _migrar_schema(conn):
++    if not _tabela_existe(conn, "events"):
++        conn.execute(
++            "CREATE TABLE events("
++            "message_id INTEGER, conversation_id INTEGER,"
++            " inbox_id INTEGER, contato_ref TEXT, handoff TEXT,"
++            " recebido_em TEXT, estado TEXT DEFAULT 'pendente'"
++            " CHECK (estado IN ('pendente','entregue','ignorado')),"
++            " UNIQUE(inbox_id, message_id))"
++        )
++    elif not _tem_unicidade_por_inbox(conn, "events"):
++        duplicado = conn.execute(
++            "SELECT 1 FROM events GROUP BY inbox_id, message_id"
++            " HAVING COUNT(*) > 1 LIMIT 1"
++        ).fetchone()
++        if duplicado is not None:
++            raise RuntimeError("evento_inbox_duplicado")
++        conn.execute(
++            "CREATE TABLE events_migracao_v2("
++            "message_id INTEGER, conversation_id INTEGER,"
++            " inbox_id INTEGER, contato_ref TEXT, handoff TEXT,"
++            " recebido_em TEXT, estado TEXT DEFAULT 'pendente'"
++            " CHECK (estado IN ('pendente','entregue','ignorado')),"
++            " UNIQUE(inbox_id, message_id))"
++        )
++        conn.execute(
++            "INSERT INTO events_migracao_v2 SELECT * FROM events ORDER BY rowid"
++        )
++        conn.execute("DROP TABLE events")
++        conn.execute("ALTER TABLE events_migracao_v2 RENAME TO events")
++
++    if not _tabela_existe(conn, "cumprimentos"):
++        conn.execute(
++            "CREATE TABLE cumprimentos("
++            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
++            " conversation_id INTEGER, message_id INTEGER,"
++            " texto TEXT, variante INTEGER, enviado_em TEXT,"
++            " inbox_id INTEGER NOT NULL,"
++            " UNIQUE(inbox_id, message_id))"
++        )
++    elif ("inbox_id" not in _colunas(conn, "cumprimentos")
++          or not _tem_unicidade_por_inbox(conn, "cumprimentos")):
++        antigos = conn.execute(
++            "SELECT id, conversation_id, message_id, texto, variante, enviado_em"
++            " FROM cumprimentos ORDER BY id"
++        ).fetchall()
++        migrados = []
++        for row in antigos:
++            inbox_id = _inbox_unico_do_evento(conn, row[2])
++            migrados.append((*row, inbox_id))
++        conn.execute(
++            "CREATE TABLE cumprimentos_migracao_v2("
++            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
++            " conversation_id INTEGER, message_id INTEGER,"
++            " texto TEXT, variante INTEGER, enviado_em TEXT,"
++            " inbox_id INTEGER NOT NULL,"
++            " UNIQUE(inbox_id, message_id))"
++        )
++        conn.executemany(
++            "INSERT INTO cumprimentos_migracao_v2"
++            "(id, conversation_id, message_id, texto, variante, enviado_em, inbox_id)"
++            " VALUES (?, ?, ?, ?, ?, ?, ?)",
++            migrados,
++        )
++        conn.execute("DROP TABLE cumprimentos")
++        conn.execute("ALTER TABLE cumprimentos_migracao_v2 RENAME TO cumprimentos")
++    conn.execute("PRAGMA user_version=2")
++
++
+ def db():
+     conn = sqlite3.connect(DB_PATH, timeout=10)
+-    conn.execute(
+-        "CREATE TABLE IF NOT EXISTS events("
+-        "message_id INTEGER UNIQUE, conversation_id INTEGER,"
+-        " inbox_id INTEGER, contato_ref TEXT, handoff TEXT,"
+-        " recebido_em TEXT, estado TEXT DEFAULT 'pendente'"
+-        " CHECK (estado IN ('pendente','entregue','ignorado')))"
+-    )
+-    conn.execute(
+-        "CREATE TABLE IF NOT EXISTS cumprimentos("
+-        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+-        " conversation_id INTEGER, message_id INTEGER UNIQUE,"
+-        " texto TEXT, variante INTEGER, enviado_em TEXT)"
+-    )
+-    conn.commit()
+-    return conn
++    try:
++        with _SCHEMA_LOCK:
++            conn.execute("BEGIN IMMEDIATE")
++            _migrar_schema(conn)
++            conn.commit()
++        return conn
++    except Exception:
++        conn.rollback()
++        conn.close()
++        raise
+ 
+ 
+ def registrar(message_id, conversation_id, inbox_id, contato_ref):
+@@ -148,40 +248,58 @@
+             conn.close()
+ 
+ 
+-def atualizar(message_id, estado=None, handoff=None):
++def atualizar(message_id, estado=None, handoff=None, inbox_id=None):
+     with _DB_LOCK:
+         conn = db()
+         try:
++            if inbox_id is None:
++                escopo = ("message_id=? AND (SELECT COUNT(*) FROM events"
++                          " WHERE message_id=?)=1")
++                parametros = (message_id, message_id)
++            else:
++                escopo = "message_id=? AND inbox_id=?"
++                parametros = (message_id, inbox_id)
+             if estado is not None:
+                 conn.execute(
+-                    "UPDATE events SET estado=? WHERE message_id=?",
+-                    (estado, message_id),
++                    f"UPDATE events SET estado=? WHERE {escopo}",
++                    (estado, *parametros),
+                 )
+             if handoff is not None:
+                 conn.execute(
+-                    "UPDATE events SET handoff=? WHERE message_id=?",
+-                    (handoff, message_id),
++                    f"UPDATE events SET handoff=? WHERE {escopo}",
++                    (handoff, *parametros),
+                 )
+             conn.commit()
+         finally:
+             conn.close()
+ 
+ 
+-def listar_pendentes(limite=20):
++def listar_pendentes(limite=20, inbox_id=None, after_message_id=0):
+     conn = db()
+     try:
+-        rows = conn.execute(
+-            "SELECT message_id, conversation_id, inbox_id, contato_ref,"
+-            " handoff, recebido_em FROM events WHERE estado='pendente'"
+-            " ORDER BY message_id ASC LIMIT ?",
+-            (limite,),
+-        ).fetchall()
++        if inbox_id is not None:
++            rows = conn.execute(
++                "SELECT message_id, conversation_id, inbox_id, contato_ref,"
++                " handoff, recebido_em FROM events WHERE estado='pendente'"
++                " AND inbox_id=? AND message_id > ?"
++                " ORDER BY message_id ASC LIMIT ?",
++                (inbox_id, after_message_id, limite),
++            ).fetchall()
++        else:
++            rows = conn.execute(
++                "SELECT message_id, conversation_id, inbox_id, contato_ref,"
++                " handoff, recebido_em FROM events WHERE estado='pendente'"
++                " ORDER BY message_id ASC LIMIT ?",
++                (limite,),
++            ).fetchall()
+         campos = ("message_id", "conversation_id", "inbox_id",
+                   "contato_ref", "handoff", "recebido_em")
+         itens = []
+         for row in rows:
+             item = dict(zip(campos, row))
+-            item["cumprimento"] = cumprimento_de(item["message_id"])
++            item["cumprimento"] = cumprimento_de(
++                item["message_id"], inbox_id=item["inbox_id"],
++            )
+             itens.append(item)
+         return itens
+     finally:
+@@ -205,20 +323,40 @@
+         conn.close()
+ 
+ 
+-def marcar_entregues(message_ids):
+-    """Marca como 'entregue' só quem está 'pendente'. Devolve quantos."""
++def marcar_entregues(message_ids, inbox_id=None):
++    """Confirma o inbox; repetição escopada de ID entregue é idempotente."""
+     with _DB_LOCK:
+         conn = db()
+         try:
+             marcados = 0
++            accepted = []
+             for message_id in message_ids:
+-                cur = conn.execute(
+-                    "UPDATE events SET estado='entregue'"
+-                    " WHERE message_id=? AND estado='pendente'",
+-                    (message_id,),
+-                )
+-                marcados += cur.rowcount
++                if inbox_id is not None:
++                    cur = conn.execute(
++                        "UPDATE events SET estado='entregue'"
++                        " WHERE message_id=? AND inbox_id=? AND estado='pendente'",
++                        (message_id, inbox_id),
++                    )
++                else:
++                    # Sem inbox, só um ID globalmente inequívoco pode sofrer ACK.
++                    cur = conn.execute(
++                        "UPDATE events SET estado='entregue'"
++                        " WHERE message_id=? AND estado='pendente'"
++                        " AND (SELECT COUNT(*) FROM events WHERE message_id=?)=1",
++                        (message_id, message_id),
++                    )
++                if cur.rowcount > 0:
++                    marcados += cur.rowcount
++                    accepted.append(message_id)
++                elif inbox_id is not None and conn.execute(
++                        "SELECT 1 FROM events WHERE message_id=? AND inbox_id=?"
++                        " AND estado='entregue'",
++                        (message_id, inbox_id),
++                ).fetchone():
++                    accepted.append(message_id)
+             conn.commit()
++            if inbox_id is not None:
++                return marcados, accepted
+             return marcados
+         finally:
+             conn.close()
+@@ -286,31 +424,44 @@
+         conn.close()
+ 
+ 
+-def cumprimento_de(message_id):
+-    """Cumprimento enviado para esta incoming, ou None."""
++def cumprimento_de(message_id, inbox_id=None):
++    """Cumprimento da incoming no inbox, sem escolher IDs ambíguos."""
+     conn = db()
+     try:
+-        row = conn.execute(
+-            "SELECT texto, enviado_em FROM cumprimentos"
+-            " WHERE message_id=?",
+-            (message_id,)).fetchone()
++        if inbox_id is None:
++            rows = conn.execute(
++                "SELECT texto, enviado_em FROM cumprimentos"
++                " WHERE message_id=? ORDER BY id DESC LIMIT 2",
++                (message_id,),
++            ).fetchall()
++            if len(rows) != 1:
++                return None
++            row = rows[0]
++        else:
++            row = conn.execute(
++                "SELECT texto, enviado_em FROM cumprimentos"
++                " WHERE message_id=? AND inbox_id=? ORDER BY id DESC LIMIT 1",
++                (message_id, inbox_id),
++            ).fetchone()
+         return {"texto": row[0], "enviado_em": row[1]} if row else None
+     finally:
+         conn.close()
+ 
+ 
+ def registrar_cumprimento(conversation_id, message_id, texto, variante,
+-                          enviado_em=None):
++                          enviado_em=None, inbox_id=None):
+     enviado_em = enviado_em or datetime.now(timezone.utc).isoformat()
+     with _DB_LOCK:
+         conn = db()
+         try:
++            if inbox_id is None:
++                inbox_id = _inbox_unico_do_evento(conn, message_id)
+             conn.execute(
+                 "INSERT OR IGNORE INTO cumprimentos(conversation_id,"
+-                " message_id, texto, variante, enviado_em)"
+-                " VALUES (?, ?, ?, ?, ?)",
++                " message_id, texto, variante, enviado_em, inbox_id)"
++                " VALUES (?, ?, ?, ?, ?, ?)",
+                 (conversation_id, message_id, texto, variante,
+-                 enviado_em))
++                 enviado_em, inbox_id))
+             conn.commit()
+         finally:
+             conn.close()
+@@ -576,8 +727,10 @@
+                         conversation_id, info.get("message_id"))
+             return None
+         enviado_em = datetime.now(timezone.utc).isoformat()
+-        registrar_cumprimento(conversation_id, info.get("message_id"),
+-                              texto, variante, enviado_em)
++        registrar_cumprimento(
++            conversation_id, info.get("message_id"), texto, variante, enviado_em,
++            inbox_id=info.get("inbox_id"),
++        )
+         log.info("cumprimento enviado: conv=%s msg=%s variante=%d"
+                  " tipo=%s", conversation_id, info.get("message_id"),
+                  variante, tipo)
+@@ -777,7 +930,7 @@
+                     message_id, exc)
+         rotulo = None
+     if rotulo:
+-        atualizar(message_id, estado="ignorado")
++        atualizar(message_id, estado="ignorado", inbox_id=info["inbox_id"])
+         log.info("ignorado (%s): msg=%s conv=%s",
+                  rotulo, message_id, info["conversation_id"])
+         return True, "ignorado"
+@@ -821,7 +974,9 @@
+             # (o stub antigo devolvia bool) — interpretar os dois.
+             if isinstance(resultado, dict):
+                 if resultado.get("ignorado"):
+-                    atualizar(message_id, estado="ignorado")
++                    atualizar(
++                        message_id, estado="ignorado", inbox_id=info["inbox_id"],
++                    )
+                     log.info("ignorado via handoff (%s): msg=%s conv=%s",
+                              resultado.get("empresa"), message_id,
+                              info["conversation_id"])
+@@ -830,7 +985,9 @@
+             else:
+                 aplicado = bool(resultado)
+             if aplicado:
+-                atualizar(message_id, handoff=motivo)
++                atualizar(
++                    message_id, handoff=motivo, inbox_id=info["inbox_id"],
++                )
+                 log.info("handoff aplicado: msg=%s conv=%s motivo=%s",
+                          message_id, info["conversation_id"], motivo)
+                 return True, "handoff"
+@@ -863,8 +1020,41 @@
+         if self.path == "/health":
+             self._send(200, {"ok": True, "service": "ana-listener",
+                              "version": VERSION})
+-        elif self.path == "/pending":
+-            self._send(200, {"pending": listar_pendentes()})
++        elif self.path == "/pending" or self.path.startswith("/pending?"):
++            parsed = urlparse(self.path)
++            qs = parse_qs(parsed.query)
++            if "inbox_id" in qs:
++                try:
++                    inbox_id = int(qs["inbox_id"][0])
++                except (ValueError, IndexError):
++                    self._send(400, {"error": "inbox_id_invalido"})
++                    return
++                try:
++                    after_mid = int(qs.get("after_message_id", [0])[0])
++                    if after_mid < 0:
++                        after_mid = 0
++                except (ValueError, IndexError):
++                    after_mid = 0
++                try:
++                    limit = int(qs.get("limit", [50])[0])
++                    if limit < 1:
++                        limit = 1
++                    elif limit > 200:
++                        limit = 200
++                except (ValueError, IndexError):
++                    limit = 50
++                itens = listar_pendentes(limite=limit, inbox_id=inbox_id, after_message_id=after_mid)
++                self._send(200, {
++                    "ok": True,
++                    "scoped": True,
++                    "inbox_id": inbox_id,
++                    "after_message_id": after_mid,
++                    "limit": limit,
++                    "count": len(itens),
++                    "pending": itens,
++                })
++            else:
++                self._send(200, {"pending": listar_pendentes()})
+         elif self.path == "/stats":
+             self._send(200, contagens())
+         else:
+@@ -900,12 +1090,25 @@
+         except Exception:  # noqa: BLE001
+             self._send(400, {"error": "bad_json"})
+             return
++        if not isinstance(payload, dict):
++            self._send(400, {"error": "bad_json"})
++            return
++
++        inbox_raw = payload.get("inbox_id")
++        eh_escopado = inbox_raw is not None
++        inbox_id = None
++        if eh_escopado:
++            try:
++                inbox_id = int(inbox_raw)
++            except (TypeError, ValueError):
++                self._send(400, {"error": "inbox_id_invalido"})
++                return
++
+         ids = []
+-        if isinstance(payload, dict):
+-            if payload.get("message_id") is not None:
+-                ids = [payload["message_id"]]
+-            elif isinstance(payload.get("message_ids"), list):
+-                ids = payload["message_ids"]
++        if payload.get("message_id") is not None:
++            ids = [payload["message_id"]]
++        elif isinstance(payload.get("message_ids"), list):
++            ids = payload["message_ids"]
+         limpos = []
+         for mid in ids:
+             try:
+@@ -915,8 +1118,21 @@
+         if not limpos:
+             self._send(400, {"error": "no_message_id"})
+             return
+-        marcados = marcar_entregues(limpos)
+-        self._send(200, {"ok": True, "marcados": marcados})
++
++        if eh_escopado:
++            marcados, accepted = marcar_entregues(limpos, inbox_id=inbox_id)
++            rejected = [m for m in limpos if m not in accepted]
++            self._send(200, {
++                "ok": True,
++                "scoped": True,
++                "inbox_id": inbox_id,
++                "marcados": marcados,
++                "accepted": accepted,
++                "rejected": rejected,
++            })
++        else:
++            marcados = marcar_entregues(limpos)
++            self._send(200, {"ok": True, "marcados": marcados})
+ 
+     def log_message(self, fmt, *args):  # silencia o log padrão
+         pass

@@ -35,3 +35,20 @@ tinha uma skill do fluxo para consultar antes de agir.
   (duas travas, status vivo, backups, isolamento verificado).
 - `skills/tuttibom-framer-site/` — lições da construção do site 2026-11-17,
   incluindo a sobreposição da Home.
+
+## Aplicação à entrega de cargos via MCP
+
+- Cada área mantém uma skill ou um conjunto enxuto em `skills/`. A skill
+  é a fonte canônica da persona, dos prompts de trabalho, dos processos,
+  das decisões, dos limites e do encaminhamento. Documentos de setor
+  inventariam tarefas; não substituem as instruções na skill.
+- O prompt de entrada só identifica a seleção já autorizada e a referência,
+  sem endereço ou credencial. O manifesto mapeia IDs de função para o
+  conhecimento necessário. O Ops entrega apenas as versões dessas skills,
+  sem acesso a caminhos, a outras áreas ou a conteúdo técnico. Ter a skill
+  não concede função, escrita ou aprovação de uma ação.
+- Para liberar uma nova função, documente e revise sua skill, isole o
+  conteúdo específico da função e teste a leitura pelo manifesto e a
+  recusa de acesso em uma atribuição menor. Após incidentes, atualize a
+  própria skill e repita os casos afetados. A área `08` tem skill técnica
+  própria e não entra no manifesto do Ops.

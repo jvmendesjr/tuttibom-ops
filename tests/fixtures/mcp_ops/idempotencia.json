@@ -1,0 +1,108 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Fixtures para validação de idempotência com TTL e integridade de payload no tuttibom-ops-mcp",
+  "configuracao": {
+    "ttl_padrao_segundos": 86400,
+    "formato_chave": "uuid_v4",
+    "estrategia_cache": "hash_payload_e_resposta"
+  },
+  "casos": [
+    {
+      "id": "IDEM-POS-01-PRIMEIRA-EXECUCAO",
+      "titulo": "Primeira execução com chave de idempotência válida",
+      "requisicao": {
+        "metodo": "ops_atendimento_responder",
+        "idempotency_key": "e5b4b1a4-3c82-429a-8a12-88f57f49cb21",
+        "payload": {
+          "conversa_ref": "conv-ficticia-101",
+          "id_aprovacao": "APROV-20261123-001",
+          "texto": "Olá! O rolo de 50 metros da fita de cetim 22mm preta custa R$ 71,90. O frete é calculado pelo produtor no envio. Posso separar para você?"
+        }
+      },
+      "processamento": {
+        "execucao_backend": true,
+        "registrado_em": "2026-11-23T19:15:00Z",
+        "payload_hash": "a90184b90e7683b544421b8c8d88e001817e883e0c03c58851f5e884e9c7482a"
+      },
+      "resposta_servidor": {
+        "status": "enviado",
+        "mensagem_id": "msg-ficticia-901",
+        "timestamp": "2026-11-23T19:15:01Z",
+        "idempotente": false
+      }
+    },
+    {
+      "id": "IDEM-POS-02-RETRANSMISSAO-IDENTICA",
+      "titulo": "Retransmissão com mesma chave e mesmo payload dentro do TTL",
+      "requisicao": {
+        "metodo": "ops_atendimento_responder",
+        "idempotency_key": "e5b4b1a4-3c82-429a-8a12-88f57f49cb21",
+        "payload": {
+          "conversa_ref": "conv-ficticia-101",
+          "id_aprovacao": "APROV-20261123-001",
+          "texto": "Olá! O rolo de 50 metros da fita de cetim 22mm preta custa R$ 71,90. O frete é calculado pelo produtor no envio. Posso separar para você?"
+        }
+      },
+      "processamento": {
+        "execucao_backend": false,
+        "recuperado_do_cache": true
+      },
+      "resposta_servidor": {
+        "status": "enviado",
+        "mensagem_id": "msg-ficticia-901",
+        "timestamp": "2026-11-23T19:15:01Z",
+        "idempotente": true,
+        "observacao": "Resposta retornada do cache de idempotência sem duplicar envio externo."
+      }
+    },
+    {
+      "id": "IDEM-NEG-01-CONFLITO-PAYLOAD",
+      "titulo": "Reenvio da mesma chave de idempotência com payload divergente",
+      "requisicao": {
+        "metodo": "ops_atendimento_responder",
+        "idempotency_key": "e5b4b1a4-3c82-429a-8a12-88f57f49cb21",
+        "payload": {
+          "conversa_ref": "conv-ficticia-999",
+          "id_aprovacao": "APROV-20261123-999",
+          "texto": "Mensagem diferente com a mesma chave"
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_IDEMPOTENCY_PAYLOAD_MISMATCH",
+        "mensagem": "Conflito de idempotência: a chave 'e5b4b1a4-3c82-429a-8a12-88f57f49cb21' já foi utilizada com parâmetros diferentes."
+      }
+    },
+    {
+      "id": "IDEM-NEG-02-CHAVE-AUSENTE",
+      "titulo": "Tentativa de executar ferramenta com efeito colateral sem idempotency_key",
+      "requisicao": {
+        "metodo": "ops_atendimento_responder",
+        "idempotency_key": null,
+        "payload": {
+          "conversa_ref": "conv-ficticia-101",
+          "id_aprovacao": "APROV-20261123-001",
+          "texto": "Olá!..."
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_IDEMPOTENCY_KEY_REQUIRED",
+        "mensagem": "A operação ops_atendimento_responder é crítica e exige fornecimento obrigatório de 'idempotency_key'."
+      }
+    },
+    {
+      "id": "IDEM-CEN-03-EXPIRACAO-TTL",
+      "titulo": "Uso de chave após término do TTL (24 horas depois)",
+      "requisicao": {
+        "idempotency_key": "e5b4b1a4-3c82-429a-8a12-88f57f49cb21",
+        "timestamp_chamada": "2026-11-24T20:00:00Z"
+      },
+      "comportamento_esperado": {
+        "registro_anterior_expirado": true,
+        "tratamento": "nova_requisicao",
+        "conflito_gerado": false
+      }
+    }
+  ]
+}

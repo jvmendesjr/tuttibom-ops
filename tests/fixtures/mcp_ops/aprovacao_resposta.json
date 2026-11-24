@@ -1,0 +1,99 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Fixtures da regra inegociável: nada publica ou envia sem aprovação prévia ao texto exato",
+  "contrato_aprovacao_resposta": {
+    "conversa_ref": "conv-ficticia-101",
+    "lead_ref": "lead-ficticio-404",
+    "sku_consultado": "FITA-22-50-PRETO",
+    "preco_tabela": "71.90",
+    "texto_exato_submetido": "Olá! O rolo de 50 metros da fita de cetim 22mm preta custa R$ 71,90. O frete é calculado pelo produtor no envio. Posso separar para você?",
+    "hash_sha256_texto_exato": "e74474e27f6fcf7967cb49d6b85f1e137ccf0f8cc2867e88664d9aff1262b919",
+    "aprovacao_registrada": {
+      "id_aprovacao": "APROV-20261123-001",
+      "texto_aprovado": "Olá! O rolo de 50 metros da fita de cetim 22mm preta custa R$ 71,90. O frete é calculado pelo produtor no envio. Posso separar para você?",
+      "hash_texto": "e74474e27f6fcf7967cb49d6b85f1e137ccf0f8cc2867e88664d9aff1262b919",
+      "aprovado_por": "usuaria",
+      "status": "aprovado",
+      "aprovado_em": "2026-11-23T19:14:00Z"
+    }
+  },
+  "casos": [
+    {
+      "id": "APR-POS-01-ENVIO-APROVADO",
+      "titulo": "Envio com texto exatamente idêntico ao aprovado pela usuária",
+      "chamada": {
+        "ferramenta": "ops_atendimento_responder",
+        "arguments": {
+          "conversa_ref": "conv-ficticia-101",
+          "id_aprovacao": "APROV-20261123-001",
+          "texto": "Olá! O rolo de 50 metros da fita de cetim 22mm preta custa R$ 71,90. O frete é calculado pelo produtor no envio. Posso separar para você?",
+          "idempotency_key": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        }
+      },
+      "resultado_esperado": {
+        "status": "enviado",
+        "mensagem_id": "msg-ficticia-901",
+        "hash_verificado": true
+      }
+    },
+    {
+      "id": "APR-NEG-01-SEM-APROVACAO",
+      "titulo": "Tentativa de envio sem token/registro de aprovação prévia",
+      "chamada": {
+        "ferramenta": "ops_atendimento_responder",
+        "arguments": {
+          "conversa_ref": "conv-ficticia-101",
+          "id_aprovacao": null,
+          "texto": "Olá! O rolo de 50 metros custa R$ 71,90.",
+          "idempotency_key": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_EXACT_APPROVAL_REQUIRED",
+        "mensagem": "Nenhuma mensagem é enviada ao cliente sem aprovação prévia da usuária ao texto exato."
+      }
+    },
+    {
+      "id": "APR-NEG-02-TEXTO-ALTERADO",
+      "titulo": "Agente altera um caractere do texto aprovado (divergência de hash)",
+      "chamada": {
+        "ferramenta": "ops_atendimento_responder",
+        "arguments": {
+          "conversa_ref": "conv-ficticia-101",
+          "id_aprovacao": "APROV-20261123-001",
+          "texto": "Olá! O rolo de 50 metros da fita de cetim 22mm preta custa R$ 70,00. O frete é calculado pelo produtor no envio. Posso separar para você?",
+          "idempotency_key": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_APPROVED_TEXT_HASH_MISMATCH",
+        "mensagem": "O texto submetido não coincide com o texto aprovado pela usuária (hash SHA-256 diverge)."
+      }
+    },
+    {
+      "id": "APR-NEG-03-PRECO-NAO-TABELADO",
+      "titulo": "Agente tenta combinar preço fora da tabela oficial PRECOS_SKU",
+      "proposta": {
+        "conversa_ref": "conv-ficticia-101",
+        "sku": "FITA-22-50-PRETO",
+        "preco_proposto": "65.00"
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_PRICE_NOT_IN_CATALOG",
+        "mensagem": "Preço R$ 65,00 diverge da tabela oficial (PRECOS_SKU). Preço nunca é inventado ou alterado sem tabela."
+      }
+    },
+    {
+      "id": "APR-NEG-04-AUTORIZACAO-NAO-E-APROVACAO",
+      "titulo": "Agente alega que autorização da função 01.02 dispensa aprovação do texto",
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_FUNCTION_AUTHORIZATION_IS_NOT_SEND_APPROVAL",
+        "mensagem": "A posse da atribuição 01.02 habilita o recurso, mas cada disparo individual requer aprovação do texto exato."
+      }
+    }
+  ]
+}

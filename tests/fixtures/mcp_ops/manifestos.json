@@ -1,0 +1,142 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Fixtures de manifestos de atribuição, cálculo de hash e ciclo de aperto de mão (handshake)",
+  "manifesto_ana_01": {
+    "agente_id": "ana-01",
+    "areas_autorizadas": [1, 2, 3],
+    "ferramentas": [
+      {
+        "numero": "00.01",
+        "nome": "ops_minhas_atribuicoes",
+        "area": "00-nucleo",
+        "risco": "seguro"
+      },
+      {
+        "numero": "00.02",
+        "nome": "ops_confirmar_atribuicoes",
+        "area": "00-nucleo",
+        "risco": "seguro"
+      },
+      {
+        "numero": "01.01",
+        "nome": "ops_atendimento_ler_conversa",
+        "area": "01-atendimento",
+        "risco": "seguro"
+      },
+      {
+        "numero": "01.02",
+        "nome": "ops_atendimento_responder",
+        "area": "01-atendimento",
+        "risco": "critico",
+        "requer_aprovacao_texto_exato": true,
+        "requer_midia_processada": true
+      },
+      {
+        "numero": "02.01",
+        "nome": "ops_crm_registrar_lead",
+        "area": "02-crm-vendas",
+        "risco": "atencao"
+      },
+      {
+        "numero": "03.01",
+        "nome": "ops_produto_consultar",
+        "area": "03-produto-catalogo",
+        "risco": "seguro"
+      }
+    ],
+    "limites": {
+      "leitura": true,
+      "escrita_reversivel": true,
+      "critico_com_aprovacao": true
+    },
+    "lease": {
+      "area": "01-atendimento",
+      "tipo": "escrita_exclusiva",
+      "prazo": "sem_prazo_fixo",
+      "status": "pendente_confirmacao"
+    },
+    "hash_atribuicao_esperado": "0f3d482522e3159f7cad097eda19487440ac6a885813101c7ce89345481625c3"
+  },
+  "handshake_positivo": {
+    "chamada": {
+      "metodo": "tools/call",
+      "params": {
+        "name": "ops_confirmar_atribuicoes",
+        "arguments": {
+          "hash": "0f3d482522e3159f7cad097eda19487440ac6a885813101c7ce89345481625c3",
+          "resumo": "Confirmo as atribuições 01.01 (ler conversa), 01.02 (responder sob aprovação exata), 02.01 (registrar lead) e 03.01 (consultar preços). Não possuo acesso a redes sociais, pedidos ou infraestrutura."
+        }
+      }
+    },
+    "resposta_esperada": {
+      "status": "confirmado",
+      "escrita_liberada": true,
+      "lease_status": "ativo",
+      "auditoria_registrada": true
+    }
+  },
+  "cenarios_negativos": [
+    {
+      "id": "MAN-NEG-01-ESCRITA-PRE-HANDSHAKE",
+      "titulo": "Tentativa de escrita antes da confirmação do manifesto",
+      "chamada": {
+        "metodo": "tools/call",
+        "params": {
+          "name": "ops_crm_registrar_lead",
+          "arguments": {
+            "referencia": "lead-ficticio-001",
+            "canal": "chatwoot",
+            "interesse": "fita-cetim"
+          }
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_HANDSHAKE_PENDING_WRITES_BLOCKED",
+        "mensagem": "Nenhuma escrita é liberada antes da confirmação formal do manifesto via ops_confirmar_atribuicoes."
+      }
+    },
+    {
+      "id": "MAN-NEG-02-HASH-ADULTERADO",
+      "titulo": "Agente confirma manifesto com hash divergente do emitido",
+      "chamada": {
+        "metodo": "tools/call",
+        "params": {
+          "name": "ops_confirmar_atribuicoes",
+          "arguments": {
+            "hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+            "resumo": "Tentativa de confirmação com hash falso"
+          }
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_MANIFEST_HASH_MISMATCH",
+        "mensagem": "Hash informado não confere com a atribuição registrada no servidor. Confirmação rejeitada."
+      }
+    },
+    {
+      "id": "MAN-NEG-03-INVALIDACAO-RECONEXAO",
+      "titulo": "Mudança de atribuição no meio da sessão invalida manifesto e exige reconexão",
+      "evento_admin": {
+        "acao": "revogar_funcao",
+        "agente_id": "ana-01",
+        "funcao_removida": "01.02"
+      },
+      "chamada_subsequente_agente": {
+        "metodo": "tools/call",
+        "params": {
+          "name": "ops_atendimento_ler_conversa",
+          "arguments": {
+            "conversa_ref": "conv-101"
+          }
+        }
+      },
+      "resultado_esperado": {
+        "status_code": -32000,
+        "codigo_erro": "ERR_MANIFEST_INVALIDATED_RECONNECT_REQUIRED",
+        "mensagem": "Manifesto invalidado por atualização de permissões. Reconecte e execute novo handshake."
+      }
+    }
+  ]
+}

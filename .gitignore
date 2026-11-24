@@ -4,6 +4,15 @@
 !.env.example
 *.pem
 *.key
+*.sqlite3
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3-wal
+*.sqlite3-shm
+listener.db
+listener.db-wal
+listener.db-shm
 **/secrets/
 **/credentials/
 **/storage-state.json

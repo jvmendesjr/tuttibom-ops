@@ -1,0 +1,239 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Catálogo administrativo de funções da operação TuttiBom OPS (D-012, Setor 08)",
+  "tipo": "catalogo_administrativo",
+  "visibilidade_mcp_ops": false,
+  "regras_catalogo": [
+    "O catálogo completo de funções é de acesso estritamente administrativo (tuttibom-ops-admin listar-atribuicoes).",
+    "Agentes operacionais não possuem ferramentas para listar ou varrer o catálogo completo de funções no tuttibom-ops-mcp.",
+    "Cada função possui número estável canônico que nunca é reutilizado para outro propósito.",
+    "Funções críticas (risco critico) exigem seleção individual explícita pelo seu número estável, nunca por pacote genérico de área.",
+    "O catálogo não contém dados operacionais de clientes, PII, histórico de mensagens ou preços dinâmicos."
+  ],
+  "funcoes": [
+    {
+      "numero": "00.01",
+      "area_id": 0,
+      "area_nome": "Núcleo Handshake",
+      "nome": "ops_minhas_atribuicoes",
+      "risco": "seguro",
+      "descricao": "Consulta o manifesto emitido para o token do agente conectado.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "00.02",
+      "area_id": 0,
+      "area_nome": "Núcleo Handshake",
+      "nome": "ops_confirmar_atribuicoes",
+      "risco": "seguro",
+      "descricao": "Aperto de mão obrigatório: confirma o hash da atribuição e resumo antes de liberar escritas.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "00.03",
+      "area_id": 0,
+      "area_nome": "Núcleo Handshake",
+      "nome": "ops_estado",
+      "risco": "seguro",
+      "descricao": "Retorna o estado operacional e áreas ativas para o agente.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "00.04",
+      "area_id": 0,
+      "area_nome": "Núcleo Handshake",
+      "nome": "ops_auditoria",
+      "risco": "seguro",
+      "descricao": "Consulta o histórico das próprias chamadas sanitizadas do agente.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "01.01",
+      "area_id": 1,
+      "area_nome": "Atendimento — Ana",
+      "nome": "ops_atendimento_ler_conversa",
+      "risco": "seguro",
+      "descricao": "Lê o histórico e anexos de uma conversa sanitizada via Chatwoot.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "01.02",
+      "area_id": 1,
+      "area_nome": "Atendimento — Ana",
+      "nome": "ops_atendimento_responder",
+      "risco": "critico",
+      "descricao": "Envia mensagem ao cliente. Exige aprovação prévia do texto exato e processamento prévio de mídias.",
+      "requer_selecao_individual": true,
+      "requer_aprovacao_texto_exato": true,
+      "requer_midia_processada": true,
+      "idempotente": true
+    },
+    {
+      "numero": "02.01",
+      "area_id": 2,
+      "area_nome": "CRM e Vendas",
+      "nome": "ops_crm_registrar_lead",
+      "risco": "atencao",
+      "descricao": "Registra lead no CRM próprio local (sem PII).",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "02.02",
+      "area_id": 2,
+      "area_nome": "CRM e Vendas",
+      "nome": "ops_crm_mover_etapa",
+      "risco": "atencao",
+      "descricao": "Move lead entre etapas válidas do pipeline.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "02.03",
+      "area_id": 2,
+      "area_nome": "CRM e Vendas",
+      "nome": "ops_crm_registrar_mensagem",
+      "risco": "seguro",
+      "descricao": "Registra resumo da interação (sem texto bruto nem PII).",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "02.04",
+      "area_id": 2,
+      "area_nome": "CRM e Vendas",
+      "nome": "ops_crm_followup",
+      "risco": "atencao",
+      "descricao": "Agenda ou cancela follow-up determinístico.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "02.05",
+      "area_id": 2,
+      "area_nome": "CRM e Vendas",
+      "nome": "ops_crm_memoria_contato",
+      "risco": "seguro",
+      "descricao": "Consulta ou atualiza rótulo de interesse do contato.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "03.01",
+      "area_id": 3,
+      "area_nome": "Produto e Catálogo",
+      "nome": "ops_produto_consultar",
+      "risco": "seguro",
+      "descricao": "Consulta preço oficial e disponibilidade de SKU da tabela PRECOS_SKU (18 SKUs).",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "04.01",
+      "area_id": 4,
+      "area_nome": "Criativos e Mídia",
+      "nome": "ops_criativo_listar_aprovados",
+      "risco": "seguro",
+      "descricao": "Lista referências de criativos já aprovados pelo produtor.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "04.02",
+      "area_id": 4,
+      "area_nome": "Criativos e Mídia",
+      "nome": "ops_criativo_gerar_previa",
+      "risco": "atencao",
+      "descricao": "Gera prévia no Modo A após solicitação explícita do lead.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "05.01",
+      "area_id": 5,
+      "area_nome": "Social e Conteúdo",
+      "nome": "ops_social_rascunho_post",
+      "risco": "atencao",
+      "descricao": "Salva rascunho de post para análise da usuária.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "05.02",
+      "area_id": 5,
+      "area_nome": "Social e Conteúdo",
+      "nome": "ops_social_publicar",
+      "risco": "critico",
+      "descricao": "Publica post em rede social. Exige aprovação prévia do texto e imagem exatos.",
+      "requer_selecao_individual": true,
+      "requer_aprovacao_texto_exato": true,
+      "idempotente": true
+    },
+    {
+      "numero": "06.01",
+      "area_id": 6,
+      "area_nome": "Anúncios, Aquisição e Concorrência",
+      "nome": "ops_anuncio_consultar_concorrencia",
+      "risco": "seguro",
+      "descricao": "Consulta dados de referência de concorrência.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "07.01",
+      "area_id": 7,
+      "area_nome": "Operação, Produção e Pagamento",
+      "nome": "ops_operacao_registrar_pedido",
+      "risco": "atencao",
+      "descricao": "Registra pedido fechado com itens e valores.",
+      "requer_selecao_individual": false,
+      "idempotente": true
+    },
+    {
+      "numero": "07.02",
+      "area_id": 7,
+      "area_nome": "Operação, Produção e Pagamento",
+      "nome": "ops_operacao_confirmar_pagamento",
+      "risco": "critico",
+      "descricao": "Confirma pagamento com validação do produtor.",
+      "requer_selecao_individual": true,
+      "idempotente": true
+    },
+    {
+      "numero": "08.01",
+      "area_id": 8,
+      "area_nome": "Plataforma e Manutenção",
+      "nome": "ops_plataforma_saude",
+      "risco": "seguro",
+      "descricao": "Verifica saúde dos serviços da operação.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "08.02",
+      "area_id": 8,
+      "area_nome": "Plataforma e Manutenção",
+      "nome": "ops_plataforma_logs",
+      "risco": "seguro",
+      "descricao": "Lê logs operacionais sanitizados.",
+      "requer_selecao_individual": false
+    },
+    {
+      "numero": "08.03",
+      "area_id": 8,
+      "area_nome": "Plataforma e Manutenção",
+      "nome": "ops_plataforma_reindex",
+      "risco": "atencao",
+      "descricao": "Dispara reindexação da base de conhecimento da operação.",
+      "requer_selecao_individual": false
+    }
+  ],
+  "sondagens_negativas": {
+    "tentativa_descoberta_operacional": {
+      "metodo_mcp": "tools/list",
+      "descricao": "Agente tenta enumerar todas as 22 ferramentas do catálogo global.",
+      "resultado_esperado": {
+        "status_code": -32601,
+        "codigo_erro": "ERR_METHOD_OR_SCOPE_RESTRICTED",
+        "mensagem": "O servidor expõe apenas ferramentas expressamente autorizadas no manifesto do token."
+      }
+    },
+    "tentativa_consulta_catalogo_por_agente": {
+      "ferramenta": "ops_listar_catalogo_completo",
+      "resultado_esperado": {
+        "status_code": -32601,
+        "codigo_erro": "ERR_UNKNOWN_TOOL",
+        "mensagem": "Ferramenta não existe no tuttibom-ops-mcp. Catálogo é apenas administrativo."
+      }
+    }
+  }
+}

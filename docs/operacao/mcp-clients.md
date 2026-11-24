@@ -1,4 +1,4 @@
-# Clientes MCP — `tuttibom-mcp`
+# Clientes MCP — `tuttibom-core-mcp`
 
 Servidor **stdio**, só leitura, **sem porta de rede**. O MCP **só indica**;
 o agente age e grava (editar + git quando houver repo). Adaptado do
@@ -7,11 +7,11 @@ o agente age e grava (editar + git quando houver repo). Adaptado do
 Comando:
 
 ```bash
-/home/pc/Workspace/tuttibom-ops/scripts/tuttibom-mcp
+./scripts/tuttibom-core-mcp
 ```
 
-(ou, no diretório: `./scripts/tuttibom-mcp`, com `PYTHONPATH=src` já
-definido pelo script; `TUTTIBOM_ROOT` aponta para o diretório do projeto.)
+O caminho legado `scripts/tuttibom-mcp` aponta para o mesmo servidor só leitura.
+Para atendimento autorizado, use o [MCP Ops separado](mcp-ops-laboratorio.md).
 
 ## Ferramentas (12, todas só leitura)
 
@@ -53,8 +53,8 @@ Saída esperada: as 12 tools acima, nenhuma a mais, nenhuma a menos.
 ```json
 {
   "mcpServers": {
-    "tuttibom": {
-      "command": "/home/pc/Workspace/tuttibom-ops/scripts/tuttibom-mcp",
+    "tuttibom-core-mcp": {
+      "command": "/caminho/absoluto/da/worktree/scripts/tuttibom-core-mcp",
       "args": []
     }
   }

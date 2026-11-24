@@ -1,0 +1,517 @@
+#!/usr/bin/env python3
+"""scripts/preflight-multi-inbox — Pré-checagem só de leitura para janela multi-inbox.
+
+Verificações:
+1. Versão e SHA-256 do listener em serviço vs integracoes/ana_listener (live vs repo)
+2. Supressão de cumprimento nos inboxes 1 e 2 em modo_operacao.json
+3. Contagem numérica de eventos por inbox no banco do listener (SQLite mode=ro via Path.as_uri)
+4. Presença de backups para a transição (não-vazios com extensão reconhecida, sem expor nomes privados)
+5. Estado do host: presença de fila/entregas legadas (.sqlite, -wal, -shm) na raiz
+6. Exclusividade: se há host ativo segurando host.lock
+
+Segurança e limites:
+- Modo estritamente leitura (sem rede externa, sem escrita, sem alteração de arquivos).
+- Não imprime segredos, tokens, PATs, digests privados, telefones, caminhos privados ou mensagens.
+- Retorna exit code 0 apenas quando todas as checagens forem OK; exit code 1 se houver pendências.
+"""
+
+from __future__ import annotations
+
+import argparse
+import fcntl
+import hashlib
+import json
+import os
+from pathlib import Path
+import re
+import sqlite3
+import sys
+
+_RE_VERSAO = re.compile(r'VERSION\s*=\s*["\']([^"\']+)["\']')
+
+EXTENSOES_BACKUP = (
+    ".bak",
+    ".backup",
+    ".tar.gz",
+    ".tgz",
+    ".tar",
+    ".sql.gz",
+    ".sqlite.bak",
+    ".sqlite.backup",
+    ".zip",
+)
+
+ARQUIVOS_LEGADOS_RAIZ = (
+    "fila.sqlite",
+    "fila.sqlite-wal",
+    "fila.sqlite-shm",
+    "entregas.sqlite",
+    "entregas.sqlite-wal",
+    "entregas.sqlite-shm",
+)
+
+
+def calcular_sha256(caminho: Path) -> str | None:
+    """Calcula sha256 de um arquivo em blocos de 64KB sem carregar tudo em memória."""
+    if not caminho.is_file():
+        return None
+    hasher = hashlib.sha256()
+    try:
+        with open(caminho, "rb") as f:
+            while bloco := f.read(65536):
+                hasher.update(bloco)
+        return hasher.hexdigest()
+    except OSError:
+        return None
+
+
+def extrair_versao_listener(caminho: Path) -> str | None:
+    """Extrai VERSION = "..." do código sem executar o módulo."""
+    if not caminho.is_file():
+        return None
+    try:
+        with open(caminho, "r", encoding="utf-8", errors="replace") as f:
+            for _ in range(100):
+                linha = f.readline()
+                if not linha:
+                    break
+                m = _RE_VERSAO.search(linha)
+                if m:
+                    return m.group(1)
+        return None
+    except OSError:
+        return None
+
+
+def checar_listener(live_path: Path, repo_path: Path) -> dict:
+    """Verifica versão e hash do listener live vs versionado no repositório."""
+    sha_live = calcular_sha256(live_path)
+    ver_live = extrair_versao_listener(live_path)
+
+    sha_repo = calcular_sha256(repo_path)
+    ver_repo = extrair_versao_listener(repo_path)
+
+    if not sha_live:
+        return {
+            "item": "Listener em serviço",
+            "status": "PENDENTE",
+            "detalhe": "Arquivo live ausente ou não legível",
+        }
+
+    if not sha_repo:
+        return {
+            "item": "Listener em serviço",
+            "status": "PENDENTE",
+            "detalhe": "Arquivo versionado ausente ou não legível",
+        }
+
+    if sha_live == sha_repo:
+        return {
+            "item": "Listener em serviço",
+            "status": "OK",
+            "detalhe": f"v{ver_live or 'desconhecida'} sincronizado com repo (sha256: {sha_live[:12]}...)",
+        }
+    else:
+        return {
+            "item": "Listener em serviço",
+            "status": "PENDENTE",
+            "detalhe": (
+                f"Live v{ver_live or '?'} ({sha_live[:12]}...) difere do repo "
+                f"v{ver_repo or '?'} ({sha_repo[:12]}...). Atualização necessária na janela."
+            ),
+        }
+
+
+def checar_modo_operacao(caminho_modo: Path, inboxes: tuple[int, ...] = (1, 2)) -> dict:
+    """Verifica se modo_operacao.json suprime cumprimento nos inboxes indicados."""
+    if not caminho_modo.is_file():
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "PENDENTE",
+            "detalhe": "Arquivo de modo ausente (cumprimento ativo por padrão)",
+        }
+
+    try:
+        with open(caminho_modo, "r", encoding="utf-8") as f:
+            dados = json.load(f)
+    except (OSError, json.JSONDecodeError) as exc:
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "PENDENTE",
+            "detalhe": f"Falha ao ler configuração de modo: {type(exc).__name__}",
+        }
+
+    if not isinstance(dados, dict):
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "PENDENTE",
+            "detalhe": "modo_operacao.json inválido (conteúdo não é objeto)",
+        }
+
+    # Se cumprimento_automatico for explicitamente False, está suprimido globalmente
+    auto = dados.get("cumprimento_automatico")
+    if auto is False:
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "OK",
+            "detalhe": f"cumprimento_automatico=false (todos os inboxes {inboxes} suprimidos)",
+        }
+
+    # Se cumprimento_automatico não for False, checa inboxes_sem_cumprimento
+    raw_inboxes_sem = dados.get("inboxes_sem_cumprimento")
+    if raw_inboxes_sem is None:
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "PENDENTE",
+            "detalhe": "cumprimento ativo e inboxes_sem_cumprimento não configurado",
+        }
+
+    if not isinstance(raw_inboxes_sem, list):
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "PENDENTE",
+            "detalhe": (
+                f"inboxes_sem_cumprimento malformado: esperado lista, recebido {type(raw_inboxes_sem).__name__}"
+            ),
+        }
+
+    inboxes_sem_ids: set[str] = set()
+    for item in raw_inboxes_sem:
+        # Apenas inteiros (não bool) ou strings numéricas válidas
+        if type(item) is int and item > 0:
+            inboxes_sem_ids.add(str(item))
+        elif isinstance(item, str) and item.strip().isdigit() and int(item.strip()) > 0:
+            inboxes_sem_ids.add(item.strip())
+        else:
+            return {
+                "item": "Supressão de cumprimento",
+                "status": "PENDENTE",
+                "detalhe": (
+                    f"inboxes_sem_cumprimento contém elemento malformado: {type(item).__name__}"
+                ),
+            }
+
+    faltantes = [i for i in inboxes if str(i) not in inboxes_sem_ids]
+
+    if not faltantes:
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "OK",
+            "detalhe": f"inboxes {inboxes} presentes em inboxes_sem_cumprimento",
+        }
+    else:
+        return {
+            "item": "Supressão de cumprimento",
+            "status": "PENDENTE",
+            "detalhe": f"inbox(es) {faltantes} NÃO suprimidos em inboxes_sem_cumprimento",
+        }
+
+
+def contar_eventos_listener(caminho_db: Path) -> dict:
+    """Conta eventos agregados por inbox_id abrindo sqlite em modo leitura restrita (URI via Path.as_uri)."""
+    if not caminho_db.is_file():
+        return {
+            "item": "Eventos no listener.db",
+            "status": "PENDENTE",
+            "detalhe": "Banco de dados ausente",
+        }
+
+    # mode=ro ainda pode criar -wal/-shm em bancos WAL. Não abrir esses
+    # bancos: immutable=1 também não é seguro, pois ignoraria eventos no WAL.
+    try:
+        with caminho_db.open("rb") as arquivo:
+            cabecalho = arquivo.read(20)
+        modo_wal = (
+            cabecalho[:16] == b"SQLite format 3\x00"
+            and len(cabecalho) == 20
+            and 2 in cabecalho[18:20]
+        )
+        if modo_wal or Path(str(caminho_db) + "-wal").exists():
+            return {
+                "item": "Eventos no listener.db",
+                "status": "PENDENTE",
+                "detalhe": "Banco em WAL; consulta suspensa para não criar ou alterar arquivos auxiliares",
+            }
+    except OSError as exc:
+        return {
+            "item": "Eventos no listener.db",
+            "status": "PENDENTE",
+            "detalhe": f"Banco não legível: {type(exc).__name__}",
+        }
+
+    # Path.as_uri() codifica caracteres reservados (? e #) corretamente
+    uri = caminho_db.resolve().as_uri() + "?mode=ro"
+    try:
+        conn = sqlite3.connect(uri, uri=True, timeout=5)
+        try:
+            cursor = conn.cursor()
+            rows = cursor.execute(
+                "SELECT inbox_id, estado, COUNT(*) FROM events GROUP BY inbox_id, estado"
+            ).fetchall()
+        finally:
+            conn.close()
+    except Exception as exc:
+        return {
+            "item": "Eventos no listener.db",
+            "status": "PENDENTE",
+            "detalhe": f"Erro ao consultar sqlite: {type(exc).__name__}",
+        }
+
+    resumo_por_inbox: dict[str, dict[str, int]] = {}
+    for inbox_id, estado, qtd in rows:
+        inbox_str = f"inbox-{inbox_id}"
+        if inbox_str not in resumo_por_inbox:
+            resumo_por_inbox[inbox_str] = {}
+        resumo_por_inbox[inbox_str][str(estado)] = qtd
+
+    if not resumo_por_inbox:
+        detalhe = "0 eventos registrados (banco vazio)"
+    else:
+        partes = []
+        for ibx in sorted(resumo_por_inbox):
+            tot = sum(resumo_por_inbox[ibx].values())
+            pend = resumo_por_inbox[ibx].get("pendente", 0)
+            partes.append(f"{ibx}: {tot} total ({pend} pendentes)")
+        detalhe = " | ".join(partes)
+
+    return {
+        "item": "Eventos no listener.db",
+        "status": "OK",
+        "detalhe": detalhe,
+    }
+
+
+def checar_backups(locais: list[Path]) -> dict:
+    """Verifica se existem backups não-vazios com extensão reconhecida sem imprimir nomes privados."""
+    count_validos = 0
+    for local in locais:
+        if not local.exists():
+            continue
+        if local.is_file():
+            if local.stat().st_size > 0 and any(local.name.lower().endswith(ext) for ext in EXTENSOES_BACKUP):
+                count_validos += 1
+        elif local.is_dir():
+            for item in local.iterdir():
+                if item.is_file() and item.stat().st_size > 0:
+                    if any(item.name.lower().endswith(ext) for ext in EXTENSOES_BACKUP):
+                        count_validos += 1
+
+    if count_validos > 0:
+        return {
+            "item": "Presença de backups",
+            "status": "OK",
+            "detalhe": (
+                f"{count_validos} arquivo(s) de backup não vazio(s) com extensão reconhecida detectado(s) "
+                "(integridade e atualidade não verificadas)"
+            ),
+        }
+    else:
+        return {
+            "item": "Presença de backups",
+            "status": "PENDENTE",
+            "detalhe": "Nenhum arquivo de backup não vazio com extensão reconhecida foi encontrado",
+        }
+
+
+def checar_migracao_estado(caminho_estado: Path) -> dict:
+    """Verifica se há arquivos legados (.sqlite, -wal, -shm) na raiz do estado que devam migrar para inbox-1/."""
+    if not caminho_estado.is_dir():
+        return {
+            "item": "Migração de estado",
+            "status": "PENDENTE",
+            "detalhe": "Diretório de estado ausente ou inválido",
+        }
+
+    arquivos_raiz = [
+        f.name for f in caminho_estado.iterdir()
+        if f.is_file() and f.name in ARQUIVOS_LEGADOS_RAIZ
+    ]
+
+    inbox1_dir = caminho_estado / "inbox-1"
+    inbox1_tem_dados = inbox1_dir.is_dir() and any(
+        (inbox1_dir / arq).is_file() for arq in ("fila.sqlite", "entregas.sqlite")
+    )
+
+    if arquivos_raiz:
+        return {
+            "item": "Migração de estado",
+            "status": "PENDENTE",
+            "detalhe": (
+                f"Arquivos legados na raiz do estado: {', '.join(sorted(arquivos_raiz))}. "
+                "Devem ser movidos para inbox-1/ na janela de conexão para evitar perda de histórico/duplicações."
+            ),
+        }
+
+    if inbox1_tem_dados:
+        return {
+            "item": "Migração de estado",
+            "status": "OK",
+            "detalhe": "Estado já particionado (arquivos presentes em inbox-1/)",
+        }
+
+    return {
+        "item": "Migração de estado",
+        "status": "OK",
+        "detalhe": "Raiz limpa (nenhum arquivo legado de banco na raiz)",
+    }
+
+
+def checar_lock_host(caminho_estado: Path) -> dict:
+    """Verifica se há processo ativo do host segurando host.lock."""
+    if not caminho_estado.is_dir():
+        return {
+            "item": "Lock do host",
+            "status": "PENDENTE",
+            "detalhe": "Diretório de estado ausente ou inválido",
+        }
+
+    lock_file = caminho_estado / "host.lock"
+    if not lock_file.exists():
+        return {
+            "item": "Lock do host",
+            "status": "OK",
+            "detalhe": "host.lock ausente (lock livre)",
+        }
+
+    try:
+        fd = os.open(lock_file, os.O_RDWR | os.O_NOFOLLOW)
+    except OSError as exc:
+        return {
+            "item": "Lock do host",
+            "status": "PENDENTE",
+            "detalhe": f"host.lock não pôde ser aberto: {type(exc).__name__}",
+        }
+
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        # Lock livre
+        fcntl.flock(fd, fcntl.LOCK_UN)
+        os.close(fd)
+        return {
+            "item": "Lock do host",
+            "status": "OK",
+            "detalhe": "host.lock livre (nenhum processo retendo exclusividade)",
+        }
+    except (BlockingIOError, PermissionError):
+        os.close(fd)
+        return {
+            "item": "Lock do host",
+            "status": "PENDENTE",
+            "detalhe": "host.lock ocupado por processo ativo. Parar o host anterior antes de iniciar o multi-inbox.",
+        }
+    except Exception as exc:
+        os.close(fd)
+        return {
+            "item": "Lock do host",
+            "status": "PENDENTE",
+            "detalhe": f"Erro ao verificar host.lock: {type(exc).__name__}",
+        }
+
+
+def executar_preflight(
+    *,
+    listener_live: Path,
+    listener_repo: Path,
+    modo_operacao: Path,
+    listener_db: Path,
+    estado_host: Path,
+    locais_backup: list[Path],
+) -> list[dict]:
+    """Executa a bateria completa de pré-checameneto só de leitura."""
+    resultados = [
+        checar_listener(listener_live, listener_repo),
+        checar_modo_operacao(modo_operacao),
+        contar_eventos_listener(listener_db),
+        checar_backups(locais_backup),
+        checar_migracao_estado(estado_host),
+        checar_lock_host(estado_host),
+    ]
+    return resultados
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Pré-checagem só de leitura para janela de conexão multi-inbox."
+    )
+    repo_root = Path(__file__).resolve().parents[1]
+
+    parser.add_argument(
+        "--listener-live",
+        type=Path,
+        required=True,
+        help="Caminho do listener.py ativo em produção (obrigatório, sem default)",
+    )
+    parser.add_argument(
+        "--listener-repo",
+        type=Path,
+        default=repo_root / "integracoes/ana_listener/listener.py",
+        help="Caminho do listener.py versionado no repositório (default relativo à raiz do repo)",
+    )
+    parser.add_argument(
+        "--modo-operacao",
+        type=Path,
+        required=True,
+        help="Caminho de modo_operacao.json do listener (obrigatório, sem default)",
+    )
+    parser.add_argument(
+        "--listener-db",
+        type=Path,
+        required=True,
+        help="Caminho do banco SQLite do listener (obrigatório, sem default)",
+    )
+    parser.add_argument(
+        "--estado-host",
+        type=Path,
+        required=True,
+        help="Diretório de estado do host (obrigatório, sem default)",
+    )
+    parser.add_argument(
+        "--backup-dir",
+        type=Path,
+        action="append",
+        dest="locais_backup",
+        required=True,
+        help="Diretório(s) ou arquivo(s) para verificar backups (obrigatório, pode repetir)",
+    )
+    parser.add_argument(
+        "--json",
+        action="store_true",
+        help="Emite saída em JSON puro",
+    )
+
+    args = parser.parse_args(argv)
+
+    resultados = executar_preflight(
+        listener_live=args.listener_live,
+        listener_repo=args.listener_repo,
+        modo_operacao=args.modo_operacao,
+        listener_db=args.listener_db,
+        estado_host=args.estado_host,
+        locais_backup=args.locais_backup,
+    )
+
+    n_pend = sum(1 for r in resultados if r["status"] != "OK")
+
+    if args.json:
+        print(json.dumps(resultados, indent=2, ensure_ascii=False))
+        return 1 if n_pend > 0 else 0
+
+    print("=== Pré-checagem Multi-Inbox (Janela de Conexão) ===")
+    print()
+    n_ok = 0
+    for r in resultados:
+        status = r["status"]
+        if status == "OK":
+            n_ok += 1
+            tag = "[OK]      "
+        else:
+            tag = "[PENDENTE]"
+        print(f"{tag} {r['item']}: {r['detalhe']}")
+
+    print()
+    print(f"Resumo: {n_ok} OK, {n_pend} PENDENTE(S).")
+    return 1 if n_pend > 0 else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

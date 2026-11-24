@@ -6,7 +6,7 @@ em 2026-11-12._
 
 ## Onde fica
 
-- **Drive — pasta raiz:** `Biblioteca TuttiBom` na conta **tutibom10@gmail.com**
+- **Drive — pasta raiz:** `Biblioteca TuttiBom` na conta **<EMAIL_OPERACIONAL_LOJA>**
   (`1D4eE8w41wPBMdFDRb1tGSk9hNWRfyAkZ`), compartilhada com
   a conta pessoal do usuário (zemanu, writer) para o usuário ver das duas contas.
   (A primeira cópia, criada 2026-11-12 no Drive do zemanu
@@ -91,7 +91,7 @@ Aba "Regras" da planilha: as regras abaixo, resumidas.
 
 ## Planilha (criada 2026-11-12 ~17:20)
 
-- **`Biblioteca TuttiBom — Assets`** na conta tutibom10@gmail.com,
+- **`Biblioteca TuttiBom — Assets`** na conta <EMAIL_OPERACIONAL_LOJA>,
   dentro da pasta `Biblioteca TuttiBom`.
 - Aba **Assets**: 15 colunas (Nome do arquivo, Ocasião, Data do
   evento, Evento, Logotipo, Produto, Cor da fita, Cor da impressão,

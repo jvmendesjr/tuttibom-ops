@@ -1,0 +1,122 @@
+# Ana no Chatwoot — ouvinte, follow-up e handoff
+
+Serviços da nova vertente (D-013) que fazem a Ana funcionar no
+Chatwoot sem polling de 5 min. Tudo em Python stdlib, sem dependência
+nova. O comportamento da Ana vive em `skills/ana-atendimento/`; a
+mecânica do Chatwoot, em `skills/chatwoot-operacao/` — este diretório
+é só o código que as executa.
+
+## Arquitetura
+
+```
+WhatsApp (WAHA) ─┐
+                 ├─► Chatwoot (conta 2) ── webhook message_created ──► ana-listener :3021
+Messenger (Zernio)┘         │                                        (fila + handoff)
+                            │   GET /pending (hook, a cada 60 s)
+                            │         ▲
+                            └─────────┘  (o hook acorda o Muse, que responde como Ana)
+Muse responde como Ana via API do Chatwoot e registra no CRM próprio.
+
+Follow-up: runner (cron) lê o CRM + conversas abertas e escreve
+RASCUNHOS de toque em followup-drafts/ — nunca envia sozinho.
+```
+
+## Componentes
+
+| Arquivo | O que faz | Não faz |
+|---|---|---|
+| `chatwoot_client.py` | Cliente mínimo da API (ler, etiquetar, atribuir, resolver, nota) | Só envia o cumprimento automático (`enviar_cumprimento`, textos fixos) — nada mais |
+| `ignorados.py` + `ignorados.json` | Lista de empresas conhecidas (não clientes) | Não bloqueia/apaga/altera esses contatos |
+| `listener.py` | Recebe o webhook `message_created`, dedupe, enfileira incoming, detecta handoff, cumprimento automático (10 s), expõe `/pending` e `/ack` | Não responde ninguém (só o cumprimento fixo) |
+| `handoff.py` | `detectar_handoff(texto)` (puro, testável) + `aplicar_handoff(conversa, motivo)` (etiqueta + atribuição + nota) | Não envia mensagem ao cliente; nunca para ignorados |
+| `followup.py` | Runner: lê CRM + conversas abertas, escreve rascunhos de toque | Nunca envia; nunca para ignorados, leads fechados ou sem follow-up vencido |
+| `templates_followup.json` | Textos-modelo de follow-up (só entram em vigor após aprovação do usuário — ver `docs/followup-textos-modelo.md`) | — |
+| `ana-listener.service` | Unit systemd do ouvinte | — |
+
+## Configuração privada para uma implantação futura
+
+O código versionado não descobre caminhos privados do host. Configure
+explicitamente no ambiente do processo, usando arquivos fora do Git:
+
+```sh
+CHATWOOT_API_TOKEN_FILE=/CAMINHO_PRIVADO/pat
+CRM_DB_PATH=/CAMINHO_PRIVADO/crm.sqlite3
+FOLLOWUP_DRAFTS_DIR=/CAMINHO_PRIVADO/followup-drafts
+TUTTIBOM_OPS_REPO=/CAMINHO_DO_REPOSITORIO
+```
+
+Sem `CHATWOOT_API_TOKEN_FILE`, o cliente fica sem credencial. Sem as
+variáveis do CRM, os defaults são relativos ao diretório de trabalho,
+não ao banco existente do host. Não use esses defaults para uma virada.
+Esta documentação não instala nem reinicia os serviços em execução.
+O listener multi-inbox está em `integracoes/ana_listener/`; o código
+deste diretório mantém o contrato legado descrito abaixo.
+
+## Contratos
+
+- **Porta do ouvinte:** 3021 (a ponte Zernio usa a 3020). Deploy em
+  `<DIR_SERVICO_ANA_LISTENER>/` (código espelhado do repo; o
+  `listener.db` e os rascunhos vivem lá, fora do git).
+- **Webhook da conta:** `POST /api/v1/accounts/2/webhooks`
+  `{"url": "http://<TAILSCALE_IP>:3021/webhooks/chatwoot",
+  "subscriptions": ["message_created"]}`. Hoje não há webhook de
+  conta (lista vazia, verificado 2026-11-21).
+- **Fila (`listener.db`, tabela `events`):** `message_id` UNIQUE,
+  `conversation_id`, `inbox_id`, `contato_ref`, `handoff` (motivo ou
+  NULL), `recebido_em`, `estado` (`pendente`/`entregue`/`ignorado`).
+  `GET /pending` devolve os `pendente` (limite 20), cada item com o
+  campo `cumprimento` (texto + `enviado_em`, ou `null`); `POST /ack`
+  `{"message_id": n}` (ou `{"message_ids": [...]}`) marca `entregue`.
+  Quem marca `entregue` é o agente acordado pelo hook, depois de
+  verificar e entregar o aviso. A vigília de 5 min continua como
+  rede de segurança.
+- **Cumprimento automático (tabela `cumprimentos`):** na abertura da
+  conversa o ouvinte agenda para 10 s depois um cumprimento fixo
+  (saudação pelo horário + pedido de espera), timer fixo, reavalia
+  a rajada inteira aos 10 s (basta um pedido na janela para o pool
+  com "verificar"). Mídia sem legenda usa o genérico, inclusive se
+  a leitura do histórico falhar. O envio respeita o limite de
+  1x a cada 10 min por conversa, ignora os contatos da lista de
+  ignorados e é suprimido se já houve resposta pública enquanto
+  o timer aguardava. Dois pools (saudação
+  fechada sem "verificar", com pedido com "verificar"), rotação sem
+  repetir a variante. `GET /stats` conta os cumprimentos enviados.
+  Único envio do serviço: `chatwoot_client.enviar_cumprimento` (só
+  textos fixos, nunca texto livre).
+- **Humano do handoff:** agente id 2 (`tutibom`, administrador,
+  <EMAIL_OPERACIONAL_LOJA>) — único agente da conta, verificado 2026-11-21.
+- **Etiqueta de handoff:** `handoff-humano` (criada se não existir;
+  hoje a conta não tem etiqueta nenhuma).
+- **Nota privada:** `POST /conversations/:id/notes` NÃO existe no
+  Chatwoot 4.20.1-ce (404, verificado 2026-11-21); a nota privada é
+  `POST /conversations/:id/messages` com `private: true` — só
+  agentes veem, nada é enviado ao contato.
+- **CRM vivo:** `<CAMINHO_CRM_SQLITE3>` (ainda não existe —
+  criado no primeiro uso via `tuttibom.crm.store.CRM`; o banco de
+  teste da V4, `/tmp/crm-v4.sqlite3`, não é o vivo). Bancos
+  `.sqlite3` nunca vão para o git.
+- **Regra de ignorados (usuário, 2026-11-21):** empresas conhecidas
+  são canais de alerta, não clientes — sem resposta, sem lead, sem
+  follow-up, sem handoff. Caso concreto: Mercado Livre
+  <TELEFONE_SINTETICO>, conversa 8 do Chatwoot (4ª mensagem idêntica de
+  "Alerta de segurança", 22:33) — sem resposta, sem lead. Isso
+  resolve na prática a P8.
+
+## Regras duras
+
+- Nada vai para Cursor/Agy. Não tocar no Deskcomm produção, no WAHA,
+  nos webhooks do Zernio nem no `cloudflared-ponte`.
+- Não tocar na conversa 8 nem no lead do golpe (P8) — a decisão sobre
+  ele é do usuário e já está coberta pela regra de ignorados.
+- Nenhum segredo em git, log ou chat. O PAT fica só no PC.
+- Nenhum dado de comprador no repo: sem texto de mensagem de cliente
+  em código, teste, log ou documento — só ids e contagens. Nos testes,
+  usar textos fictícios.
+- O ouvinte e o runner NUNCA enviam mensagem ao cliente — exceto o
+  cumprimento automático do ouvinte (textos fixos, 10 s, ver acima).
+
+## Testes
+
+```bash
+python3 -m unittest discover -s services/chatwoot-ana -p 'test_*.py' -v
+```

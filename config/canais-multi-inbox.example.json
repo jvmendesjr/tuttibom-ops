@@ -1,0 +1,24 @@
+{
+  "canais": [
+    {
+      "conta_id": "2",
+      "inbox_id": "1",
+      "pat_arquivo": "/CAMINHO/PRIVADO/chatwoot-pat.txt",
+      "chatwoot_porta": 3001,
+      "listener_porta": 3021,
+      "intervalo_sync_segundos": 2.0,
+      "conversas_ignoradas": ["8"],
+      "ignorados_arquivo": "/CAMINHO/PRIVADO/ignorados.json"
+    },
+    {
+      "conta_id": "2",
+      "inbox_id": "2",
+      "pat_arquivo": "/CAMINHO/PRIVADO/chatwoot-pat.txt",
+      "chatwoot_porta": 3001,
+      "listener_porta": 3021,
+      "intervalo_sync_segundos": 2.0,
+      "conversas_ignoradas": ["8"],
+      "ignorados_arquivo": "/CAMINHO/PRIVADO/ignorados.json"
+    }
+  ]
+}

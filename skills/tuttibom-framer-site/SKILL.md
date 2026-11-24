@@ -41,7 +41,7 @@ Ler antes de qualquer tarefa no projeto Framer.
   `43a5f6f4-4d35-4cc0-990b-9da9329d3da0` (só leitura; nada alterado lá).
 - Projeto Framer: "TuttiBom", id `BDhe0URLFRQFGavqPZy6`. Páginas: Home `/`,
   Impressão 3D `/3d`, Fitas `/fitas`.
-- CTAs vão para o WhatsApp (`wa.me/558881022939`) com as mensagens exatas de
+- CTAs vão para o WhatsApp (`wa.me/<NUMERO_LOJA>`) com as mensagens exatas de
   `data/site.ts` do artefato. Imagens via CDN público do Magic Patterns.
 - Créditos de modelo onde existirem (ex.: "Modelo: @kayocavalcantte, licença
   CC BY"). Metadados (título/descrição) em cada página.

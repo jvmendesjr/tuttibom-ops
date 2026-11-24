@@ -1,0 +1,17 @@
+[Unit]
+Description=Ana no Chatwoot — ouvinte de webhook (message_created)
+After=network.target
+
+[Service]
+Type=simple
+User=pc
+WorkingDirectory=/home/pc/chatwoot/ana-listener
+ExecStart=/usr/bin/python3 /home/pc/chatwoot/ana-listener/listener.py
+Environment=LISTENER_PORT=3021
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

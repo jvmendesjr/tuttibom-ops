@@ -1,0 +1,138 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Fixtures de autorizações administrativas e ativações de tokens para tuttibom-ops-mcp",
+  "autorizacoes_validas": [
+    {
+      "referencia": "AUTH-REF-20261123-ANA01-7F8A",
+      "agente_id": "ana-01",
+      "funcoes_autorizadas": ["01.01", "01.02", "02.01", "03.01"],
+      "identidade_vinculada": "agent:ana-01:fingerprint-sha256-a1b2c3d4e5f60718",
+      "uso_unico": true,
+      "ativada": false,
+      "criada_em": "2026-11-23T19:00:00Z",
+      "expiracao": "2026-11-24T19:00:00Z",
+      "token_emitido_mock": "ops_mock_EXEMPLO_NAO_USAR_0001",
+      "token_sha256": "sha256_EXEMPLO_NAO_USAR_0004"
+    },
+    {
+      "referencia": "AUTH-REF-20261123-ANA02-8E2B",
+      "agente_id": "ana-02",
+      "funcoes_autorizadas": ["01.01", "01.02", "02.01", "03.01"],
+      "identidade_vinculada": "agent:ana-02:fingerprint-sha256-f8e7d6c5b4a39281",
+      "uso_unico": true,
+      "ativada": false,
+      "criada_em": "2026-11-23T19:05:00Z",
+      "expiracao": "2026-11-24T19:05:00Z",
+      "token_emitido_mock": "ops_mock_EXEMPLO_NAO_USAR_0002",
+      "token_sha256": "sha256_EXEMPLO_NAO_USAR_0005"
+    },
+    {
+      "referencia": "AUTH-REF-20261123-PLAT01-3C9A",
+      "agente_id": "hermes-plat",
+      "funcoes_autorizadas": ["08.01", "08.02"],
+      "identidade_vinculada": "agent:hermes-plat:fingerprint-sha256-1122334455667788",
+      "uso_unico": true,
+      "ativada": false,
+      "criada_em": "2026-11-23T19:10:00Z",
+      "expiracao": "2026-11-24T19:10:00Z",
+      "token_emitido_mock": "ops_mock_EXEMPLO_NAO_USAR_0003",
+      "token_sha256": "sha256_EXEMPLO_NAO_USAR_0006"
+    }
+  ],
+  "cenarios_negativos": [
+    {
+      "id": "AUT-NEG-01-SEM-IDENTIDADE",
+      "titulo": "Referência sem poder sozinha — cliente tenta usar referência como bearer token",
+      "tentativa": {
+        "metodo": "auth/activate",
+        "referencia": "AUTH-REF-20261123-ANA01-7F8A",
+        "identidade_apresentada": null,
+        "chave_assinatura": null
+      },
+      "resultado_esperado": {
+        "status": 401,
+        "codigo_erro": "ERR_AUTHENTICATION_REQUIRED",
+        "mensagem": "Ativação requer identidade verificável fora do chat. Referência não secreta sozinha não concede acesso."
+      }
+    },
+    {
+      "id": "AUT-NEG-02-IDENTIDADE-ERRADA",
+      "titulo": "Identidade errada — agente ana-02 tenta ativar referência autorizada para ana-01",
+      "tentativa": {
+        "metodo": "auth/activate",
+        "referencia": "AUTH-REF-20261123-ANA01-7F8A",
+        "identidade_apresentada": "agent:ana-02:fingerprint-sha256-f8e7d6c5b4a39281"
+      },
+      "resultado_esperado": {
+        "status": 403,
+        "codigo_erro": "ERR_IDENTITY_MISMATCH",
+        "mensagem": "A identidade apresentada (ana-02) não corresponde à identidade vinculada à autorização (ana-01)."
+      }
+    },
+    {
+      "id": "AUT-NEG-03-REUSO-CONSUMIDA",
+      "titulo": "Uso único — tentativa de reativar autorização já consumida",
+      "tentativa": {
+        "metodo": "auth/activate",
+        "referencia": "AUTH-REF-20261123-ANA01-CONSUMIDA",
+        "identidade_apresentada": "agent:ana-01:fingerprint-sha256-a1b2c3d4e5f60718"
+      },
+      "registro_servidor_previo": {
+        "referencia": "AUTH-REF-20261123-ANA01-CONSUMIDA",
+        "ativada": true,
+        "ativada_em": "2026-11-23T19:01:00Z"
+      },
+      "resultado_esperado": {
+        "status": 409,
+        "codigo_erro": "ERR_AUTHORIZATION_ALREADY_CONSUMED",
+        "mensagem": "Autorização já foi utilizada. Cada referência permite uma única ativação."
+      }
+    },
+    {
+      "id": "AUT-NEG-04-CONCORRENCIA-RACE",
+      "titulo": "Uso concorrente — duas ativações simultâneas da mesma referência",
+      "tentativa_concorrente": {
+        "referencia": "AUTH-REF-20261123-CONCORRENTE-RACE",
+        "conexoes_simultaneas": 2,
+        "lock_mecanismo": "atomic_compare_and_set"
+      },
+      "resultado_esperado": {
+        "conexao_1": {
+          "status": 200,
+          "codigo": "OK",
+          "token_emitido": true
+        },
+        "conexao_2": {
+          "status": 409,
+          "codigo_erro": "ERR_ACTIVATION_IN_PROGRESS_OR_CONSUMED",
+          "mensagem": "Conflito de ativação concorrente. Referência já em processo de consumo ou consumida."
+        }
+      }
+    },
+    {
+      "id": "AUT-NEG-05-PACOTE-SEM-CRITICO",
+      "titulo": "Autorização de área genérica sem explicitar número crítico",
+      "tentativa_admin": {
+        "comando": "tuttibom-ops-admin autorizar --agente ana-01 --area 01",
+        "observacao": "Tentativa de incluir 01.02 implicitamente via wildcard ou seleção de área"
+      },
+      "resultado_esperado": {
+        "status": 400,
+        "codigo_erro": "ERR_CRITICAL_FUNCTION_REQUIRES_EXPLICIT_NUMBER",
+        "mensagem": "Função crítica 01.02 (ops_atendimento_responder) exige seleção individual explícita pelo seu número estável."
+      }
+    },
+    {
+      "id": "AUT-NEG-06-NUMERO-INEXISTENTE",
+      "titulo": "Tentativa de autorizar função com número inexistente ou alterado",
+      "tentativa_admin": {
+        "comando": "tuttibom-ops-admin autorizar --agente ana-01 --funcoes 99.99"
+      },
+      "resultado_esperado": {
+        "status": 400,
+        "codigo_erro": "ERR_UNKNOWN_FUNCTION_NUMBER",
+        "mensagem": "Número de função 99.99 não existe no catálogo oficial de atribuições."
+      }
+    }
+  ]
+}

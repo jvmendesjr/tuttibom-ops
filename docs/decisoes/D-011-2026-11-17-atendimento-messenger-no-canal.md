@@ -310,7 +310,7 @@ nada editado, nada publicado, nenhum upload)
 ## Ana não responde no WhatsApp (2026-11-18 ~00:25) — causa raiz: o modelo
 
 Dois testes do usuário ("Oi teste" 00:25 e "Olá" 00:43, conversa
-3577efc6, Junior +5588997111267) receberam só o ack ("Só um instante" /
+3577efc6, Lead-Exemplo +5588999990001) receberam só o ack ("Só um instante" /
 "Vou verificar"). Investigação no log e no banco do 9Router:
 
 - O combo `core-medio` no 9Router hoje é UM modelo só:

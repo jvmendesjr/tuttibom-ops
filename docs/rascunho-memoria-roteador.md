@@ -53,7 +53,7 @@ perguntou vá para o produto certo, sem perguntar de novo o que já se sabe.
 
 - O número/sessão do TuttiBom tem um roteador de intenção ATIVO? **SIM,
   desde 2026-11-13 ~13:00** — `ai_routers` `c8c955b5-9a8f-4ba0-bdad-aa5a38627ded`
-  "Roteador TuttiBom" (sessão `31436449`, 558881022939), fallback Ana v9,
+  "Roteador TuttiBom" (sessão `31436449`, <NUMERO_LOJA>), fallback Ana v9,
   3 membros todos Ana (`fita`, `impressao_3d`, `preco`); tarefa Jev
   `roteador` em `decidindo`, modo comparação. Verificado com as funções
   do turno contra o banco de produção.

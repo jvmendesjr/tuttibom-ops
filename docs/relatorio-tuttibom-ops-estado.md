@@ -104,7 +104,7 @@ Deskcomm é um clique do usuário.
   Transcrição de áudio: ElevenLabs Scribe (`scribe_v1`),
   provada em produção. OpenAI só para embedding.
 - **Canal:** WhatsApp via WAHA (sessão `tutibom`,
-  558881022939, WORKING). Organização tutibom
+  <NUMERO_LOJA>, WORKING). Organização tutibom
   (`92bfe3dd-1117-4b12-8413-95a2e8e143e0`, slug
   `deskcomm-local`); agente Ana
   (`c9008471-d098-4e9f-88e9-da77dde393ea`, v9
@@ -357,7 +357,7 @@ nada executado, nada agendado.**
 | Conversas resolvidas | 0 |
 | Registros em `contact_interests` | 0 |
 | Trechos `memoria_contato` em `ai_chunks` | 0 |
-| Sessão WAHA tutibom | WORKING (558881022939) |
+| Sessão WAHA tutibom | WORKING (<NUMERO_LOJA>) |
 | Roteador "Roteador TuttiBom" | ativo, 3 membros, Jev `roteador` decidindo |
 | Fluxo A — versão viva | `1df069fe` (rascunho com ramo presente, sem publicar) |
 | Ana — versão viva | v9 |
@@ -389,9 +389,9 @@ nada executado, nada agendado.**
 8. **Menores, para observar no próximo teste:** refinamento do
    tempo do ack (27–33 s, aceito); `reason` tentado 1× no turno
    de áudio; Ana não ofereceu a prévia como pergunta nesse
-   áudio; intervalo silencioso de ~5 min sem log no turno da
-   Gleiciane; teste de imagem; testes de ADB desbloqueados pelo
-   u2; teste fim-a-fim da recuperação do S10.
+   áudio; intervalo silencioso de ~5 min sem log no turno do
+   contato de teste da V4; teste de imagem; testes de ADB
+   desbloqueados pelo u2; teste fim-a-fim da recuperação do S10.
 
 ## 10. Regras que governam tudo isto
 

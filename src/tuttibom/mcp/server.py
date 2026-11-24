@@ -1,4 +1,4 @@
-"""tuttibom-mcp — servidor MCP só leitura via stdio (sem porta de rede).
+"""tuttibom-core-mcp — servidor MCP só leitura via stdio (sem porta de rede).
 
 Adaptado do pqbr2-mcp (PQBR2, modelo), com melhorias para a realidade do
 TuttiBom — ver docs/operacao/mcp-clients.md, seção "Diferenças vs PQBR2".
@@ -18,13 +18,15 @@ from pathlib import Path
 from mcp.server.fastmcp import FastMCP
 
 ROOT = Path(os.environ.get("TUTTIBOM_ROOT", Path(__file__).resolve().parents[3]))
-VERSAO = "0.1.1"
+NOME = "tuttibom-core-mcp"
+VERSAO = "0.2.0"
 
 mcp = FastMCP(
-    "tuttibom-mcp",
+    NOME,
     instructions=(
-        "tuttibom-mcp — MCP de manutenção do TuttiBom: SÓ LEITURA, stdio. "
-        "O MCP só INDICA; quem age e grava é o agente.\n"
+        "tuttibom-core-mcp — manutenção do TuttiBom: SÓ LEITURA, stdio. "
+        "Não atende, não publica, não administra atribuições. "
+        "O atendimento autorizado usa o servidor separado tuttibom-ops-mcp.\n"
         "AO COMEÇAR: 1) `estado` 2) `onde_esta_tudo` (repo, blueprint, roadmap, "
         "decisões, Hindsight bank tuttibom, codebase-memory TUTTIBOM, Paperclip "
         "3110, fila, catálogo) 3) `decisoes`/`propostas`/`ler_doc` conforme a "
@@ -56,7 +58,7 @@ mcp = FastMCP(
 
 def _ler(rel: str, limite: int = 120_000) -> str:
     path = (ROOT / rel).resolve()
-    if not str(path).startswith(str(ROOT.resolve())):
+    if not path.is_relative_to(ROOT.resolve()):
         raise ValueError("caminho fora do repo")
     if not path.is_file():
         raise FileNotFoundError(rel)
@@ -67,6 +69,8 @@ def _ler(rel: str, limite: int = 120_000) -> str:
 
 
 def _run(cmd: list[str], timeout: int = 30) -> str:
+    if cmd[0] == "git":
+        cmd = ["git", "-c", "core.fsmonitor=false", *cmd[1:]]
     p = subprocess.run(
         cmd,
         cwd=ROOT,
@@ -74,19 +78,20 @@ def _run(cmd: list[str], timeout: int = 30) -> str:
         text=True,
         timeout=timeout,
         check=False,
+        env={**os.environ, "GIT_OPTIONAL_LOCKS": "0"},
     )
     out = (p.stdout or "") + (("\n" + p.stderr) if p.stderr else "")
     return out.strip() or f"(exit {p.returncode}, sem saída)"
 
 
 def _eh_git() -> bool:
-    return (ROOT / ".git").is_dir()
+    return (ROOT / ".git").exists()
 
 
 @mcp.tool()
 def estado() -> str:
     """Estado curto do TuttiBom: blueprint + roadmap + git (se houver)."""
-    partes = [f"# tuttibom-mcp {VERSAO}", f"ROOT={ROOT}"]
+    partes = [f"# {NOME} {VERSAO}", f"ROOT={ROOT}"]
     try:
         partes.append(_ler("docs/ESTADO.md"))
     except FileNotFoundError:
@@ -188,6 +193,7 @@ def buscar_codigo(padrao: str, glob: str = "*.md") -> str:
         "!work/**",
         "--max-count",
         "50",
+        "--",
         padrao,
         str(ROOT),
     ]
@@ -213,16 +219,19 @@ def git_status() -> str:
 
 @mcp.tool()
 def ler_doc(caminho: str) -> str:
-    """Lê um arquivo de documentação relativo ao root (ex.: docs/roadmap.md)."""
+    """Lê documentação técnica ou a skill da manutenção, por caminho relativo."""
     caminho = caminho.lstrip("./")
     if ".." in Path(caminho).parts:
         raise ValueError("caminho inválido")
     if not (
         caminho.startswith("docs/")
-        or caminho in {"README.md", "AGENTS.md", "CHANGELOG.md", "Makefile"}
+        or caminho in {
+            "README.md", "AGENTS.md", "CHANGELOG.md", "Makefile",
+            "skills/core-plataforma-manutencao/SKILL.md",
+        }
         or re.match(r"^(src|config|scripts|tests|ops|catalogo|templates)/", caminho)
     ):
-        raise ValueError("só docs/, AGENTS/README/CHANGELOG/Makefile, src/, config/, scripts/, tests/, ops/, catalogo/, templates/")
+        raise ValueError("caminho fora da documentação, da skill técnica e dos diretórios permitidos")
     return _ler(caminho)
 
 

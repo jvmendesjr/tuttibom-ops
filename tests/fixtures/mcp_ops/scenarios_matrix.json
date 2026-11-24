@@ -1,0 +1,303 @@
+{
+  "versao": "1.0.0-lab",
+  "descricao": "Matriz consolidada de cenários de aceitação em laboratório para tuttibom-ops-mcp",
+  "dominios": [
+    {
+      "dominio_id": 1,
+      "nome": "Catálogo apenas administrativo",
+      "documento_base": "rascunho-mcp-operacao.md §5, §6",
+      "cenarios": [
+        {
+          "id": "CAT-01-POS",
+          "tipo": "positivo",
+          "titulo": "Consulta autenticada de atribuições via CLI administrativa tuttibom-ops-admin",
+          "fixture_arquivo": "catalogo_admin.json",
+          "criterio": "Lista funções com número estável, área, nome e risco sem expor dados operacionais ou PII."
+        },
+        {
+          "id": "CAT-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Agente operacional tenta varrer catálogo completo via MCP ops",
+          "fixture_arquivo": "catalogo_admin.json",
+          "codigo_erro_esperado": "ERR_METHOD_OR_SCOPE_RESTRICTED",
+          "criterio": "Servidor recusa a chamada; agente vê apenas o escopo restrito do seu manifesto."
+        }
+      ]
+    },
+    {
+      "dominio_id": 2,
+      "nome": "Autorização de número estável",
+      "documento_base": "rascunho-mcp-operacao.md §5, comando-inicial-agente-ops.md §1",
+      "cenarios": [
+        {
+          "id": "AUT-01-POS",
+          "tipo": "positivo",
+          "titulo": "Autorização administrativa usando números estáveis específicos (ex: 01.01, 01.02)",
+          "fixture_arquivo": "autorizacoes.json",
+          "criterio": "Gera autorização restrita vinculada à identidade do cliente, com números imutáveis."
+        },
+        {
+          "id": "AUT-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Tentativa de autorizar função crítica por pacote de área genérica sem número estável",
+          "fixture_arquivo": "autorizacoes.json",
+          "codigo_erro_esperado": "ERR_CRITICAL_FUNCTION_REQUIRES_EXPLICIT_NUMBER",
+          "criterio": "Comando admin recusa a autorização; funções críticas exigem seleção individual explícita."
+        },
+        {
+          "id": "AUT-03-NEG",
+          "tipo": "negativo",
+          "titulo": "Tentativa de autorizar número inexistente no catálogo oficial",
+          "fixture_arquivo": "autorizacoes.json",
+          "codigo_erro_esperado": "ERR_UNKNOWN_FUNCTION_NUMBER",
+          "criterio": "Comando admin recusa números forjados ou não cadastrados."
+        }
+      ]
+    },
+    {
+      "dominio_id": 3,
+      "nome": "Referência sem poder sozinha",
+      "documento_base": "rascunho-mcp-operacao.md §5, comando-inicial-agente-ops.md §1",
+      "cenarios": [
+        {
+          "id": "REF-01-POS",
+          "tipo": "positivo",
+          "titulo": "Ativação com referência não secreta combinada com chave de identidade verificável",
+          "fixture_arquivo": "autorizacoes.json",
+          "criterio": "Emissão de token diretamente ao cliente autenticado."
+        },
+        {
+          "id": "REF-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Referência não secreta apresentada como bearer token ou sem identidade verificável",
+          "fixture_arquivo": "autorizacoes.json",
+          "codigo_erro_esperado": "ERR_AUTHENTICATION_REQUIRED",
+          "criterio": "Servidor recusa acesso imediato; referência sozinha não é credencial."
+        }
+      ]
+    },
+    {
+      "dominio_id": 4,
+      "nome": "Identidade errada",
+      "documento_base": "rascunho-mcp-operacao.md §4, §5",
+      "cenarios": [
+        {
+          "id": "IDE-01-POS",
+          "tipo": "positivo",
+          "titulo": "Cliente com identidade ana-01 ativa autorização emitida para ana-01",
+          "fixture_arquivo": "autorizacoes.json",
+          "criterio": "Validação de identidade positiva, token gerado."
+        },
+        {
+          "id": "IDE-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Cliente com identidade ana-02 tenta ativar autorização de ana-01",
+          "fixture_arquivo": "autorizacoes.json",
+          "codigo_erro_esperado": "ERR_IDENTITY_MISMATCH",
+          "criterio": "Rejeição com erro 403 / ERR_IDENTITY_MISMATCH."
+        }
+      ]
+    },
+    {
+      "dominio_id": 5,
+      "nome": "Uso único e concorrente na ativação",
+      "documento_base": "rascunho-mcp-operacao.md §5",
+      "cenarios": [
+        {
+          "id": "UNI-01-POS",
+          "tipo": "positivo",
+          "titulo": "Primeira ativação consome a referência com sucesso",
+          "fixture_arquivo": "autorizacoes.json",
+          "criterio": "Marca ativada=true no registro do servidor."
+        },
+        {
+          "id": "UNI-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Reativação da mesma referência consumida",
+          "fixture_arquivo": "autorizacoes.json",
+          "codigo_erro_esperado": "ERR_AUTHORIZATION_ALREADY_CONSUMED",
+          "criterio": "Rejeição imediata; uso único estrito."
+        },
+        {
+          "id": "UNI-03-NEG",
+          "tipo": "negativo",
+          "titulo": "Tentativas simultâneas concorrentes na mesma referência",
+          "fixture_arquivo": "autorizacoes.json",
+          "codigo_erro_esperado": "ERR_ACTIVATION_IN_PROGRESS_OR_CONSUMED",
+          "criterio": "Lock atômico garante que exatamente uma vence e a outra falha com conflito."
+        }
+      ]
+    },
+    {
+      "dominio_id": 6,
+      "nome": "Manifesto inválido e reconexão",
+      "documento_base": "rascunho-mcp-operacao.md §5",
+      "cenarios": [
+        {
+          "id": "MAN-01-POS",
+          "tipo": "positivo",
+          "titulo": "Handshake formal com hash de manifesto verificado e resumo",
+          "fixture_arquivo": "manifestos.json",
+          "criterio": "ops_confirmar_atribuicoes valida o hash SHA-256 e libera escritas."
+        },
+        {
+          "id": "MAN-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Tentativa de escrita antes do handshake de confirmação",
+          "fixture_arquivo": "manifestos.json",
+          "codigo_erro_esperado": "ERR_HANDSHAKE_PENDING_WRITES_BLOCKED",
+          "criterio": "Apenas leituras são liberadas pré-handshake; escritas são recusadas."
+        },
+        {
+          "id": "MAN-03-NEG",
+          "tipo": "negativo",
+          "titulo": "Confirmação com hash adulterado",
+          "fixture_arquivo": "manifestos.json",
+          "codigo_erro_esperado": "ERR_MANIFEST_HASH_MISMATCH",
+          "criterio": "Servidor recusa a confirmação e mantém bloqueio de escritas."
+        },
+        {
+          "id": "MAN-04-POS",
+          "tipo": "positivo",
+          "titulo": "Ciclo de reconexão após atualização de manifesto pelo administrador",
+          "fixture_arquivo": "manifestos.json",
+          "codigo_erro_esperado": "ERR_MANIFEST_INVALIDATED_RECONNECT_REQUIRED",
+          "criterio": "Manifesto anterior invalidado; agente deve reconectar e confirmar novo manifesto."
+        }
+      ]
+    },
+    {
+      "dominio_id": 7,
+      "nome": "Dois escritores e revogação de lease",
+      "documento_base": "rascunho-mcp-operacao.md §2, §5",
+      "cenarios": [
+        {
+          "id": "ESC-01-POS",
+          "tipo": "positivo",
+          "titulo": "Primeiro agente adquire lease exclusivo de escrita na Área 01",
+          "fixture_arquivo": "leases_concorrencia.json",
+          "criterio": "Lease ativo sem prazo fixo."
+        },
+        {
+          "id": "ESC-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Segundo agente tenta escrever na mesma área gravável ativa",
+          "fixture_arquivo": "leases_concorrencia.json",
+          "codigo_erro_esperado": "ERR_AREA_OCCUPIED",
+          "criterio": "Escrita recusada ('área ocupada'); leitura permitida se atribuída."
+        },
+        {
+          "id": "ESC-03-POS",
+          "tipo": "positivo",
+          "titulo": "Revogação imediata do primeiro agente e transferência de lease ao sucessor",
+          "fixture_arquivo": "leases_concorrencia.json",
+          "criterio": "Token anterior revogado, lease liberado e assumido por ana-02."
+        }
+      ]
+    },
+    {
+      "dominio_id": 8,
+      "nome": "Aprovação da resposta exata",
+      "documento_base": "rascunho-mcp-operacao.md §2, §6, comando-inicial-agente-ops.md §2",
+      "cenarios": [
+        {
+          "id": "APR-01-POS",
+          "tipo": "positivo",
+          "titulo": "Disparo com texto exatamente idêntico ao registro de aprovação da usuária",
+          "fixture_arquivo": "aprovacao_resposta.json",
+          "criterio": "Hash SHA-256 confere, mensagem transmitida com sucesso."
+        },
+        {
+          "id": "APR-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Envio sem id de aprovação prévio",
+          "fixture_arquivo": "aprovacao_resposta.json",
+          "codigo_erro_esperado": "ERR_EXACT_APPROVAL_REQUIRED",
+          "criterio": "Bloqueio estrito: nenhuma mensagem sai sem aprovação prévia."
+        },
+        {
+          "id": "APR-03-NEG",
+          "tipo": "negativo",
+          "titulo": "Envio com texto alterado em 1 caractere em relação ao aprovado",
+          "fixture_arquivo": "aprovacao_resposta.json",
+          "codigo_erro_esperado": "ERR_APPROVED_TEXT_HASH_MISMATCH",
+          "criterio": "Divergência de hash SHA-256 causa recusa do envio."
+        },
+        {
+          "id": "APR-04-NEG",
+          "tipo": "negativo",
+          "titulo": "Tentativa de submeter preço que não consta na tabela PRECOS_SKU",
+          "fixture_arquivo": "aprovacao_resposta.json",
+          "codigo_erro_esperado": "ERR_PRICE_NOT_IN_CATALOG",
+          "criterio": "Rejeição imediata por violação de regra de produto (preço nunca inventado)."
+        }
+      ]
+    },
+    {
+      "dominio_id": 9,
+      "nome": "Idempotência com TTL e integridade de payload",
+      "documento_base": "rascunho-mcp-operacao.md §6",
+      "cenarios": [
+        {
+          "id": "IDEM-01-POS",
+          "tipo": "positivo",
+          "titulo": "Primeira execução com idempotency_key UUID v4",
+          "fixture_arquivo": "idempotencia.json",
+          "criterio": "Execução realizada e resposta armazenada com hash do payload."
+        },
+        {
+          "id": "IDEM-02-POS",
+          "tipo": "positivo",
+          "titulo": "Replay com mesma chave e mesmo payload dentro do TTL",
+          "fixture_arquivo": "idempotencia.json",
+          "criterio": "Retorna resposta em cache sem novo disparo externo."
+        },
+        {
+          "id": "IDEM-03-NEG",
+          "tipo": "negativo",
+          "titulo": "Reenvio da mesma chave com payload divergente",
+          "fixture_arquivo": "idempotencia.json",
+          "codigo_erro_esperado": "ERR_IDEMPOTENCY_PAYLOAD_MISMATCH",
+          "criterio": "Recusa com erro de conflito de idempotência."
+        },
+        {
+          "id": "IDEM-04-NEG",
+          "tipo": "negativo",
+          "titulo": "Chamada crítica sem fornecer idempotency_key",
+          "fixture_arquivo": "idempotencia.json",
+          "codigo_erro_esperado": "ERR_IDEMPOTENCY_KEY_REQUIRED",
+          "criterio": "Recusa de chamada crítica por ausência de chave de idempotência."
+        }
+      ]
+    },
+    {
+      "dominio_id": 10,
+      "nome": "Mídia obrigatória e continuidade de fila na troca",
+      "documento_base": "rascunho-mcp-operacao.md §2, §4, comando-inicial-agente-ops.md §2",
+      "cenarios": [
+        {
+          "id": "MID-01-POS",
+          "tipo": "positivo",
+          "titulo": "Processamento obrigatório prévio de imagem e áudio antes de responder",
+          "fixture_arquivo": "midia_fila_troca.json",
+          "criterio": "Análise visual e transcrição concluídas antes da proposta de resposta."
+        },
+        {
+          "id": "MID-02-NEG",
+          "tipo": "negativo",
+          "titulo": "Tentativa de responder com mídia pendente na conversa",
+          "fixture_arquivo": "midia_fila_troca.json",
+          "codigo_erro_esperado": "ERR_MEDIA_PENDING_ANALYSIS",
+          "criterio": "Bloqueio de resposta exigindo análise de imagens e transcrição de áudio."
+        },
+        {
+          "id": "MID-03-POS",
+          "tipo": "positivo",
+          "titulo": "Continuidade íntegra da fila de atendimento na troca de agente",
+          "fixture_arquivo": "midia_fila_troca.json",
+          "criterio": "Agente sucessor lê fila completa, preserva contexto, não duplica saudação."
+        }
+      ]
+    }
+  ]
+}

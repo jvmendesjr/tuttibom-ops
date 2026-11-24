@@ -1,5 +1,17 @@
 # Roadmap — TuttiBom
 
+**Próxima entrega do MCP Ops:** integração permanente WhatsApp/Messenger
+por composição isolada de inboxes, com protocolo de listener versionado,
+testes e revisão antes do merge. Rollout e envio real ficam para uma
+janela posterior autorizada. Ver [guia multi-inbox](operacao/mcp-ops-multi-inbox.md).
+
+**Nova vertente, 2026-11-23:** [MCPs separados no laboratório](operacao/mcp-ops-laboratorio.md),
+com skills operacionais canônicas por função no manifesto e entrada HTTP
+pré-configurada sem referência no prompt.
+Próxima etapa: identidade e fluxo completo no Chatwoot isolado,
+antes da transferência autorizada da Ana. As fases históricas abaixo
+não substituem o [roadmap da nova vertente](roadmap-nova-vertente.md).
+
 **Status:** atualizado em 2026-11-13 (seção 12: estado atual e o que falta
 arrumar). Renomeado de `roadmap-paperclip.md` para `roadmap.md` em
 2026-11-05 ~21:43, a pedido do usuário: o Paperclip saiu do nome e do
@@ -1180,7 +1192,7 @@ atualização (2026-11-13):
    tempo do ack (27–33 s aceito, refinamento adiado); `reason`
    tentado 1× no turno de áudio + Ana não ofereceu a prévia como
    pergunta nesse áudio; intervalo silencioso de ~5 min sem log
-   no turno da Gleiciane (sem explicação); teste de imagem
+   no turno do contato de teste da V4 (sem explicação); teste de imagem
    pendente; testes de ADB desbloqueados pelo u2 pendentes;
    teste fim-a-fim da recuperação do S10 adiado.
 8. **Saúde do sistema — fora do Deskcomm, a discutir depois**
